@@ -6,12 +6,78 @@
 //
 
 import SwiftUI
+import KeyboardShortcuts
+import Cocoa
+import ServiceManagement
 
 @main
-struct MagicMacApp: App {
+final class MagicMacApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var delegate
+
+    private var observers = [NSObjectProtocol]()
+    private let dimmer = DisplayDimmer()
+
+    init() {
+        setUpShortcuts()
+        // setInitialAppearanceWhenUsingGamma()
+        addObservers()
+        terminateLauncher()
+    }
+
     var body: some Scene {
-        WindowGroup {
-            ContentView()
+        Settings {
+            SettingsView()
+                .frame(width: 450, height: 350, alignment: .center)
         }
     }
+
+    private func setUpShortcuts() {
+        KeyboardShortcuts.onKeyDown(
+            for: .invertColors,
+            action: {
+                doInvertPolarityUniversalAccess {
+                    self.dimmer.updateGamma()
+                }
+            })
+        KeyboardShortcuts.onKeyDown(
+            for: .hoverSpeech,
+            action: toggleHoverSpeech)
+        KeyboardShortcuts.onKeyDown(
+            for: .maximizeFrontWindow,
+            action: doMaximizeFrontWindow)
+        KeyboardShortcuts.onKeyDown(
+            for: .increaseBrightness,
+            action: dimmer.increase)
+        KeyboardShortcuts.onKeyDown(
+            for: .decreaseBrightness,
+            action: dimmer.decrease)
+    }
+    
+    private func addObservers() {
+        observers.append(
+            NotificationCenter.default.addObserver(forName: NSApplication.willTerminateNotification, object: nil, queue: .main) { _ in
+                // setShutdownAppearance()
+            }
+        )
+    }
+    
+    private func terminateLauncher() {
+        let launcherAppId = "com.dra11y.MagicMacLauncher"
+        let runningApps = NSWorkspace.shared.runningApplications
+        let isRunning = !runningApps.filter { $0.bundleIdentifier == launcherAppId }.isEmpty
+
+        let result = SMLoginItemSetEnabled(launcherAppId as CFString, true)
+        
+        if !result {
+            fatalError("Could not add login item.")
+        }
+
+        if isRunning {
+            DistributedNotificationCenter.default().post(name: .killLauncher, object: Bundle.main.bundleIdentifier!)
+        }
+    }
+}
+
+extension Notification.Name {
+    static let killLauncher = Notification.Name("killLauncher")
 }

@@ -8,22 +8,88 @@
 
 /* Begin PBXBuildFile section */
 		E249DF3A28A752B800479A6B /* MagicMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E249DF3928A752B800479A6B /* MagicMacApp.swift */; };
-		E249DF3C28A752B800479A6B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E249DF3B28A752B800479A6B /* ContentView.swift */; };
+		E249DF3C28A752B800479A6B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E249DF3B28A752B800479A6B /* SettingsView.swift */; };
 		E249DF3E28A752B800479A6B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E249DF3D28A752B800479A6B /* Assets.xcassets */; };
 		E249DF4128A752B800479A6B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E249DF4028A752B800479A6B /* Preview Assets.xcassets */; };
+		E249DF5128A7587100479A6B /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = E249DF5028A7587100479A6B /* KeyboardShortcuts */; };
+		E249DF5328A7728800479A6B /* PolarityInverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E249DF5228A7728800479A6B /* PolarityInverter.swift */; };
+		E249DF5528A7733500479A6B /* KeyboardShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = E249DF5428A7733500479A6B /* KeyboardShortcuts.swift */; };
+		E249DF5728A77C6A00479A6B /* HoverSpeech.swift in Sources */ = {isa = PBXBuildFile; fileRef = E249DF5628A77C6A00479A6B /* HoverSpeech.swift */; };
+		E249DF5928A8362900479A6B /* Permissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E249DF5828A8362900479A6B /* Permissions.swift */; };
+		E249DF5B28A8413000479A6B /* NSSound.swift in Sources */ = {isa = PBXBuildFile; fileRef = E249DF5A28A8413000479A6B /* NSSound.swift */; };
+		E2D32E6928A8C16F00F52439 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2D32E6828A8C16F00F52439 /* ApplicationServices.framework */; };
+		E2D32E6C28A8CF7E00F52439 /* AXSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E2D32E6B28A8CF7E00F52439 /* AXSwift */; };
+		E2D32E6E28A9794000F52439 /* DisplayDimmer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D32E6D28A9794000F52439 /* DisplayDimmer.swift */; };
+		E2E5ABCA28A86B99005C2B49 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E5ABC928A86B99005C2B49 /* AppDelegate.swift */; };
+		E2E5ABD528A86BC3005C2B49 /* Application.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2E5ABD428A86BC3005C2B49 /* Application.xib */; };
+		E2E5ABD728A86C67005C2B49 /* MagicMacLauncher.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = E2E5ABC728A86B99005C2B49 /* MagicMacLauncher.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		E2E5ABDA28A86C99005C2B49 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2E5ABD928A86C99005C2B49 /* ServiceManagement.framework */; };
+		E2E5ABDE28A86CE8005C2B49 /* UniversalAccess.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2E5ABDD28A86CE8005C2B49 /* UniversalAccess.framework */; };
+		E2E5ABE228A86CF7005C2B49 /* SkyLight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2E5ABE128A86CF7005C2B49 /* SkyLight.framework */; };
+		E2E5ABE728A878EB005C2B49 /* MaximizeFrontWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E5ABE628A878EB005C2B49 /* MaximizeFrontWindow.swift */; };
+		E2FC512128A9832400A1FCA2 /* Icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E2FC512028A9832400A1FCA2 /* Icons.xcassets */; };
+		E2FC512328A98AC900A1FCA2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FC512228A98AC900A1FCA2 /* AppDelegate.swift */; };
+		E2FC512528A9918100A1FCA2 /* NSImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FC512428A9918100A1FCA2 /* NSImage.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		E249DF9B28A8632300479A6B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Library/LoginItems;
+			dstSubfolderSpec = 1;
+			files = (
+				E2E5ABD728A86C67005C2B49 /* MagicMacLauncher.app in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		E249DF3628A752B800479A6B /* MagicMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MagicMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E249DF3928A752B800479A6B /* MagicMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MagicMacApp.swift; sourceTree = "<group>"; };
-		E249DF3B28A752B800479A6B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		E249DF3B28A752B800479A6B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		E249DF3D28A752B800479A6B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E249DF4028A752B800479A6B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		E249DF4228A752B800479A6B /* MagicMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MagicMac.entitlements; sourceTree = "<group>"; };
+		E249DF4828A7538500479A6B /* MagicMac-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MagicMac-Bridging-Header.h"; sourceTree = "<group>"; };
+		E249DF5228A7728800479A6B /* PolarityInverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolarityInverter.swift; sourceTree = "<group>"; };
+		E249DF5428A7733500479A6B /* KeyboardShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardShortcuts.swift; sourceTree = "<group>"; };
+		E249DF5628A77C6A00479A6B /* HoverSpeech.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverSpeech.swift; sourceTree = "<group>"; };
+		E249DF5828A8362900479A6B /* Permissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Permissions.swift; sourceTree = "<group>"; };
+		E249DF5A28A8413000479A6B /* NSSound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSSound.swift; sourceTree = "<group>"; };
+		E2D32E6828A8C16F00F52439 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
+		E2D32E6D28A9794000F52439 /* DisplayDimmer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayDimmer.swift; sourceTree = "<group>"; };
+		E2E5ABC728A86B99005C2B49 /* MagicMacLauncher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MagicMacLauncher.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E2E5ABC928A86B99005C2B49 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		E2E5ABD428A86BC3005C2B49 /* Application.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Application.xib; sourceTree = "<group>"; };
+		E2E5ABD628A86C3F005C2B49 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		E2E5ABD928A86C99005C2B49 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
+		E2E5ABDB28A86CAC005C2B49 /* libUniversalAccess.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libUniversalAccess.tbd; path = usr/lib/libUniversalAccess.tbd; sourceTree = SDKROOT; };
+		E2E5ABDD28A86CE8005C2B49 /* UniversalAccess.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UniversalAccess.framework; path = ../../../System/Library/PrivateFrameworks/UniversalAccess.framework; sourceTree = "<group>"; };
+		E2E5ABE128A86CF7005C2B49 /* SkyLight.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SkyLight.framework; path = ../../../System/Library/PrivateFrameworks/SkyLight.framework; sourceTree = "<group>"; };
+		E2E5ABE528A87072005C2B49 /* MagicMacLauncher.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MagicMacLauncher.entitlements; sourceTree = "<group>"; };
+		E2E5ABE628A878EB005C2B49 /* MaximizeFrontWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaximizeFrontWindow.swift; sourceTree = "<group>"; };
+		E2FC512028A9832400A1FCA2 /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Icons.xcassets; sourceTree = "<group>"; };
+		E2FC512228A98AC900A1FCA2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		E2FC512428A9918100A1FCA2 /* NSImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSImage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		E249DF3328A752B700479A6B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E2D32E6928A8C16F00F52439 /* ApplicationServices.framework in Frameworks */,
+				E2E5ABDE28A86CE8005C2B49 /* UniversalAccess.framework in Frameworks */,
+				E2E5ABE228A86CF7005C2B49 /* SkyLight.framework in Frameworks */,
+				E2D32E6C28A8CF7E00F52439 /* AXSwift in Frameworks */,
+				E2E5ABDA28A86C99005C2B49 /* ServiceManagement.framework in Frameworks */,
+				E249DF5128A7587100479A6B /* KeyboardShortcuts in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E2E5ABC428A86B99005C2B49 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -37,7 +103,9 @@
 			isa = PBXGroup;
 			children = (
 				E249DF3828A752B800479A6B /* MagicMac */,
+				E2E5ABC828A86B99005C2B49 /* MagicMacLauncher */,
 				E249DF3728A752B800479A6B /* Products */,
+				E2E5ABD828A86C99005C2B49 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -45,6 +113,7 @@
 			isa = PBXGroup;
 			children = (
 				E249DF3628A752B800479A6B /* MagicMac.app */,
+				E2E5ABC728A86B99005C2B49 /* MagicMacLauncher.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -53,10 +122,21 @@
 			isa = PBXGroup;
 			children = (
 				E249DF3928A752B800479A6B /* MagicMacApp.swift */,
-				E249DF3B28A752B800479A6B /* ContentView.swift */,
+				E249DF3B28A752B800479A6B /* SettingsView.swift */,
 				E249DF3D28A752B800479A6B /* Assets.xcassets */,
 				E249DF4228A752B800479A6B /* MagicMac.entitlements */,
 				E249DF3F28A752B800479A6B /* Preview Content */,
+				E249DF4828A7538500479A6B /* MagicMac-Bridging-Header.h */,
+				E249DF5228A7728800479A6B /* PolarityInverter.swift */,
+				E249DF5428A7733500479A6B /* KeyboardShortcuts.swift */,
+				E249DF5628A77C6A00479A6B /* HoverSpeech.swift */,
+				E249DF5828A8362900479A6B /* Permissions.swift */,
+				E249DF5A28A8413000479A6B /* NSSound.swift */,
+				E2E5ABE628A878EB005C2B49 /* MaximizeFrontWindow.swift */,
+				E2D32E6D28A9794000F52439 /* DisplayDimmer.swift */,
+				E2FC512028A9832400A1FCA2 /* Icons.xcassets */,
+				E2FC512228A98AC900A1FCA2 /* AppDelegate.swift */,
+				E2FC512428A9918100A1FCA2 /* NSImage.swift */,
 			);
 			path = MagicMac;
 			sourceTree = "<group>";
@@ -69,6 +149,29 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		E2E5ABC828A86B99005C2B49 /* MagicMacLauncher */ = {
+			isa = PBXGroup;
+			children = (
+				E2E5ABE528A87072005C2B49 /* MagicMacLauncher.entitlements */,
+				E2E5ABD628A86C3F005C2B49 /* Info.plist */,
+				E2E5ABC928A86B99005C2B49 /* AppDelegate.swift */,
+				E2E5ABD428A86BC3005C2B49 /* Application.xib */,
+			);
+			path = MagicMacLauncher;
+			sourceTree = "<group>";
+		};
+		E2E5ABD828A86C99005C2B49 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E2D32E6828A8C16F00F52439 /* ApplicationServices.framework */,
+				E2E5ABE128A86CF7005C2B49 /* SkyLight.framework */,
+				E2E5ABDD28A86CE8005C2B49 /* UniversalAccess.framework */,
+				E2E5ABDB28A86CAC005C2B49 /* libUniversalAccess.tbd */,
+				E2E5ABD928A86C99005C2B49 /* ServiceManagement.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -79,14 +182,36 @@
 				E249DF3228A752B700479A6B /* Sources */,
 				E249DF3328A752B700479A6B /* Frameworks */,
 				E249DF3428A752B700479A6B /* Resources */,
+				E249DF9B28A8632300479A6B /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = MagicMac;
+			packageProductDependencies = (
+				E249DF5028A7587100479A6B /* KeyboardShortcuts */,
+				E2D32E6B28A8CF7E00F52439 /* AXSwift */,
+			);
 			productName = MagicMac;
 			productReference = E249DF3628A752B800479A6B /* MagicMac.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E2E5ABC628A86B99005C2B49 /* MagicMacLauncher */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E2E5ABD128A86B9A005C2B49 /* Build configuration list for PBXNativeTarget "MagicMacLauncher" */;
+			buildPhases = (
+				E2E5ABC328A86B99005C2B49 /* Sources */,
+				E2E5ABC428A86B99005C2B49 /* Frameworks */,
+				E2E5ABC528A86B99005C2B49 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MagicMacLauncher;
+			productName = MagicMacLauncher;
+			productReference = E2E5ABC728A86B99005C2B49 /* MagicMacLauncher.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -101,6 +226,10 @@
 				TargetAttributes = {
 					E249DF3528A752B700479A6B = {
 						CreatedOnToolsVersion = 13.4.1;
+						LastSwiftMigration = 1340;
+					};
+					E2E5ABC628A86B99005C2B49 = {
+						CreatedOnToolsVersion = 13.4.1;
 					};
 				};
 			};
@@ -113,11 +242,16 @@
 				Base,
 			);
 			mainGroup = E249DF2D28A752B700479A6B;
+			packageReferences = (
+				E249DF4F28A7587100479A6B /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
+				E2D32E6A28A8CF7E00F52439 /* XCRemoteSwiftPackageReference "AXSwift" */,
+			);
 			productRefGroup = E249DF3728A752B800479A6B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				E249DF3528A752B700479A6B /* MagicMac */,
+				E2E5ABC628A86B99005C2B49 /* MagicMacLauncher */,
 			);
 		};
 /* End PBXProject section */
@@ -128,7 +262,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				E249DF4128A752B800479A6B /* Preview Assets.xcassets in Resources */,
+				E2FC512128A9832400A1FCA2 /* Icons.xcassets in Resources */,
 				E249DF3E28A752B800479A6B /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E2E5ABC528A86B99005C2B49 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E2E5ABD528A86BC3005C2B49 /* Application.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -139,8 +282,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E249DF3C28A752B800479A6B /* ContentView.swift in Sources */,
+				E249DF3C28A752B800479A6B /* SettingsView.swift in Sources */,
+				E2D32E6E28A9794000F52439 /* DisplayDimmer.swift in Sources */,
 				E249DF3A28A752B800479A6B /* MagicMacApp.swift in Sources */,
+				E249DF5528A7733500479A6B /* KeyboardShortcuts.swift in Sources */,
+				E2E5ABE728A878EB005C2B49 /* MaximizeFrontWindow.swift in Sources */,
+				E249DF5728A77C6A00479A6B /* HoverSpeech.swift in Sources */,
+				E249DF5928A8362900479A6B /* Permissions.swift in Sources */,
+				E249DF5328A7728800479A6B /* PolarityInverter.swift in Sources */,
+				E2FC512528A9918100A1FCA2 /* NSImage.swift in Sources */,
+				E2FC512328A98AC900A1FCA2 /* AppDelegate.swift in Sources */,
+				E249DF5B28A8413000479A6B /* NSSound.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E2E5ABC328A86B99005C2B49 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E2E5ABCA28A86B99005C2B49 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -265,13 +425,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = MagicMac/MagicMac.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"MagicMac/Preview Content\"";
+				DEVELOPMENT_TEAM = LSQM3T2SC6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -281,7 +445,13 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.dra11y.MagicMac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "MagicMac/MagicMac-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				SYSTEM_FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
+				);
 			};
 			name = Debug;
 		};
@@ -290,13 +460,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = MagicMac/MagicMac.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"MagicMac/Preview Content\"";
+				DEVELOPMENT_TEAM = LSQM3T2SC6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -305,6 +479,71 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dra11y.MagicMac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "MagicMac/MagicMac-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				SYSTEM_FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
+				);
+			};
+			name = Release;
+		};
+		E2E5ABD228A86B9A005C2B49 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = MagicMacLauncher/MagicMacLauncher.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LSQM3T2SC6;
+				ENABLE_HARDENED_RUNTIME = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MagicMacLauncher/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainNibFile = Application;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dra11y.MagicMacLauncher;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		E2E5ABD328A86B9A005C2B49 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = MagicMacLauncher/MagicMacLauncher.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LSQM3T2SC6;
+				ENABLE_HARDENED_RUNTIME = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MagicMacLauncher/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainNibFile = Application;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dra11y.MagicMacLauncher;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -331,7 +570,48 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		E2E5ABD128A86B9A005C2B49 /* Build configuration list for PBXNativeTarget "MagicMacLauncher" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E2E5ABD228A86B9A005C2B49 /* Debug */,
+				E2E5ABD328A86B9A005C2B49 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E249DF4F28A7587100479A6B /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.7.1;
+			};
+		};
+		E2D32E6A28A8CF7E00F52439 /* XCRemoteSwiftPackageReference "AXSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/tmandry/AXSwift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.3.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E249DF5028A7587100479A6B /* KeyboardShortcuts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E249DF4F28A7587100479A6B /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
+			productName = KeyboardShortcuts;
+		};
+		E2D32E6B28A8CF7E00F52439 /* AXSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E2D32E6A28A8CF7E00F52439 /* XCRemoteSwiftPackageReference "AXSwift" */;
+			productName = AXSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E249DF2E28A752B700479A6B /* Project object */;
 }
