@@ -75,6 +75,7 @@
 		E2FC512228A98AC900A1FCA2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E2FC512428A9918100A1FCA2 /* NSImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSImage.swift; sourceTree = "<group>"; };
 		E2FC512828A9B4FF00A1FCA2 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		E2FC512A28A9B84700A1FCA2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +125,7 @@
 		E249DF3828A752B800479A6B /* MagicMac */ = {
 			isa = PBXGroup;
 			children = (
+				E2FC512A28A9B84700A1FCA2 /* Info.plist */,
 				E249DF3928A752B800479A6B /* MagicMacApp.swift */,
 				E249DF3B28A752B800479A6B /* SettingsView.swift */,
 				E249DF3D28A752B800479A6B /* Assets.xcassets */,
@@ -439,6 +441,7 @@
 				DEVELOPMENT_TEAM = LSQM3T2SC6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MagicMac/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -474,6 +477,7 @@
 				DEVELOPMENT_TEAM = LSQM3T2SC6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MagicMac/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (

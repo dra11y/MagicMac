@@ -42,6 +42,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             selector = Selector(("showPreferencesWindow:"))
         }
         NSApp.sendAction(selector, to: nil, from: nil)
+        NSApp.activate(ignoringOtherApps: true)
     }
 
 }
