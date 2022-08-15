@@ -81,7 +81,7 @@ func doInvertPolarityUniversalAccess(completion: ((Bool) -> Void)? = nil) {
         // But setting the pref doesn't change it, so use the legacy API.
         // A nice side effect is that the popup does not seem to show anymore.
         UAWhiteOnBlackSetEnabled(isInverted)
+        
+        completion?(isInverted)
     }
-    
-    completion?(isInverted)
 }
