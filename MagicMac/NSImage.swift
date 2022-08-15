@@ -8,6 +8,7 @@
 import os
 import AppKit
 import Foundation
+import SwiftUI
 
 // https://stackoverflow.com/questions/2137744/draw-standard-nsimage-inverted-white-instead-of-black
 public extension NSImage {
@@ -22,7 +23,7 @@ public extension NSImage {
             os_log(.error, "Could not create CIColorInvert filter")
             return self
         }
-
+        
         filter.setValue(ciImage, forKey: kCIInputImageKey)
         guard let outputImage = filter.outputImage else {
             os_log(.error, "Could not obtain output CIImage from filter")

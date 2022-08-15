@@ -52,15 +52,15 @@ func doInvertPolarityGammaTable() {
 }
 */
 
-func doInvertPolarityUniversalAccess(completion: (() -> Void)? = nil) {
+func doInvertPolarityUniversalAccess(completion: ((Bool) -> Void)? = nil) {
     guard
         let defaults = UserDefaults(suiteName: "com.apple.universalaccess")
     else { return }
 
     let key = "whiteOnBlack"
-
-    let isEnabled = !defaults.bool(forKey: key)
-    defaults.set(isEnabled, forKey: key)
+    
+    let isInverted = !defaults.bool(forKey: key)
+    defaults.set(isInverted, forKey: key)
     
     // `synchronize()` returns `true` if FDA (Full Disk Access) is granted, `false` otherwise.
     let result = defaults.synchronize()
@@ -73,10 +73,15 @@ func doInvertPolarityUniversalAccess(completion: (() -> Void)? = nil) {
         return
     }
     
-    // But setting the pref doesn't change it, so use the legacy API.
-    // A nice side effect is that the popup does not seem to show anymore.
-    UAWhiteOnBlackSetEnabled(isEnabled)
-    SLSSetAppearanceThemeLegacy(!isEnabled)
+    SLSSetAppearanceThemeLegacy(!isInverted)
 
-    completion?()
+    let delay = isInverted ? 0.13 : 0.13
+    
+    DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+        // But setting the pref doesn't change it, so use the legacy API.
+        // A nice side effect is that the popup does not seem to show anymore.
+        UAWhiteOnBlackSetEnabled(isInverted)
+    }
+    
+    completion?(isInverted)
 }

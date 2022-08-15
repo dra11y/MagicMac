@@ -9,7 +9,7 @@ import SwiftUI
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     var statusItem: NSStatusItem?
-    let menuIcon = NSImage(named: .menuIcon)?.inverted()
+    let menuIcon = NSImage(named: .menuIcon)
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         setUpMenuBarItem()

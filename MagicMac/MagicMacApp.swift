@@ -35,8 +35,14 @@ final class MagicMacApp: App {
         KeyboardShortcuts.onKeyDown(
             for: .invertColors,
             action: {
-                doInvertPolarityUniversalAccess {
+                doInvertPolarityUniversalAccess { isInverted in
                     self.dimmer.updateGamma()
+                    if
+                        let menuIcon = self.delegate.menuIcon,
+                        let statusItem = self.delegate.statusItem
+                    {
+                        statusItem.button?.image = isInverted ? menuIcon.inverted() : menuIcon
+                    }
                 }
             })
         KeyboardShortcuts.onKeyDown(
