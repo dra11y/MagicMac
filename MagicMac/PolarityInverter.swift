@@ -5,7 +5,8 @@
 //  Created by Tom Grushka on 8/12/22.
 //
 
-import Foundation
+import Cocoa
+import Carbon
 
 /*
 func getCurrentPolarity() -> (Bool, [CGGammaValue]) {
@@ -52,6 +53,52 @@ func doInvertPolarityGammaTable() {
 }
 */
 
+var invertTerminalColorsScript: NSAppleScript = {
+    let script = NSAppleScript(source: """
+        on invertTerminalColors(themeName)
+            tell application "Terminal"
+                repeat with w from 1 to count windows
+                    repeat with t from 1 to count tabs of window w
+                        set current settings of tab t of window w to (first settings set whose name is (themeName as Text))
+                    end repeat
+                end repeat
+            end tell
+        end invertTerminalColors
+    """)!
+    
+    var error: NSDictionary?
+    let success = script.compileAndReturnError(&error)
+    assert(success)
+    return script
+}()
+
+func doSwitchTerminalTheme(_ isInverted: Bool) {
+    let parameters = NSAppleEventDescriptor.list()
+    parameters.insert(NSAppleEventDescriptor(string: isInverted ? "Inverted" : "Basic"), at: 0)
+
+    let event = NSAppleEventDescriptor(
+        eventClass: AEEventClass(kASAppleScriptSuite),
+        eventID: AEEventID(kASSubroutineEvent),
+        targetDescriptor: nil,
+        returnID: AEReturnID(kAutoGenerateReturnID),
+        transactionID: AETransactionID(kAnyTransactionID)
+    )
+
+    event.setDescriptor(
+        NSAppleEventDescriptor(
+            string: "invertTerminalColors"),
+        forKeyword: AEKeyword(keyASSubroutineName))
+    event.setDescriptor(parameters, forKeyword: AEKeyword(keyDirectObject))
+
+    var error: NSDictionary? = nil
+    let _ = invertTerminalColorsScript.executeAppleEvent(event, error: &error)
+    if let error = error {
+        let alert = NSAlert()
+        alert.messageText = error.description
+        alert.runModal()
+    }
+}
+
 func doInvertPolarityUniversalAccess(completion: ((Bool) -> Void)? = nil) {
     guard
         let defaults = UserDefaults(suiteName: "com.apple.universalaccess")
@@ -81,6 +128,8 @@ func doInvertPolarityUniversalAccess(completion: ((Bool) -> Void)? = nil) {
         // But setting the pref doesn't change it, so use the legacy API.
         // A nice side effect is that the popup does not seem to show anymore.
         UAWhiteOnBlackSetEnabled(isInverted)
+        
+        doSwitchTerminalTheme(isInverted)
         
         completion?(isInverted)
     }
