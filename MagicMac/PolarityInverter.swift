@@ -72,6 +72,20 @@ var invertTerminalColorsScript: NSAppleScript = {
     return script
 }()
 
+// Ensure the correct color scheme is selected on Terminal launch.
+func terminalLaunchObserver() -> NSObjectProtocol {
+    return NSWorkspace.shared.notificationCenter
+        .addObserver(forName: NSWorkspace.didLaunchApplicationNotification, object: nil, queue: .main) { notification in
+            guard
+                let app =
+                    notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
+                app.bundleIdentifier == "com.apple.Terminal"
+            else { return }
+            
+            doSwitchTerminalTheme(UAWhiteOnBlackIsEnabled())
+        }
+}
+
 func doSwitchTerminalTheme(_ isInverted: Bool) {
     let parameters = NSAppleEventDescriptor.list()
     parameters.insert(NSAppleEventDescriptor(string: isInverted ? "Inverted" : "Basic"), at: 0)

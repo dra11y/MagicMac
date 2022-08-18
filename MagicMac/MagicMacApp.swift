@@ -65,6 +65,7 @@ final class MagicMacApp: App {
                 // setShutdownAppearance()
             }
         )
+        observers.append(terminalLaunchObserver())
     }
     
     private func terminateLauncher() {
