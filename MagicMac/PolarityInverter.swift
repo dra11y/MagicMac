@@ -90,6 +90,10 @@ func doSwitchTerminalTheme(_ isInverted: Bool) {
     let parameters = NSAppleEventDescriptor.list()
     parameters.insert(NSAppleEventDescriptor(string: isInverted ? "Inverted" : "Basic"), at: 0)
 
+    if !NSWorkspace.shared.runningApplications.contains(where: { $0.localizedName == "Terminal" }) {
+        return
+    }
+
     let event = NSAppleEventDescriptor(
         eventClass: AEEventClass(kASAppleScriptSuite),
         eventID: AEEventID(kASSubroutineEvent),
