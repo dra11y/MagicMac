@@ -27,14 +27,17 @@ final class MagicMacApp: App {
     var body: some Scene {
         Settings {
             SettingsView()
-                .frame(width: 450, height: 350, alignment: .center)
+                .frame(width: 450, alignment: .center)
         }
     }
 
     private func setUpShortcuts() {
         KeyboardShortcuts.onKeyDown(
-            for: .invertColors,
-            action: {
+            for: .toggleAppearance) {
+                doToggleAppearance()
+            }
+        KeyboardShortcuts.onKeyDown(
+            for: .invertColors) {
                 doInvertPolarityUniversalAccess { isInverted in
                     self.dimmer.updateGamma()
                     if
@@ -44,7 +47,7 @@ final class MagicMacApp: App {
                         statusItem.button?.image = isInverted ? menuIcon.inverted() : menuIcon
                     }
                 }
-            })
+            }
         KeyboardShortcuts.onKeyDown(
             for: .hoverSpeech,
             action: toggleHoverSpeech)
@@ -66,6 +69,7 @@ final class MagicMacApp: App {
             }
         )
         observers.append(terminalLaunchObserver())
+        observers.append(terminalNewWindowObserver())
     }
     
     private func terminateLauncher() {

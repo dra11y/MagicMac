@@ -8,6 +8,7 @@
 import KeyboardShortcuts
 
 extension KeyboardShortcuts.Name {
+    static let toggleAppearance = Self("toggleAppearance")
     static let invertColors = Self("invertColors")
     static let hoverSpeech = Self("hoverSpeech")
     static let maximizeFrontWindow = Self("maximizeFrontWindow")

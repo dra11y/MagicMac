@@ -23,8 +23,11 @@ struct SettingsView: View {
     var body: some View {
         Form {
             VStack {
-                KeyboardShortcuts.Recorder("Invert Colors:", name: .invertColors)
+                KeyboardShortcuts.Recorder("Toggle Appearance:", name: .toggleAppearance)
+                    .padding()
                     .focused($isFocused, equals: true)
+
+                KeyboardShortcuts.Recorder("Invert Colors:", name: .invertColors)
                     .padding()
 
                 KeyboardShortcuts.Recorder("Toggle Hover Speech:", name: .hoverSpeech)
@@ -38,6 +41,10 @@ struct SettingsView: View {
 
                 KeyboardShortcuts.Recorder("Decrease Brightness:", name: .decreaseBrightness)
                     .padding()
+
+                Button("Quit") {
+                    NSApp.terminate(self)
+                }
             }.padding()
         }.padding()
         

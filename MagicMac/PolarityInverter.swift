@@ -86,6 +86,21 @@ func terminalLaunchObserver() -> NSObjectProtocol {
         }
 }
 
+// Ensure the correct color scheme is selected on Terminal new window.
+func terminalNewWindowObserver() -> NSObjectProtocol {
+    return NSWorkspace.shared.notificationCenter
+        .addObserver(
+            forName: NSWorkspace.didActivateApplicationNotification, object: nil, queue: .main) { notification in
+            guard
+                let app =
+                    notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
+                app.bundleIdentifier == "com.apple.Terminal"
+            else { return }
+
+            doSwitchTerminalTheme(UAWhiteOnBlackIsEnabled())
+        }
+}
+
 func doSwitchTerminalTheme(_ isInverted: Bool) {
     let parameters = NSAppleEventDescriptor.list()
     parameters.insert(NSAppleEventDescriptor(string: isInverted ? "Inverted" : "Basic"), at: 0)
@@ -117,6 +132,11 @@ func doSwitchTerminalTheme(_ isInverted: Bool) {
     }
 }
 
+func doToggleAppearance(completion: ((Bool) -> Void)? = nil) {
+    let currentAppearance = SLSGetAppearanceThemeLegacy()
+    SLSSetAppearanceThemeLegacy(!currentAppearance)
+}
+
 func doInvertPolarityUniversalAccess(completion: ((Bool) -> Void)? = nil) {
     guard
         let defaults = UserDefaults(suiteName: "com.apple.universalaccess")
@@ -141,14 +161,14 @@ func doInvertPolarityUniversalAccess(completion: ((Bool) -> Void)? = nil) {
     SLSSetAppearanceThemeLegacy(!isInverted)
 
     let delay = isInverted ? 0.13 : 0.13
-    
+
     DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
         // But setting the pref doesn't change it, so use the legacy API.
         // A nice side effect is that the popup does not seem to show anymore.
         UAWhiteOnBlackSetEnabled(isInverted)
         
         doSwitchTerminalTheme(isInverted)
-        
+
         completion?(isInverted)
     }
 }
