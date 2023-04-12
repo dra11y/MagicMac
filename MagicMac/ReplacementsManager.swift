@@ -8,10 +8,14 @@
 import Foundation
 
 class ReplacementsManager: ObservableObject {
+    static let shared = ReplacementsManager()
+    
+    private init() {}
+
     private static let replacementsFilename = "replacements.txt"
     private static let separator = "||||"
     private static let newline = "\n"
-
+    
     private static var replacementsURL: URL {
         guard
             let bundleName = Bundle.main.bundleIdentifier,

@@ -19,7 +19,7 @@ struct Replacement: Codable, Equatable, Identifiable {
 }
 
 struct RegexListView: View {
-    @StateObject private var replacementsManager = ReplacementsManager()
+    @StateObject private var replacementsManager = ReplacementsManager.shared
     @State private var selection: Int?
 
     private func index(of row: Replacement) -> Int {

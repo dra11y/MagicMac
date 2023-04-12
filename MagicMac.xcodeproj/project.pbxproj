@@ -19,7 +19,7 @@
 		E249DF5928A8362900479A6B /* Permissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E249DF5828A8362900479A6B /* Permissions.swift */; };
 		E249DF5B28A8413000479A6B /* NSSound.swift in Sources */ = {isa = PBXBuildFile; fileRef = E249DF5A28A8413000479A6B /* NSSound.swift */; };
 		E25CF14329E70A3D00895FC3 /* ReplacementsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25CF14229E70A3D00895FC3 /* ReplacementsManager.swift */; };
-		E28298DD29E620B60088437C /* SpeakOnDemand.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28298DC29E620B60088437C /* SpeakOnDemand.swift */; };
+		E28298DD29E620B60088437C /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28298DC29E620B60088437C /* SpeechManager.swift */; };
 		E2C70D0029E6753E0099FFBA /* SubstitutionSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C70CFF29E6753E0099FFBA /* SubstitutionSettings.swift */; };
 		E2D32E6928A8C16F00F52439 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2D32E6828A8C16F00F52439 /* ApplicationServices.framework */; };
 		E2D32E6C28A8CF7E00F52439 /* AXSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E2D32E6B28A8CF7E00F52439 /* AXSwift */; };
@@ -65,7 +65,7 @@
 		E249DF5828A8362900479A6B /* Permissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Permissions.swift; sourceTree = "<group>"; };
 		E249DF5A28A8413000479A6B /* NSSound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSSound.swift; sourceTree = "<group>"; };
 		E25CF14229E70A3D00895FC3 /* ReplacementsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplacementsManager.swift; sourceTree = "<group>"; };
-		E28298DC29E620B60088437C /* SpeakOnDemand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakOnDemand.swift; sourceTree = "<group>"; };
+		E28298DC29E620B60088437C /* SpeechManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechManager.swift; sourceTree = "<group>"; };
 		E2C70CFF29E6753E0099FFBA /* SubstitutionSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubstitutionSettings.swift; sourceTree = "<group>"; };
 		E2D32E6828A8C16F00F52439 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 		E2D32E6D28A9794000F52439 /* DisplayDimmer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayDimmer.swift; sourceTree = "<group>"; };
@@ -150,7 +150,7 @@
 				E2FC512028A9832400A1FCA2 /* Icons.xcassets */,
 				E2FC512228A98AC900A1FCA2 /* AppDelegate.swift */,
 				E2FC512428A9918100A1FCA2 /* NSImage.swift */,
-				E28298DC29E620B60088437C /* SpeakOnDemand.swift */,
+				E28298DC29E620B60088437C /* SpeechManager.swift */,
 				E229BA2229E65E8400435833 /* FakeKeyEvents.swift */,
 				E2C70CFF29E6753E0099FFBA /* SubstitutionSettings.swift */,
 				E25CF14229E70A3D00895FC3 /* ReplacementsManager.swift */,
@@ -300,7 +300,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E28298DD29E620B60088437C /* SpeakOnDemand.swift in Sources */,
+				E28298DD29E620B60088437C /* SpeechManager.swift in Sources */,
 				E2C70D0029E6753E0099FFBA /* SubstitutionSettings.swift in Sources */,
 				E249DF3C28A752B800479A6B /* SettingsView.swift in Sources */,
 				E2D32E6E28A9794000F52439 /* DisplayDimmer.swift in Sources */,

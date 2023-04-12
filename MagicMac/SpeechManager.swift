@@ -16,6 +16,27 @@ public class SpeechManager {
     private let speechSynthesizer = NSSpeechSynthesizer()
 
     private let observer = PasteboardObserver()
+    
+    private let replacementsManager = ReplacementsManager.shared
+    
+    private func replaceText(_ text: String) -> String {
+        let replacements = replacementsManager.replacements
+        var replacedText = text
+        
+        // Apply replacements
+        for replacement in replacements {
+            if replacement.regex {
+                // Replace using regex
+                let regex = try! NSRegularExpression(pattern: replacement.pattern)
+                replacedText = regex.stringByReplacingMatches(in: text, range: NSRange(text.startIndex..., in: text), withTemplate: replacement.replacement)
+            } else {
+                // Replace using plain text
+                replacedText = text.replacingOccurrences(of: replacement.pattern, with: replacement.replacement)
+            }
+        }
+        
+        return replacedText
+    }
 
     public func speakFrontmostSelection() {
         if speechSynthesizer.isSpeaking {
@@ -37,7 +58,8 @@ public class SpeechManager {
             else { return }
 
             self.observer.stopObserving()
-            self.speechSynthesizer.startSpeaking(text)
+            let replacedText = replaceText(text)
+            self.speechSynthesizer.startSpeaking(replacedText)
             NSPasteboard.general.restore(archive: archive)
         }
         FakeKey.shared.send(fakeKey: "C", useCommandFlag: true)
@@ -62,8 +84,6 @@ class PasteboardObserver {
 
             let elapsedTime = timer.fireDate.timeIntervalSince(startTime)
             guard elapsedTime < timeout else { return }
-
-            print("timer fired \(elapsedTime)")
 
             let changeCount = NSPasteboard.general.changeCount
             guard changeCount != self.lastChangeCount else { return }
