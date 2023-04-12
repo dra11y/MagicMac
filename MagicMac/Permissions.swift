@@ -5,8 +5,8 @@
 //  Created by Tom Grushka on 8/13/22.
 //
 
-import Foundation
 import ApplicationServices
+import Foundation
 
 func trustForAccessibility() {
     let promptFlag = kAXTrustedCheckOptionPrompt.takeRetainedValue() as NSString

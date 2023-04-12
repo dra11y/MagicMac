@@ -5,16 +5,16 @@
 //  Created by Tom Grushka on 4/11/23.
 //
 
-import Foundation
 import Cocoa
+import Foundation
 
 public class SpeechManager {
     static let shared = SpeechManager()
 
-    private init() { }
+    private init() {}
 
     private let speechSynthesizer = NSSpeechSynthesizer()
-    
+
     private let observer = PasteboardObserver()
 
     public func speakFrontmostSelection() {
@@ -47,13 +47,13 @@ public class SpeechManager {
 class PasteboardObserver {
     private var timer: Timer?
     private var lastChangeCount: Int
-    
+
     init() {
-        self.lastChangeCount = NSPasteboard.general.changeCount
+        lastChangeCount = NSPasteboard.general.changeCount
     }
 
     func startObserving(interval: TimeInterval = 0.01, timeout: TimeInterval = 1, handler: @escaping () -> Void) {
-        self.lastChangeCount = NSPasteboard.general.changeCount
+        lastChangeCount = NSPasteboard.general.changeCount
         timer?.invalidate()
         let startTime = Date()
         timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
@@ -73,13 +73,12 @@ class PasteboardObserver {
         }
         timer?.fire()
     }
-    
+
     func stopObserving() {
         timer?.invalidate()
         timer = nil
     }
 }
-
 
 extension NSPasteboard {
     func save() -> [NSPasteboardItem] {
@@ -101,4 +100,3 @@ extension NSPasteboard {
         writeObjects(archive)
     }
 }
-

@@ -5,10 +5,10 @@
 //  Created by Tom Grushka on 8/12/22.
 //
 
-import SwiftUI
-import KeyboardShortcuts
 import Cocoa
+import KeyboardShortcuts
 import ServiceManagement
+import SwiftUI
 
 @main
 final class MagicMacApp: App {
@@ -34,54 +34,63 @@ final class MagicMacApp: App {
     private func setUpShortcuts() {
         KeyboardShortcuts.onKeyDown(
             for: .toggleAppearance) {
-                doToggleAppearance()
-            }
+            doToggleAppearance()
+        }
         KeyboardShortcuts.onKeyDown(
-            for: .invertColors) {
-                doInvertPolarityUniversalAccess { isInverted in
-                    self.dimmer.updateGamma()
-                    if
-                        let menuIcon = self.delegate.menuIcon,
-                        let statusItem = self.delegate.statusItem
-                    {
-                        statusItem.button?.image = isInverted ? menuIcon.inverted() : menuIcon
-                    }
+            for: .invertColors)
+        {
+            doInvertPolarityUniversalAccess { isInverted in
+                self.dimmer.updateGamma()
+                if
+                    let menuIcon = self.delegate.menuIcon,
+                    let statusItem = self.delegate.statusItem
+                {
+                    statusItem.button?.image = isInverted ? menuIcon.inverted() : menuIcon
                 }
             }
+        }
         KeyboardShortcuts.onKeyDown(
             for: .hoverSpeech,
-            action: toggleHoverSpeech)
+            action: toggleHoverSpeech
+        )
         KeyboardShortcuts.onKeyDown(
             for: .maximizeFrontWindow,
-            action: doMaximizeFrontWindow)
+            action: doMaximizeFrontWindow
+        )
         KeyboardShortcuts.onKeyDown(
             for: .increaseBrightness,
-            action: dimmer.increase)
+            action: dimmer.increase
+        )
         KeyboardShortcuts.onKeyDown(
             for: .decreaseBrightness,
-            action: dimmer.decrease)
+            action: dimmer.decrease
+        )
         KeyboardShortcuts.onKeyDown(
             for: .speakSelection,
-            action: SpeechManager.shared.speakFrontmostSelection)
+            action: SpeechManager.shared.speakFrontmostSelection
+        )
     }
-    
+
     private func addObservers() {
         observers.append(
-            NotificationCenter.default.addObserver(forName: NSApplication.willTerminateNotification, object: nil, queue: .main) { _ in
+            NotificationCenter.default.addObserver(
+                forName: NSApplication.willTerminateNotification,
+                object: nil, queue: .main
+            ) { _ in
                 // setShutdownAppearance()
             }
         )
         observers.append(terminalLaunchObserver())
         observers.append(terminalNewWindowObserver())
     }
-    
+
     private func terminateLauncher() {
         let launcherAppId = "com.dra11y.MagicMacLauncher"
         let runningApps = NSWorkspace.shared.runningApplications
         let isRunning = !runningApps.filter { $0.bundleIdentifier == launcherAppId }.isEmpty
 
         let result = SMLoginItemSetEnabled(launcherAppId as CFString, true)
-        
+
         if !result {
             fatalError("Could not add login item.")
         }

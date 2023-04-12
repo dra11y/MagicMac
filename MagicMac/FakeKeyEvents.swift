@@ -7,14 +7,13 @@
 //  Copyright © 2019-2020 ocodo. All rights reserved.
 //
 
-import Foundation
 import Carbon
+import Foundation
 
 class FakeKey {
-
     static let shared = FakeKey()
 
-    private let keyCodeRange = 0x00...0x7E
+    private let keyCodeRange = 0x00 ... 0x7E
 
     func send(fakeKey key: String, useCommandFlag: Bool) {
         let keyCode = stringToKeyCode(key)
@@ -23,13 +22,14 @@ class FakeKey {
 
     private func transformKeyCode(_ keyCode: Int) -> String {
         guard keyCodeRange.contains(keyCode)
-            else { fatalError("Cannot transform \(keyCode) - out of range") }
+        else { fatalError("Cannot transform \(keyCode) - out of range") }
 
         let inputSource = unsafeBitCast(
             TISGetInputSourceProperty(
                 TISCopyCurrentASCIICapableKeyboardLayoutInputSource().takeUnretainedValue(),
                 kTISPropertyUnicodeKeyLayoutData
-        ), to: CFData.self)
+            ), to: CFData.self
+        )
 
         var deadKeyState: UInt32 = 0
         var char = UniChar()
@@ -65,7 +65,7 @@ class FakeKey {
         let translationTable = keyCodeTranslationTable()
 
         guard let keyCode = translationTable[key]
-            else { fatalError("Unable to get keyCode for: \(key)") }
+        else { fatalError("Unable to get keyCode for: \(key)") }
 
         return keyCode
     }
@@ -97,5 +97,4 @@ class FakeKey {
         keyDownEvent?.post(tap: .cghidEventTap)
         keyUpEvent?.post(tap: .cghidEventTap)
     }
-
 }

@@ -5,15 +5,15 @@
 //  Created by Tom Grushka on 8/14/22.
 //
 
-import os
 import AppKit
 import Foundation
+import os
 import SwiftUI
 
 // https://stackoverflow.com/questions/2137744/draw-standard-nsimage-inverted-white-instead-of-black
 public extension NSImage {
     func inverted() -> NSImage {
-        guard let cgImage = self.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
+        guard let cgImage = cgImage(forProposedRect: nil, context: nil, hints: nil) else {
             os_log("Could not create CGImage from NSImage")
             return self
         }
@@ -23,7 +23,7 @@ public extension NSImage {
             os_log(.error, "Could not create CIColorInvert filter")
             return self
         }
-        
+
         filter.setValue(ciImage, forKey: kCIInputImageKey)
         guard let outputImage = filter.outputImage else {
             os_log(.error, "Could not obtain output CIImage from filter")
@@ -35,14 +35,14 @@ public extension NSImage {
             return self
         }
 
-        return NSImage(cgImage: outputCgImage, size: self.size)
+        return NSImage(cgImage: outputCgImage, size: size)
     }
 }
 
-fileprivate extension CIImage {
+private extension CIImage {
     func toCGImage() -> CGImage? {
         let context = CIContext(options: nil)
-        if let cgImage = context.createCGImage(self, from: self.extent) {
+        if let cgImage = context.createCGImage(self, from: extent) {
             return cgImage
         }
         return nil

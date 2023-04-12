@@ -10,8 +10,8 @@ import SwiftUI
 class AppDelegate: NSObject, NSApplicationDelegate {
     var statusItem: NSStatusItem?
     let menuIcon = NSImage(named: .menuIcon)
-    
-    func applicationDidFinishLaunching(_ notification: Notification) {
+
+    func applicationDidFinishLaunching(_: Notification) {
         setUpMenuBarItem()
     }
 
@@ -23,14 +23,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
         if let button = statusItem?.button {
-            button.action = #selector(self.doMenu)
+            button.action = #selector(doMenu)
             button.sendAction(on: [.leftMouseDown, .rightMouseUp])
             button.image = menuIcon
         }
     }
-    
+
     // https://stackoverflow.com/questions/65355696/how-to-programatically-open-settings-window-in-a-macos-swiftui-app
-    @objc private func doMenu(sender: NSStatusItem) {
+    @objc private func doMenu(sender _: NSStatusItem) {
         if let window = NSApp.mainWindow, window.isVisible {
             window.close()
             return
@@ -44,7 +44,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.sendAction(selector, to: nil, from: nil)
         NSApp.activate(ignoringOtherApps: true)
     }
-
 }
 
 extension NSImage.Name {

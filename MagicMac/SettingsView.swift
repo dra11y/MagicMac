@@ -5,8 +5,8 @@
 //  Created by Tom Grushka on 8/12/22.
 //
 
-import SwiftUI
 import KeyboardShortcuts
+import SwiftUI
 
 struct SettingsView: View {
     @FocusState public var isFocused: Bool
@@ -22,7 +22,7 @@ struct SettingsView: View {
                     ShortcutRecorderView(label: "Increase Brightness:", name: .increaseBrightness)
                     ShortcutRecorderView(label: "Decrease Brightness:", name: .decreaseBrightness)
                     ShortcutRecorderView(label: "Speak Selection:", name: .speakSelection)
-                    
+
                     Button("Quit") {
                         NSApp.terminate(self)
                     }
@@ -34,8 +34,7 @@ struct SettingsView: View {
                 Text("Shortcuts")
             }
             .tag(0)
-            
-            
+
             RegexListView()
                 .tabItem {
                     Image(systemName: "text.insert")
@@ -53,7 +52,6 @@ struct SettingsView: View {
         .frame(minHeight: 400)
     }
 }
-
 
 struct ShortcutRecorderView: View {
     let label: String
@@ -73,12 +71,12 @@ struct ShortcutRecorderView: View {
     }
 }
 
-
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView()
     }
 }
+
 //        .onReceive(NotificationCenter.default.publisher(
 //            for: NSWindow.didResignKeyNotification), perform: { _ in
 //                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {

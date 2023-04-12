@@ -18,75 +18,56 @@ struct Replacement: Codable, Equatable, Identifiable {
     }
 }
 
-let replacementsKey = "replacements"
-
 struct RegexListView: View {
-
-    // Use a computed property to retrieve the saved data from UserDefaults
-    @State private var data: [Replacement] = {
-        guard let data = UserDefaults.standard.data(forKey: replacementsKey),
-              let decodedData = try? JSONDecoder().decode([Replacement].self, from: data)
-        else {
-            return []
-        }
-        return decodedData
-    }()
-    
-    // Save the updated data to UserDefaults when the user makes changes
-    private func saveData() {
-        guard let encodedData = try? JSONEncoder().encode(data)
-        else { return }
-        UserDefaults.standard.set(encodedData, forKey: replacementsKey)
-    }
-
+    @StateObject private var replacementsManager = ReplacementsManager()
     @State private var selection: Int?
 
     private func index(of row: Replacement) -> Int {
-        $data.firstIndex(where: { $0.id == row.id })!
+        replacementsManager.replacements.firstIndex(where: { $0.id == row.id })!
     }
-    
+
     var body: some View {
         VStack {
-            Table(data, selection: $selection) {
+            Table(replacementsManager.replacements, selection: $selection) {
                 TableColumn("Pattern") { row in
-                    TextField("", text: $data[index(of: row)].pattern)
-                        .onChange(of: data) { _ in saveData() }
+                    TextField("", text: $replacementsManager.replacements[index(of: row)].pattern)
+                        .onChange(of: replacementsManager.replacements) { _ in replacementsManager.saveData() }
                 }
-                
+
                 TableColumn("Replacement") { row in
-                    TextField("", text: $data[index(of: row)].replacement)
-                        .onChange(of: data) { _ in saveData() }
+                    TextField("", text: $replacementsManager.replacements[index(of: row)].replacement)
+                        .onChange(of: replacementsManager.replacements) { _ in replacementsManager.saveData() }
                 }
-                
+
                 TableColumn("Regex") { row in
-                    Toggle(isOn: $data[index(of: row)].regex) {
+                    Toggle(isOn: $replacementsManager.replacements[index(of: row)].regex) {
                         EmptyView()
                     }
-                        .onChange(of: data) { _ in saveData() }
+                    .onChange(of: replacementsManager.replacements) { _ in replacementsManager.saveData() }
                 }
             }
-            
+
             HStack(spacing: 0) {
-                
                 Button(action: {
-                    data.append(Replacement.create(data.count + 1))
+                    let id = replacementsManager.replacements.count + 1
+                    replacementsManager.replacements.append(
+                        Replacement.create(id))
                 }, label: {
                     Text("+").frame(width: 25)
                 })
 
                 Button(action: {
-                    data.removeAll(where: { $0.id == selection })
+                    replacementsManager.replacements.removeAll(where: { $0.id == selection })
                     selection = nil
-                    saveData()
+                    replacementsManager.saveData()
                 }, label: {
                     Text("-").frame(width: 25)
                 })
-                    .disabled(selection == nil)
-                
+                .disabled(selection == nil)
+
                 Spacer()
 
             }.padding()
-            
         }
     }
 }

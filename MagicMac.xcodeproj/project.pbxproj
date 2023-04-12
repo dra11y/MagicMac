@@ -18,6 +18,7 @@
 		E249DF5728A77C6A00479A6B /* HoverSpeech.swift in Sources */ = {isa = PBXBuildFile; fileRef = E249DF5628A77C6A00479A6B /* HoverSpeech.swift */; };
 		E249DF5928A8362900479A6B /* Permissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E249DF5828A8362900479A6B /* Permissions.swift */; };
 		E249DF5B28A8413000479A6B /* NSSound.swift in Sources */ = {isa = PBXBuildFile; fileRef = E249DF5A28A8413000479A6B /* NSSound.swift */; };
+		E25CF14329E70A3D00895FC3 /* ReplacementsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25CF14229E70A3D00895FC3 /* ReplacementsManager.swift */; };
 		E28298DD29E620B60088437C /* SpeakOnDemand.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28298DC29E620B60088437C /* SpeakOnDemand.swift */; };
 		E2C70D0029E6753E0099FFBA /* SubstitutionSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C70CFF29E6753E0099FFBA /* SubstitutionSettings.swift */; };
 		E2D32E6928A8C16F00F52439 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2D32E6828A8C16F00F52439 /* ApplicationServices.framework */; };
@@ -63,6 +64,7 @@
 		E249DF5628A77C6A00479A6B /* HoverSpeech.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverSpeech.swift; sourceTree = "<group>"; };
 		E249DF5828A8362900479A6B /* Permissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Permissions.swift; sourceTree = "<group>"; };
 		E249DF5A28A8413000479A6B /* NSSound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSSound.swift; sourceTree = "<group>"; };
+		E25CF14229E70A3D00895FC3 /* ReplacementsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplacementsManager.swift; sourceTree = "<group>"; };
 		E28298DC29E620B60088437C /* SpeakOnDemand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakOnDemand.swift; sourceTree = "<group>"; };
 		E2C70CFF29E6753E0099FFBA /* SubstitutionSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubstitutionSettings.swift; sourceTree = "<group>"; };
 		E2D32E6828A8C16F00F52439 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
@@ -151,6 +153,7 @@
 				E28298DC29E620B60088437C /* SpeakOnDemand.swift */,
 				E229BA2229E65E8400435833 /* FakeKeyEvents.swift */,
 				E2C70CFF29E6753E0099FFBA /* SubstitutionSettings.swift */,
+				E25CF14229E70A3D00895FC3 /* ReplacementsManager.swift */,
 			);
 			path = MagicMac;
 			sourceTree = "<group>";
@@ -301,6 +304,7 @@
 				E2C70D0029E6753E0099FFBA /* SubstitutionSettings.swift in Sources */,
 				E249DF3C28A752B800479A6B /* SettingsView.swift in Sources */,
 				E2D32E6E28A9794000F52439 /* DisplayDimmer.swift in Sources */,
+				E25CF14329E70A3D00895FC3 /* ReplacementsManager.swift in Sources */,
 				E229BA2329E65E8400435833 /* FakeKeyEvents.swift in Sources */,
 				E249DF3A28A752B800479A6B /* MagicMacApp.swift in Sources */,
 				E249DF5528A7733500479A6B /* KeyboardShortcuts.swift in Sources */,
