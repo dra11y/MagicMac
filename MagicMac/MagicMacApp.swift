@@ -60,6 +60,9 @@ final class MagicMacApp: App {
         KeyboardShortcuts.onKeyDown(
             for: .decreaseBrightness,
             action: dimmer.decrease)
+        KeyboardShortcuts.onKeyDown(
+            for: .speakSelection,
+            action: SpeechManager.shared.speakFrontmostSelection)
     }
     
     private func addObservers() {

@@ -14,4 +14,5 @@ extension KeyboardShortcuts.Name {
     static let maximizeFrontWindow = Self("maximizeFrontWindow")
     static let increaseBrightness = Self("increaseBrightness")
     static let decreaseBrightness = Self("decreaseBrightness")
+    static let speakSelection = Self("speakSelection")
 }

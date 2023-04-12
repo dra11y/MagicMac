@@ -125,11 +125,11 @@ func doSwitchTerminalTheme(_ isInverted: Bool) {
 
     var error: NSDictionary? = nil
     let _ = invertTerminalColorsScript.executeAppleEvent(event, error: &error)
-    if let error = error {
-        let alert = NSAlert()
-        alert.messageText = error.description
-        alert.runModal()
-    }
+//    if let error = error {
+//        let alert = NSAlert()
+//        alert.messageText = error.description
+//        alert.runModal()
+//    }
 }
 
 func doToggleAppearance(completion: ((Bool) -> Void)? = nil) {
