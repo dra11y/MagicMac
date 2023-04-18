@@ -83,7 +83,10 @@ class PasteboardObserver {
             guard let timer = timer, timer.isValid else { return }
 
             let elapsedTime = timer.fireDate.timeIntervalSince(startTime)
-            guard elapsedTime < timeout else { return }
+            guard elapsedTime < timeout else {
+                self.timer?.invalidate()
+                return
+            }
 
             let changeCount = NSPasteboard.general.changeCount
             guard changeCount != self.lastChangeCount else { return }
