@@ -25,13 +25,15 @@ public class SpeechManager {
         
         // Apply replacements
         for replacement in replacements {
-            if replacement.regex {
+            if replacement.isRegex {
                 // Replace using regex
-                let regex = try! NSRegularExpression(pattern: replacement.pattern)
-                replacedText = regex.stringByReplacingMatches(in: text, range: NSRange(text.startIndex..., in: text), withTemplate: replacement.replacement)
+                guard
+                    let regex = try? NSRegularExpression(pattern: replacement.pattern)
+                else { continue }
+                replacedText = regex.stringByReplacingMatches(in: replacedText, range: NSRange(text.startIndex..., in: text), withTemplate: " \(replacement.replacement) ")
             } else {
                 // Replace using plain text
-                replacedText = text.replacingOccurrences(of: replacement.pattern, with: replacement.replacement)
+                replacedText = replacedText.replacingOccurrences(of: replacement.pattern, with: " \(replacement.replacement) ")
             }
         }
         

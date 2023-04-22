@@ -12,9 +12,7 @@ class ReplacementsManager: ObservableObject {
     
     private init() {}
 
-    private static let replacementsFilename = "replacements.txt"
-    private static let separator = "||||"
-    private static let newline = "\n"
+    private static let replacementsFilename = "replacements.json"
     
     private static var replacementsURL: URL {
         guard
@@ -54,39 +52,24 @@ class ReplacementsManager: ObservableObject {
 
     @Published var replacements: [Replacement] = {
         guard
-            let data = try? String(contentsOf: ReplacementsManager.replacementsURL),
-            !data.isEmpty
+            let data = try? Data(contentsOf: ReplacementsManager.replacementsURL),
+            !data.isEmpty,
+            let replacements = try? JSONDecoder().decode([Replacement].self, from: data)
         else {
             return []
         }
-        let replacements = data.components(separatedBy: ReplacementsManager.newline)
-            .compactMap { item -> Replacement? in
-                let components = item.components(separatedBy: ReplacementsManager.separator)
-                guard
-                    components.count == 4,
-                    let id = Int(components[0]),
-                    let regex = Bool(components[3])
-                else { return nil }
-                return Replacement(
-                    id: id,
-                    pattern: components[1],
-                    replacement: components[2],
-                    regex: regex
-                )
-            }
+
         return replacements
     }()
 
     func saveData() {
-        let data = replacements.map { replacement -> String in
-            [
-                String(replacement.id),
-                replacement.pattern,
-                replacement.replacement,
-                String(replacement.regex),
-            ]
-            .joined(separator: ReplacementsManager.separator)
-        }.joined(separator: ReplacementsManager.newline)
-        try? data.write(to: ReplacementsManager.replacementsURL, atomically: true, encoding: .utf8)
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        do {
+            let data = try encoder.encode(replacements)
+            try data.write(to: ReplacementsManager.replacementsURL)
+        } catch {
+            fatalError("Error encoding JSON: \(error)")
+        }
     }
 }
