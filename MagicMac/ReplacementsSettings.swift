@@ -39,6 +39,10 @@ struct RegexListView: View {
 
     var body: some View {
         VStack {
+
+            /// Review this tutorial for potential drag-drop solution:
+            /// https://www.kodeco.com/22408716-drag-and-drop-editable-lists-tutorial-for-swiftui
+
             Table(replacementsManager.replacements, selection: $selection) {
                 TableColumn("Pattern") { row in
                     TextField("", text: $replacementsManager.replacements[index(of: row)].pattern)
