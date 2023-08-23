@@ -8,11 +8,38 @@
 import KeyboardShortcuts
 import SwiftUI
 
+extension HorizontalAlignment {
+    private enum ControlAlignment: AlignmentID {
+        static func defaultValue(in context: ViewDimensions) -> CGFloat {
+            return context[HorizontalAlignment.center]
+        }
+    }
+    static let controlAlignment = HorizontalAlignment(ControlAlignment.self)
+}
+
 struct SettingsView: View {
     @FocusState public var isFocused: Bool
+    @AppStorage("speechRate") private var speechRate: Int = 100
 
     var body: some View {
         TabView {
+            Form {
+                VStack {
+
+                    HStack {
+                        TextField("Speech Rate", value: $speechRate, formatter: NumberFormatter())
+
+                        Stepper("", value: $speechRate, in: 100...500, step: 20)
+                    }
+
+                }
+            }
+            .tabItem {
+                Image(systemName: "gear")
+                Text("General")
+            }
+
+            
             Form {
                 VStack {
                     ShortcutRecorderView(label: "Toggle Appearance:", name: .toggleAppearance)
@@ -33,14 +60,6 @@ struct SettingsView: View {
                 Image(systemName: "keyboard")
                 Text("Shortcuts")
             }
-            .tag(0)
-
-            RegexListView()
-                .tabItem {
-                    Image(systemName: "text.insert")
-                    Text("Substitutions")
-                }
-                .tag(1)
 
 //            .onReceive(NotificationCenter.default.publisher(
 //                for: NSWindow.didBecomeKeyNotification), perform: { _ in
@@ -48,6 +67,13 @@ struct SettingsView: View {
 //                        self.isFocused = false
 //                    }
 //                })
+
+            ReplacementsView()
+                .tabItem {
+                    Image(systemName: "textformat.abc.dottedunderline")
+                    Text("Substitutions")
+                }
+
         }
         .frame(minHeight: 400)
     }

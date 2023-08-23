@@ -9,8 +9,11 @@ import Foundation
 
 class ReplacementsManager: ObservableObject {
     static let shared = ReplacementsManager()
-    
-    private init() {}
+
+    private init() {
+        self.replacements = []
+        self.reloadReplacements()
+    }
 
     private static let replacementsFilename = "replacements.json"
     
@@ -39,28 +42,32 @@ class ReplacementsManager: ObservableObject {
         let replacementsURL = appSupportURL.appendingPathComponent(replacementsFilename)
 
         if !FileManager.default.fileExists(atPath: replacementsURL.path) {
-            let data = Data()
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .prettyPrinted
             do {
+                let replacements = [Replacement]()
+                let data = try encoder.encode(replacements)
                 try data.write(to: replacementsURL)
             } catch {
-                fatalError("Unable to create file: \(replacementsURL)")
+                fatalError("Error creating JSON replacements file: \(error)")
             }
         }
 
         return replacementsURL
     }
 
-    @Published var replacements: [Replacement] = {
-        guard
-            let data = try? Data(contentsOf: ReplacementsManager.replacementsURL),
-            !data.isEmpty,
-            let replacements = try? JSONDecoder().decode([Replacement].self, from: data)
-        else {
-            return []
-        }
+    @Published var replacements: [Replacement]
 
-        return replacements
-    }()
+    public func reloadReplacements() {
+        // print("Loading replacements...")
+        do {
+            let data = try Data(contentsOf: ReplacementsManager.replacementsURL)
+            let replacements = try JSONDecoder().decode([Replacement].self, from: data)
+            self.replacements = replacements
+        } catch {
+            fatalError("Can't decode: \(error)")
+        }
+    }
 
     func saveData() {
         let encoder = JSONEncoder()

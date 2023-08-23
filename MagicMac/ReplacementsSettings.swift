@@ -9,11 +9,13 @@ import SwiftUI
 
 struct Replacement: Codable, Equatable, Identifiable {
     var id: UUID = UUID()
+    var isEnabled: Bool = true
     var isRegex: Bool
     var pattern: String
     var replacement: String
     
     enum CodingKeys: CodingKey {
+        case isEnabled
         case isRegex
         case pattern
         case replacement
@@ -24,7 +26,7 @@ struct Replacement: Codable, Equatable, Identifiable {
     }
 }
 
-struct RegexListView: View {
+struct ReplacementsView: View {
     @StateObject private var replacementsManager = ReplacementsManager.shared
     @State private var selection = Set<UUID>()
     @FocusState private var focused: UUID?
@@ -32,8 +34,9 @@ struct RegexListView: View {
     private func index(of row: Replacement) -> Int {
         replacementsManager.replacements.firstIndex(where: { $0.id == row.id })!
     }
-    
+
     private func onSubmitHandler() {
+        print("onSubmitHandler \(Date.now)")
         replacementsManager.saveData()
     }
 
@@ -44,15 +47,22 @@ struct RegexListView: View {
             /// https://www.kodeco.com/22408716-drag-and-drop-editable-lists-tutorial-for-swiftui
 
             Table(replacementsManager.replacements, selection: $selection) {
+                TableColumn("Enabled") { row in
+                    Toggle(isOn: $replacementsManager.replacements[index(of: row)].isEnabled) {
+                        EmptyView()
+                    }
+                    .onSubmit(onSubmitHandler)
+                }
+                
                 TableColumn("Pattern") { row in
                     TextField("", text: $replacementsManager.replacements[index(of: row)].pattern)
-                        .focused($focused, equals: row.id)
+//                        .focused($focused, equals: row.id)
                         .onSubmit(onSubmitHandler)
-                        .onAppear {
-                            if focused != row.id && row.id == replacementsManager.replacements.last?.id {
-                                focused = row.id
-                            }
-                        }
+//                        .onAppear {
+//                            if focused != row.id && row.id == replacementsManager.replacements.last?.id {
+//                                focused = row.id
+//                            }
+//                        }
                 }
 
                 TableColumn("Replacement") { row in
