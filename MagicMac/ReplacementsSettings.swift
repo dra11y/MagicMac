@@ -46,37 +46,32 @@ struct ReplacementsView: View {
             /// Review this tutorial for potential drag-drop solution:
             /// https://www.kodeco.com/22408716-drag-and-drop-editable-lists-tutorial-for-swiftui
 
-            Table(replacementsManager.replacements, selection: $selection) {
-                TableColumn("Enabled") { row in
-                    Toggle(isOn: $replacementsManager.replacements[index(of: row)].isEnabled) {
+            Table($replacementsManager.replacements, selection: $selection) {
+                TableColumn("Enabled") { $row in
+                    Toggle(isOn: $row.isEnabled) {
                         EmptyView()
                     }
                     .onSubmit(onSubmitHandler)
                 }
                 
-                TableColumn("Pattern") { row in
-                    TextField("", text: $replacementsManager.replacements[index(of: row)].pattern)
-//                        .focused($focused, equals: row.id)
-                        .onSubmit(onSubmitHandler)
-//                        .onAppear {
-//                            if focused != row.id && row.id == replacementsManager.replacements.last?.id {
-//                                focused = row.id
-//                            }
-//                        }
-                }
-
-                TableColumn("Replacement") { row in
-                    TextField("", text: $replacementsManager.replacements[index(of: row)].replacement)
+                TableColumn("Pattern") { $row in
+                    TextField("", text: $row.pattern)
                         .onSubmit(onSubmitHandler)
                 }
 
-                TableColumn("Regex") { row in
-                    Toggle(isOn: $replacementsManager.replacements[index(of: row)].isRegex) {
+                TableColumn("Replacement") { $row in
+                    TextField("", text: $row.replacement)
+                        .onSubmit(onSubmitHandler)
+                }
+
+                TableColumn("Regex") { $row in
+                    Toggle(isOn: $row.isRegex) {
                         EmptyView()
                     }
                     .onSubmit(onSubmitHandler)
                 }
             }
+
 
             HStack(spacing: 0) {
                 Button(action: {
