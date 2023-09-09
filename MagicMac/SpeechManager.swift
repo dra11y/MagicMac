@@ -9,15 +9,46 @@ import Cocoa
 import Foundation
 import AVFoundation
 
-public class SpeechManager {
+public class SpeechManager: NSObject, NSSpeechSynthesizerDelegate {
+    private let speechRateKey = "speechRate"
+
+    public func speechSynthesizer(_ sender: NSSpeechSynthesizer, willSpeakWord characterRange: NSRange, of string: String) {
+        print("start will speak word at \(characterRange.location)")
+        currentCharacterIndex = characterRange.location
+    }
+
+    var lastSpeechRate: Double?
+    var speechRate: Double {
+        get {
+            UserDefaults.standard.double(forKey: speechRateKey).rounded()
+        }
+        set {
+            UserDefaults.standard.set<Double>(newValue, forKey: speechRateKey)
+        }
+    }
+
     static let shared = SpeechManager()
 
-    private init() {
+    private override init() {
+        super.init()
+
+        if UserDefaults.standard.object(forKey: speechRateKey) == nil {
+            UserDefaults.standard.set(100.0, forKey: speechRateKey)
+        }
+
+        NotificationCenter.default.addObserver(self, selector: #selector(speechRateChanged), name: UserDefaults.didChangeNotification, object: nil)
+
         startBackgroundSilence()
         observeSleepWakeNotifications()
         observeAudioConfigurationChanges()
+        speechSynthesizer.delegate = self
     }
-    
+
+    @objc private func speechRateChanged(notification: NSNotification) {
+        speechRateChangeTimer?.invalidate()
+        speechRateChangeTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(startSpeaking), userInfo: nil, repeats: false)
+    }
+
     private func observeSleepWakeNotifications() {
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(systemWillSleep), name: NSWorkspace.willSleepNotification, object: nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(systemDidWake), name: NSWorkspace.didWakeNotification, object: nil)
@@ -28,6 +59,8 @@ public class SpeechManager {
     }
 
     deinit {
+        NotificationCenter.default.removeObserver(self, name: UserDefaults.didChangeNotification, object: nil)
+
         NSWorkspace.shared.notificationCenter.removeObserver(self, name: NSWorkspace.willSleepNotification, object: nil)
         NSWorkspace.shared.notificationCenter.removeObserver(self, name: NSWorkspace.didWakeNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AVAudioEngineConfigurationChange, object: audioEngine)
@@ -102,6 +135,10 @@ public class SpeechManager {
     
     private let replacementsManager = ReplacementsManager.shared
     
+    private var speechString: String = ""
+    private var currentCharacterIndex: Int = 0
+    private var speechRateChangeTimer: Timer?
+
     private func replaceText(_ text: String) -> String {
         replacementsManager.reloadReplacements()
         let replacements = replacementsManager.replacements.filter { replacement in
@@ -148,12 +185,28 @@ public class SpeechManager {
             else { return }
 
             self.pasteboardObserver.stopObserving()
-            let replacedText = "[[slnc 200]] " + replaceText(text)
-            print("replacedText = \(replacedText)")
-            self.speechSynthesizer.startSpeaking(replacedText)
+            self.speechString = self.replaceText(text)
+            self.currentCharacterIndex = 0
+            self.startSpeaking()
             NSPasteboard.general.restore(archive: archive)
         }
         FakeKey.shared.send(fakeKey: "C", useCommandFlag: true)
+    }
+
+    @objc private func startSpeaking() {
+        guard currentCharacterIndex < speechString.count else { return }
+
+        let startIndex = speechString.index(speechString.startIndex, offsetBy: currentCharacterIndex)
+        let substring = String(speechString[startIndex...])
+        currentCharacterIndex = 0
+        speechString = [
+            lastSpeechRate != nil && lastSpeechRate != speechRate ? "Rate \(Int(speechRate))" : nil,
+            substring,
+        ].compactMap { $0 }.joined(separator: ", ")
+
+        speechSynthesizer.rate = Float(speechRate)
+        lastSpeechRate = speechRate
+        speechSynthesizer.startSpeaking(speechString)
     }
 }
 

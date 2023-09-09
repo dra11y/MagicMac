@@ -17,21 +17,20 @@ extension HorizontalAlignment {
     static let controlAlignment = HorizontalAlignment(ControlAlignment.self)
 }
 
+
 struct SettingsView: View {
     @FocusState public var isFocused: Bool
-    @AppStorage("speechRate") private var speechRate: Int = 100
-
+    @AppStorage("speechRate") private var speechRate: Double = 100
+    
     var body: some View {
         TabView {
             Form {
                 VStack {
-
                     HStack {
-                        TextField("Speech Rate", value: $speechRate, formatter: NumberFormatter())
-
-                        Stepper("", value: $speechRate, in: 100...500, step: 20)
+                        Slider(value: $speechRate, in: 100.0...300.0)
+                        Text("\(Int(speechRate.rounded()))")
                     }
-
+                    .padding()
                 }
             }
             .tabItem {
@@ -39,7 +38,6 @@ struct SettingsView: View {
                 Text("General")
             }
 
-            
             Form {
                 VStack {
                     ShortcutRecorderView(label: "Toggle Appearance:", name: .toggleAppearance)
@@ -49,7 +47,7 @@ struct SettingsView: View {
                     ShortcutRecorderView(label: "Increase Brightness:", name: .increaseBrightness)
                     ShortcutRecorderView(label: "Decrease Brightness:", name: .decreaseBrightness)
                     ShortcutRecorderView(label: "Speak Selection:", name: .speakSelection)
-
+                    
                     Button("Quit") {
                         NSApp.terminate(self)
                     }
@@ -60,20 +58,20 @@ struct SettingsView: View {
                 Image(systemName: "keyboard")
                 Text("Shortcuts")
             }
-
-//            .onReceive(NotificationCenter.default.publisher(
-//                for: NSWindow.didBecomeKeyNotification), perform: { _ in
-//                    DispatchQueue.main.async {
-//                        self.isFocused = false
-//                    }
-//                })
-
+            
+            //            .onReceive(NotificationCenter.default.publisher(
+            //                for: NSWindow.didBecomeKeyNotification), perform: { _ in
+            //                    DispatchQueue.main.async {
+            //                        self.isFocused = false
+            //                    }
+            //                })
+            
             ReplacementsView()
                 .tabItem {
                     Image(systemName: "textformat.abc.dottedunderline")
                     Text("Substitutions")
                 }
-
+            
         }
         .frame(minHeight: 400)
     }
@@ -83,7 +81,7 @@ struct ShortcutRecorderView: View {
     let label: String
     let name: KeyboardShortcuts.Name
     @FocusState var isFocused: Bool
-
+    
     var body: some View {
         GeometryReader { geom in
             HStack {
