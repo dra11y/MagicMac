@@ -8,32 +8,24 @@
 import Cocoa
 import Foundation
 import AVFoundation
+import SwiftUI
 
 public class SpeechManager: NSObject, NSSpeechSynthesizerDelegate {
-    private let speechRateKey = "speechRate"
-
     public func speechSynthesizer(_ sender: NSSpeechSynthesizer, willSpeakWord characterRange: NSRange, of string: String) {
         currentCharacterIndex = characterRange.location
     }
 
     var lastSpeechRate: Double?
-    var speechRate: Double {
-        get {
-            UserDefaults.standard.double(forKey: speechRateKey).rounded()
-        }
-        set {
-            UserDefaults.standard.set<Double>(newValue, forKey: speechRateKey)
-        }
-    }
+    var lastSpeechVolume: Double?
+    
+    @AppStorage("speechRate") private var speechRate: Double = 100
+
+    @AppStorage("speechVolume") private var speechVolume: Double = 1.0
 
     static let shared = SpeechManager()
 
     private override init() {
         super.init()
-
-        if UserDefaults.standard.object(forKey: speechRateKey) == nil {
-            UserDefaults.standard.set(100.0, forKey: speechRateKey)
-        }
 
         NotificationCenter.default.addObserver(self, selector: #selector(speechRateChanged), name: UserDefaults.didChangeNotification, object: nil)
 
@@ -44,6 +36,10 @@ public class SpeechManager: NSObject, NSSpeechSynthesizerDelegate {
     }
 
     @objc private func speechRateChanged(notification: NSNotification) {
+        if speechRate == lastSpeechRate && speechVolume == lastSpeechVolume {
+            return
+        }
+
         speechRateChangeTimer?.invalidate()
         speechRateChangeTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(startSpeaking), userInfo: nil, repeats: false)
     }
@@ -199,12 +195,14 @@ public class SpeechManager: NSObject, NSSpeechSynthesizerDelegate {
         let substring = String(speechString[startIndex...])
         currentCharacterIndex = 0
         speechString = [
-            lastSpeechRate != nil && lastSpeechRate != speechRate ? "Rate \(Int(speechRate))" : nil,
+//            lastSpeechRate != nil && lastSpeechRate != speechRate ? "Rate \(Int(speechRate))" : nil,
             substring,
         ].compactMap { $0 }.joined(separator: ", ")
 
         speechSynthesizer.rate = Float(speechRate)
+        speechSynthesizer.volume = Float(speechVolume)
         lastSpeechRate = speechRate
+        lastSpeechVolume = speechVolume
         speechSynthesizer.startSpeaking(speechString)
     }
 }
