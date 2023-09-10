@@ -13,7 +13,6 @@ public class SpeechManager: NSObject, NSSpeechSynthesizerDelegate {
     private let speechRateKey = "speechRate"
 
     public func speechSynthesizer(_ sender: NSSpeechSynthesizer, willSpeakWord characterRange: NSRange, of string: String) {
-        print("start will speak word at \(characterRange.location)")
         currentCharacterIndex = characterRange.location
     }
 

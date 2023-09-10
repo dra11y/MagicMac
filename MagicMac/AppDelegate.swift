@@ -11,6 +11,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var statusItem: NSStatusItem?
     let menuIcon = NSImage(named: .menuIcon)
 
+    @AppStorage("speechRate") private var speechRate: Double = 100.0
+
     func applicationDidFinishLaunching(_: Notification) {
         setUpMenuBarItem()
     }
@@ -21,20 +23,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         menuIcon?.size = iconSize
 
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        
+        statusItem?.button?.image = menuIcon
 
-        if let button = statusItem?.button {
-            button.action = #selector(doMenu)
-            button.sendAction(on: [.leftMouseDown, .rightMouseUp])
-            button.image = menuIcon
-        }
+        let menu = NSMenu()
+        
+        let sliderItem = NSMenuItem()
+        let slider = NSSlider(value: speechRate, minValue: 100.0, maxValue: 300.0, target: self, action: #selector(sliderChanged))
+        slider.frame.size.width = 200
+        sliderItem.view = slider
+        menu.addItem(sliderItem)
+
+        menu.addItem(NSMenuItem(title: "Settings", action: #selector(openSettings), keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: "Quit", action: #selector(quitApp), keyEquivalent: ""))
+        
+        statusItem?.menu = menu
     }
-
-    // https://stackoverflow.com/questions/65355696/how-to-programatically-open-settings-window-in-a-macos-swiftui-app
-    @objc private func doMenu(sender _: NSStatusItem) {
-        if let window = NSApp.mainWindow, window.isVisible {
-            window.close()
-            return
-        }
+    
+    @objc private func sliderChanged(sender: NSSlider) {
+        speechRate = sender.doubleValue
+    }
+    
+    @objc private func openSettings() {
         let selector: Selector
         if #available(macOS 13, *) {
             selector = Selector(("showSettingsWindow:"))
@@ -44,6 +54,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.sendAction(selector, to: nil, from: nil)
         NSApp.activate(ignoringOtherApps: true)
     }
+    
+    @objc private func quitApp() {
+        NSApp.terminate(nil)
+    }
+
 }
 
 extension NSImage.Name {
