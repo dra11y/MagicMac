@@ -27,7 +27,7 @@ final class MagicMacApp: App {
     var body: some Scene {
         Settings {
             SettingsView()
-                .frame(width: 450, alignment: .center)
+                .frame(alignment: .center)
         }
     }
 
