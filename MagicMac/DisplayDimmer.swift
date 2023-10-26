@@ -5,9 +5,9 @@
 //  Created by Tom Grushka on 8/14/22.
 //
 
-import Foundation
+import SwiftUI
 
-final class DisplayDimmer {
+final class DisplayDimmer: ObservableObject {
     func increase() {
         brightness += 0.1
     }

@@ -10,11 +10,16 @@ import Foundation
 import AVFoundation
 import SwiftUI
 
-public class SpeechManager: NSObject, NSSpeechSynthesizerDelegate {
-    public func speechSynthesizer(_ sender: NSSpeechSynthesizer, willSpeakWord characterRange: NSRange, of string: String) {
+public class SpeechManager: NSObject, AVSpeechSynthesizerDelegate {
+    public func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, willSpeakRangeOfSpeechString characterRange: NSRange, utterance: AVSpeechUtterance) {
         currentCharacterIndex = characterRange.location
     }
-
+    
+    public func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+        speechString = ""
+        currentCharacterIndex = 0
+    }
+    
     var lastSpeechRate: Double?
     var lastSpeechVolume: Double?
     
@@ -124,7 +129,7 @@ public class SpeechManager: NSObject, NSSpeechSynthesizerDelegate {
     let audioEngine = AVAudioEngine()
     let playerNode = AVAudioPlayerNode()
     
-    private let speechSynthesizer = NSSpeechSynthesizer()
+    private let speechSynthesizer = AVSpeechSynthesizer()
     
     private let pasteboardObserver = PasteboardObserver()
     
@@ -147,7 +152,7 @@ public class SpeechManager: NSObject, NSSpeechSynthesizerDelegate {
             if replacement.isRegex {
                 /// Replace using regex
                 guard
-                    let regex = try? NSRegularExpression(pattern: replacement.pattern)
+                    let regex = try? NSRegularExpression(pattern: replacement.pattern, options: [.caseInsensitive])
                 else { continue }
                 let range = NSRange(replacedText.startIndex..., in: replacedText)
                 replacedText = regex.stringByReplacingMatches(in: replacedText, range: range, withTemplate: " \(replacement.replacement) ")
@@ -159,14 +164,26 @@ public class SpeechManager: NSObject, NSSpeechSynthesizerDelegate {
         
         return replacedText
     }
+    
+    public func speakSelection() {
+        speakFrontmostSelection()
+    }
 
-    public func speakFrontmostSelection() {
+    public func speakSelectionSlowly() {
+        speakFrontmostSelection(slow: true)
+    }
+
+    private func speakFrontmostSelection(slow: Bool = false) {
         if speechSynthesizer.isSpeaking {
-            speechSynthesizer.stopSpeaking()
+            speechSynthesizer.stopSpeaking(at: .immediate)
             return
         }
+        // TODO: detect if we're resuming (same text selected)
+        // else if speechSynthesizer.isPaused {
+        //     speechSynthesizer.continueSpeaking()
+        // }
 
-        speechSynthesizer.setVoice(NSSpeechSynthesizer.defaultVoice)
+//        speechSynthesizer.setVoice(NSSpeechSynthesizer.defaultVoice)
 
         startCopyText()
     }
@@ -199,11 +216,12 @@ public class SpeechManager: NSObject, NSSpeechSynthesizerDelegate {
             substring,
         ].compactMap { $0 }.joined(separator: ", ")
 
-        speechSynthesizer.rate = Float(speechRate)
-        speechSynthesizer.volume = Float(speechVolume)
         lastSpeechRate = speechRate
         lastSpeechVolume = speechVolume
-        speechSynthesizer.startSpeaking(speechString)
+        let utterance = AVSpeechUtterance(string: speechString)
+        utterance.rate = Float(speechRate)
+        utterance.volume = Float(speechVolume)
+        speechSynthesizer.speak(utterance)
     }
 }
 

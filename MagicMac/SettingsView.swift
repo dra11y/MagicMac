@@ -21,7 +21,8 @@ extension HorizontalAlignment {
 struct SettingsView: View {
     @FocusState public var isFocused: Bool
     @AppStorage("speechRate") private var speechRate: Double = 100
-    
+    @EnvironmentObject var keyboardShortcutsManager: KeyboardShortcutsManager
+
     var body: some View {
         TabView {
             Form {
@@ -47,6 +48,7 @@ struct SettingsView: View {
                     ShortcutRecorderView(label: "Increase Brightness:", name: .increaseBrightness)
                     ShortcutRecorderView(label: "Decrease Brightness:", name: .decreaseBrightness)
                     ShortcutRecorderView(label: "Speak Selection:", name: .speakSelection)
+                    ShortcutRecorderView(label: "Speak Selection Slowly:", name: .speakSelectionSlowly)
                     
                     Button("Quit") {
                         NSApp.terminate(self)
@@ -58,13 +60,6 @@ struct SettingsView: View {
                 Image(systemName: "keyboard")
                 Text("Shortcuts")
             }
-            
-            //            .onReceive(NotificationCenter.default.publisher(
-            //                for: NSWindow.didBecomeKeyNotification), perform: { _ in
-            //                    DispatchQueue.main.async {
-            //                        self.isFocused = false
-            //                    }
-            //                })
             
             ReplacementsView()
                 .tabItem {
@@ -100,10 +95,3 @@ struct ContentView_Previews: PreviewProvider {
         SettingsView()
     }
 }
-
-//        .onReceive(NotificationCenter.default.publisher(
-//            for: NSWindow.didResignKeyNotification), perform: { _ in
-//                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//                    self.isFocused = false
-//                }
-//            })

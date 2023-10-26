@@ -138,39 +138,3 @@ func doToggleAppearance(completion _: ((Bool) -> Void)? = nil) {
     let currentAppearance = SLSGetAppearanceThemeLegacy()
     SLSSetAppearanceThemeLegacy(!currentAppearance)
 }
-
-func doInvertPolarityUniversalAccess(completion: ((Bool) -> Void)? = nil) {
-    guard
-        let defaults = UserDefaults(suiteName: "com.apple.universalaccess")
-    else { return }
-
-    let key = "whiteOnBlack"
-
-    let isInverted = !defaults.bool(forKey: key)
-    defaults.set(isInverted, forKey: key)
-
-    // `synchronize()` returns `true` if FDA (Full Disk Access) is granted, `false` otherwise.
-    let result = defaults.synchronize()
-    if !result {
-        // https://stackoverflow.com/questions/52751941/how-to-launch-system-preferences-to-a-specific-preference-pane-using-bundle-iden
-        guard
-            let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles")
-        else { return }
-        NSWorkspace.shared.open(url)
-        return
-    }
-
-    SLSSetAppearanceThemeLegacy(!isInverted)
-
-    let delay = isInverted ? 0.13 : 0.13
-
-    DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-        // But setting the pref doesn't change it, so use the legacy API.
-        // A nice side effect is that the popup does not seem to show anymore.
-        UAWhiteOnBlackSetEnabled(isInverted)
-
-        doSwitchTerminalTheme(isInverted)
-
-        completion?(isInverted)
-    }
-}

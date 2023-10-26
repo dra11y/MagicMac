@@ -7,7 +7,20 @@
 
 import KeyboardShortcuts
 
-extension KeyboardShortcuts.Name {
+extension KeyboardShortcuts.Name: CaseIterable {
+    public static var allCases: [KeyboardShortcuts.Name] {
+        [
+            toggleAppearance,
+            invertColors,
+            hoverSpeech,
+            maximizeFrontWindow,
+            increaseBrightness,
+            decreaseBrightness,
+            speakSelection,
+            speakSelectionSlowly,
+        ]
+    }
+    
     static let toggleAppearance = Self("toggleAppearance")
     static let invertColors = Self("invertColors")
     static let hoverSpeech = Self("hoverSpeech")
@@ -15,4 +28,5 @@ extension KeyboardShortcuts.Name {
     static let increaseBrightness = Self("increaseBrightness")
     static let decreaseBrightness = Self("decreaseBrightness")
     static let speakSelection = Self("speakSelection")
+    static let speakSelectionSlowly = Self("speakSelectionSlowly")
 }
