@@ -9,9 +9,6 @@ import Combine
 import SwiftUI
 
 class InvertedColorManager: ObservableObject {
-    private let universalAccessSuite = "com.apple.universalaccess"
-    private let whiteOnBlackKey = "whiteOnBlack"
-
     @Published public var isInverted: Bool = false
 
     init() {
@@ -19,18 +16,18 @@ class InvertedColorManager: ObservableObject {
     }
 
     private func getInvertedStatus() -> Bool {
-        guard let defaults = UserDefaults(suiteName: universalAccessSuite) else { return false }
-        return defaults.bool(forKey: whiteOnBlackKey)
+        guard let defaults = UserDefaults(suiteName: UserDefaults.Suite.universalAccess) else { return false }
+        return defaults.bool(forKey: UserDefaults.UniversalAccess.whiteOnBlack)
     }
 
     public func toggle(completion: ((Bool) -> Void)? = nil) {
         guard
-            let defaults = UserDefaults(suiteName: universalAccessSuite)
+            let defaults = UserDefaults(suiteName: UserDefaults.Suite.universalAccess)
         else { return }
         
         let newInverted = !isInverted
         
-        defaults.set(newInverted, forKey: whiteOnBlackKey)
+        defaults.set(newInverted, forKey: UserDefaults.UniversalAccess.whiteOnBlack)
 
         // `synchronize()` returns `true` if FDA (Full Disk Access) is granted, `false` otherwise.
         let result = defaults.synchronize()

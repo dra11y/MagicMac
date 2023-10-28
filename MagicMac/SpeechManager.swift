@@ -16,16 +16,23 @@ public class SpeechManager: NSObject, AVSpeechSynthesizerDelegate {
     }
     
     public func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
-        speechString = ""
-        currentCharacterIndex = 0
+        if !didChangeRate {
+            speechString = ""
+            currentCharacterIndex = 0
+        }
+        didChangeRate = false
     }
     
     var lastSpeechRate: Double?
     var lastSpeechVolume: Double?
     
-    @AppStorage("speechRate") private var speechRate: Double = 100
-
-    @AppStorage("speechVolume") private var speechVolume: Double = 1.0
+    var didChangeRate: Bool = false
+    var speakSlowly: Bool = false
+    
+    @AppStorage(.speechRate) private var speechRate: Double = UserDefaults.UniversalAccess.preferredRate
+    @AppStorage(.slowSpeechRate) private var slowSpeechRate: Double = UserDefaults.UniversalAccess.preferredSlowRate
+    @AppStorage(.speechVolume) private var speechVolume: Double = UserDefaults.UniversalAccess.preferredVolume
+    @AppStorage(.speechVoice) private var speechVoice: String = ""
 
     static let shared = SpeechManager()
 
@@ -46,7 +53,17 @@ public class SpeechManager: NSObject, AVSpeechSynthesizerDelegate {
         }
 
         speechRateChangeTimer?.invalidate()
-        speechRateChangeTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(startSpeaking), userInfo: nil, repeats: false)
+        speechRateChangeTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(changeSpeechRate), userInfo: nil, repeats: false)
+    }
+    
+    @objc private func changeSpeechRate() {
+        if speechSynthesizer.isSpeaking {
+            speechSynthesizer.stopSpeaking(at: .immediate)
+        }
+        
+        didChangeRate = true
+        
+        startSpeaking()
     }
 
     private func observeSleepWakeNotifications() {
@@ -67,7 +84,6 @@ public class SpeechManager: NSObject, AVSpeechSynthesizerDelegate {
     }
 
     @objc private func systemWillSleep(notification: NSNotification) {
-        print("systemWillSleep \(Date.now)")
         stopBackgroundSilence()
     }
 
@@ -185,6 +201,7 @@ public class SpeechManager: NSObject, AVSpeechSynthesizerDelegate {
 
 //        speechSynthesizer.setVoice(NSSpeechSynthesizer.defaultVoice)
 
+        speakSlowly = slow
         startCopyText()
     }
 
@@ -205,22 +222,24 @@ public class SpeechManager: NSObject, AVSpeechSynthesizerDelegate {
         FakeKey.shared.send(fakeKey: "C", useCommandFlag: true)
     }
 
-    @objc private func startSpeaking() {
+    private func startSpeaking() {
         guard currentCharacterIndex < speechString.count else { return }
 
         let startIndex = speechString.index(speechString.startIndex, offsetBy: currentCharacterIndex)
         let substring = String(speechString[startIndex...])
+        speechString = substring
         currentCharacterIndex = 0
-        speechString = [
-//            lastSpeechRate != nil && lastSpeechRate != speechRate ? "Rate \(Int(speechRate))" : nil,
-            substring,
-        ].compactMap { $0 }.joined(separator: ", ")
+        
+        let rate = speakSlowly ? slowSpeechRate : speechRate
 
-        lastSpeechRate = speechRate
+        lastSpeechRate = rate
         lastSpeechVolume = speechVolume
         let utterance = AVSpeechUtterance(string: speechString)
-        utterance.rate = Float(speechRate)
+        utterance.rate = Float(rate)
         utterance.volume = Float(speechVolume)
+        if !speechVoice.isEmpty {
+            utterance.voice = AVSpeechSynthesisVoice(identifier: speechVoice)
+        }
         speechSynthesizer.speak(utterance)
     }
 }

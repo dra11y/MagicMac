@@ -19,6 +19,15 @@
       }
     },
     {
+      "identity" : "lettercase",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rwbutler/LetterCase",
+      "state" : {
+        "revision" : "03589da8c6554655b276ba187cfc1cd35ad711d2",
+        "version" : "1.6.1"
+      }
+    },
+    {
       "identity" : "settingsaccess",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/orchetect/SettingsAccess",

@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		E229BA2329E65E8400435833 /* FakeKeyEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229BA2229E65E8400435833 /* FakeKeyEvents.swift */; };
+		E2324E0E2AEC223A00D012E1 /* LetterCase in Frameworks */ = {isa = PBXBuildFile; productRef = E2324E0D2AEC223A00D012E1 /* LetterCase */; };
+		E2324E102AEC284500D012E1 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2324E0F2AEC284500D012E1 /* Metal.framework */; };
 		E249DF3A28A752B800479A6B /* MagicMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E249DF3928A752B800479A6B /* MagicMacApp.swift */; };
 		E249DF3C28A752B800479A6B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E249DF3B28A752B800479A6B /* SettingsView.swift */; };
 		E249DF4128A752B800479A6B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E249DF4028A752B800479A6B /* Preview Assets.xcassets */; };
@@ -21,6 +23,7 @@
 		E28298DD29E620B60088437C /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28298DC29E620B60088437C /* SpeechManager.swift */; };
 		E282F0862AEA4DBD003035E2 /* KeyboardShortcutsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E282F0852AEA4DBD003035E2 /* KeyboardShortcutsManager.swift */; };
 		E282F0892AEA6857003035E2 /* SettingsAccess in Frameworks */ = {isa = PBXBuildFile; productRef = E282F0882AEA6857003035E2 /* SettingsAccess */; };
+		E2A8F0BB2AEC457E0076969C /* MomentaryButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A8F0BA2AEC457E0076969C /* MomentaryButtons.swift */; };
 		E2AD352B2AE8F7A2008A3EBF /* InvertedColorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2AD352A2AE8F7A2008A3EBF /* InvertedColorManager.swift */; };
 		E2C70D0029E6753E0099FFBA /* ReplacementsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C70CFF29E6753E0099FFBA /* ReplacementsSettings.swift */; };
 		E2D32E6928A8C16F00F52439 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2D32E6828A8C16F00F52439 /* ApplicationServices.framework */; };
@@ -53,6 +56,7 @@
 
 /* Begin PBXFileReference section */
 		E229BA2229E65E8400435833 /* FakeKeyEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeKeyEvents.swift; sourceTree = "<group>"; };
+		E2324E0F2AEC284500D012E1 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		E249DF3628A752B800479A6B /* MagicMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MagicMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E249DF3928A752B800479A6B /* MagicMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MagicMacApp.swift; sourceTree = "<group>"; };
 		E249DF3B28A752B800479A6B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -67,6 +71,7 @@
 		E25CF14229E70A3D00895FC3 /* ReplacementsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplacementsManager.swift; sourceTree = "<group>"; };
 		E28298DC29E620B60088437C /* SpeechManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechManager.swift; sourceTree = "<group>"; };
 		E282F0852AEA4DBD003035E2 /* KeyboardShortcutsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardShortcutsManager.swift; sourceTree = "<group>"; };
+		E2A8F0BA2AEC457E0076969C /* MomentaryButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentaryButtons.swift; sourceTree = "<group>"; };
 		E2AD352A2AE8F7A2008A3EBF /* InvertedColorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedColorManager.swift; sourceTree = "<group>"; };
 		E2C70CFF29E6753E0099FFBA /* ReplacementsSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplacementsSettings.swift; sourceTree = "<group>"; };
 		E2D32E6828A8C16F00F52439 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
@@ -93,11 +98,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				E282F0892AEA6857003035E2 /* SettingsAccess in Frameworks */,
+				E2324E102AEC284500D012E1 /* Metal.framework in Frameworks */,
 				E2D32E6928A8C16F00F52439 /* ApplicationServices.framework in Frameworks */,
 				E2E5ABDE28A86CE8005C2B49 /* UniversalAccess.framework in Frameworks */,
 				E2E5ABE228A86CF7005C2B49 /* SkyLight.framework in Frameworks */,
 				E2D32E6C28A8CF7E00F52439 /* AXSwift in Frameworks */,
 				E2E5ABDA28A86C99005C2B49 /* ServiceManagement.framework in Frameworks */,
+				E2324E0E2AEC223A00D012E1 /* LetterCase in Frameworks */,
 				E249DF5128A7587100479A6B /* KeyboardShortcuts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -135,6 +142,7 @@
 		E249DF3828A752B800479A6B /* MagicMac */ = {
 			isa = PBXGroup;
 			children = (
+				E2A8F0B92AEC45740076969C /* Components */,
 				E2FC512A28A9B84700A1FCA2 /* Info.plist */,
 				E249DF3928A752B800479A6B /* MagicMacApp.swift */,
 				E249DF3B28A752B800479A6B /* SettingsView.swift */,
@@ -168,6 +176,14 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		E2A8F0B92AEC45740076969C /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				E2A8F0BA2AEC457E0076969C /* MomentaryButtons.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		E2E5ABC828A86B99005C2B49 /* MagicMacLauncher */ = {
 			isa = PBXGroup;
 			children = (
@@ -182,6 +198,7 @@
 		E2E5ABD828A86C99005C2B49 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E2324E0F2AEC284500D012E1 /* Metal.framework */,
 				E2D32E6828A8C16F00F52439 /* ApplicationServices.framework */,
 				E2E5ABE128A86CF7005C2B49 /* SkyLight.framework */,
 				E2E5ABDD28A86CE8005C2B49 /* UniversalAccess.framework */,
@@ -212,6 +229,7 @@
 				E249DF5028A7587100479A6B /* KeyboardShortcuts */,
 				E2D32E6B28A8CF7E00F52439 /* AXSwift */,
 				E282F0882AEA6857003035E2 /* SettingsAccess */,
+				E2324E0D2AEC223A00D012E1 /* LetterCase */,
 			);
 			productName = MagicMac;
 			productReference = E249DF3628A752B800479A6B /* MagicMac.app */;
@@ -266,6 +284,7 @@
 				E249DF4F28A7587100479A6B /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
 				E2D32E6A28A8CF7E00F52439 /* XCRemoteSwiftPackageReference "AXSwift" */,
 				E282F0872AEA6857003035E2 /* XCRemoteSwiftPackageReference "SettingsAccess" */,
+				E2324E0C2AEC223A00D012E1 /* XCRemoteSwiftPackageReference "LetterCase" */,
 			);
 			productRefGroup = E249DF3728A752B800479A6B /* Products */;
 			projectDirPath = "";
@@ -318,6 +337,7 @@
 				E249DF5928A8362900479A6B /* Permissions.swift in Sources */,
 				E249DF5328A7728800479A6B /* PolarityInverter.swift in Sources */,
 				E2FC512528A9918100A1FCA2 /* NSImage.swift in Sources */,
+				E2A8F0BB2AEC457E0076969C /* MomentaryButtons.swift in Sources */,
 				E249DF5B28A8413000479A6B /* NSSound.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -385,7 +405,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -441,7 +461,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -478,6 +498,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dra11y.MagicMac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -521,6 +542,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dra11y.MagicMac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -640,6 +662,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		E2324E0C2AEC223A00D012E1 /* XCRemoteSwiftPackageReference "LetterCase" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/rwbutler/LetterCase";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.6.1;
+			};
+		};
 		E249DF4F28A7587100479A6B /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
@@ -667,6 +697,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		E2324E0D2AEC223A00D012E1 /* LetterCase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E2324E0C2AEC223A00D012E1 /* XCRemoteSwiftPackageReference "LetterCase" */;
+			productName = LetterCase;
+		};
 		E249DF5028A7587100479A6B /* KeyboardShortcuts */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E249DF4F28A7587100479A6B /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;

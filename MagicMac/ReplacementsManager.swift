@@ -19,12 +19,12 @@ class ReplacementsManager: ObservableObject {
     
     private static var replacementsURL: URL {
         guard
-            let bundleName = Bundle.main.bundleIdentifier,
+            let productName = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String,
             let appSupportURL = FileManager.default.urls(
                 for: .applicationSupportDirectory,
                 in: .userDomainMask
             ).first?
-            .appendingPathComponent(bundleName)
+            .appendingPathComponent(productName)
         else {
             fatalError("Could not produce App Support URL.")
         }
@@ -57,9 +57,26 @@ class ReplacementsManager: ObservableObject {
     }
 
     @Published var replacements: [Replacement]
+    
+    public func getOffsets(_ selection: Set<UUID>) -> IndexSet {
+        IndexSet(replacements.enumerated().compactMap { index, element in
+            selection.contains(element.id) ? index : nil
+        })
+    }
+    
+    public func moveDown(_ selection: Set<UUID>) {
+        let offsets = getOffsets(selection)
+        let offset = min(offsets.max()!, replacements.count - 2) + 2
+        replacements.move(fromOffsets: offsets, toOffset: offset)
+    }
+    
+    public func moveUp(_ selection: Set<UUID>) {
+        let offsets = getOffsets(selection)
+        let offset = max(offsets.min()!, 1) - 1
+        replacements.move(fromOffsets: offsets, toOffset: offset)
+    }
 
     public func reloadReplacements() {
-        // print("Loading replacements...")
         do {
             let data = try Data(contentsOf: ReplacementsManager.replacementsURL)
             let replacements = try JSONDecoder().decode([Replacement].self, from: data)

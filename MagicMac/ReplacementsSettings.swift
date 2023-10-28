@@ -12,6 +12,7 @@ struct Replacement: Codable, Equatable, Identifiable, Transferable {
     var id: UUID = UUID()
     var isEnabled: Bool = true
     var isRegex: Bool
+    var ignoreCase: Bool = false
     var pattern: String
     var replacement: String
     
@@ -24,12 +25,37 @@ struct Replacement: Codable, Equatable, Identifiable, Transferable {
     enum CodingKeys: CodingKey {
         case isEnabled
         case isRegex
+        case ignoreCase
         case pattern
         case replacement
     }
     
-    static func create(isRegex: Bool = false) -> Replacement {
-        Replacement(isRegex: isRegex, pattern: "", replacement: "")
+    init(id: UUID? = nil, isEnabled: Bool? = nil, isRegex: Bool, ignoreCase: Bool? = nil, pattern: String, replacement: String) {
+        if let id = id {
+            self.id = id
+        }
+        if let isEnabled = isEnabled {
+            self.isEnabled = isEnabled
+        }
+        self.isRegex = isRegex
+        if let ignoreCase = ignoreCase {
+            self.ignoreCase = ignoreCase
+        }
+        self.pattern = pattern
+        self.replacement = replacement
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.isEnabled = try container.decode(Bool.self, forKey: .isEnabled)
+        self.isRegex = try container.decode(Bool.self, forKey: .isRegex)
+        self.ignoreCase = (try? container.decode(Bool.self, forKey: .ignoreCase)) ?? false
+        self.pattern = try container.decode(String.self, forKey: .pattern)
+        self.replacement = try container.decode(String.self, forKey: .replacement)
+    }
+    
+    static func create(isRegex: Bool = false, ignoreCase: Bool = false) -> Replacement {
+        Replacement(isRegex: isRegex, ignoreCase: ignoreCase, pattern: "", replacement: "")
     }
 }
 
@@ -38,117 +64,99 @@ struct ReplacementsView: View {
     @State private var selection = Set<UUID>()
     @FocusState private var focused: UUID?
     
-    let rowHeight: CGFloat = 30
-    
     private func index(of row: Replacement) -> Int {
         replacementsManager.replacements.firstIndex(where: { $0.id == row.id })!
     }
     
     private func onSubmitHandler() {
-        print("onSubmitHandler \(Date.now)")
         replacementsManager.saveData()
     }
     
     var body: some View {
         VStack {
-            
-            Table($replacementsManager.replacements, selection: $selection) {
-                
-                TableColumn("Sort") { $row in
-                    Image(systemName: "line.horizontal.3")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 20, height: 20)
-                        .contentShape(Rectangle())
-                        .onDrag {
-                            let index = replacementsManager.replacements.firstIndex(where: { $0.id == row.id })!
-                            return NSItemProvider(object: String(index) as NSString)
+            ScrollViewReader { proxy in
+                Table($replacementsManager.replacements, selection: $selection) {
+                    TableColumn("Enabled") { $row in
+                        Toggle(isOn: $row.isEnabled) {
+                            EmptyView()
                         }
-                }
-                .width(50)
-                
-                TableColumn("Enabled") { $row in
-                    Toggle(isOn: $row.isEnabled) {
-                        EmptyView()
-                    }
-                    .onSubmit(onSubmitHandler)
-                }
-                .width(50)
-                
-                TableColumn("Pattern") { $row in
-                    TextField("", text: $row.pattern)
                         .onSubmit(onSubmitHandler)
-                }
-                
-                TableColumn("Replacement") { $row in
-                    TextField("", text: $row.replacement)
-                        .onSubmit(onSubmitHandler)
-                }
-                
-                TableColumn("Regex") { $row in
-                    Toggle(isOn: $row.isRegex) {
-                        EmptyView()
                     }
-                    .onSubmit(onSubmitHandler)
-                }
-            }
-            .environment(\.defaultMinListRowHeight, rowHeight)
-            .onDrop(of: [UTType.plainText], isTargeted: nil) { providers, location in
-                // Step 1: Retrieve the source index from the dragged item provider
-                providers.first?.loadObject(ofClass: NSString.self) { (sourceIndexString, error) in
-                    guard let sourceIndexString = sourceIndexString as? String,
-                          let sourceIndex = Int(sourceIndexString) else {
-                        return
+                    .width(50)
+                    
+                    TableColumn("Pattern") { $row in
+                        TextField("", text: $row.pattern)
+                            .onSubmit(onSubmitHandler)
+                            .accessibilityTextContentType(.sourceCode)
                     }
                     
-                    // Step 2: Calculate the destination index based on the drop location
-                    // Note: In this example, we're using a simple method to calculate the destination index.
-                    // You might need to adjust this to more accurately determine the destination index based on your UI.
-                    let destinationIndex = min(max(Int(location.y / rowHeight), 0), replacementsManager.replacements.count - 1)
+                    TableColumn("Replacement") { $row in
+                        TextField("", text: $row.replacement)
+                            .accessibilityTextContentType(.sourceCode)
+                            .onSubmit(onSubmitHandler)
+                    }
                     
-                    // Step 3: Rearrange the items in your data array accordingly
-                    if destinationIndex != sourceIndex {
-                        let draggedItem = replacementsManager.replacements[sourceIndex]
-                        replacementsManager.replacements.remove(at: sourceIndex)
-                        replacementsManager.replacements.insert(draggedItem, at: destinationIndex)
+                    TableColumn("Regex") { $row in
+                        Toggle(isOn: $row.isRegex) {
+                            EmptyView()
+                        }
+                        .onSubmit(onSubmitHandler)
+                    }
+                    
+                    TableColumn("Ignore Case") { $row in
+                        Toggle(isOn: $row.ignoreCase) {
+                            EmptyView()
+                        }
+                        .onSubmit(onSubmitHandler)
                     }
                 }
-                
-                return true
+                .onChange(of: selection) { oldValue, newValue in
+                    if let first = newValue.first {
+                        proxy.scrollTo(first)
+                    }
+                }
             }
             
-            HStack(spacing: 0) {
-                Button(action: {
-                    let newRow = Replacement.create()
-                    replacementsManager.replacements.append(newRow)
-                    selection = [newRow.id]
-                }, label: {
-                    Text("+").frame(width: 25)
-                })
-                
-                Button(action: {
-                    replacementsManager.replacements.removeAll(where: { selection.contains($0.id) })
-                    selection = []
-                    onSubmitHandler()
-                }, label: {
-                    Text("-").frame(width: 25)
-                })
+            HStack {
+                MomentaryButtons(
+                    segments: [
+                        ButtonSegment(view: AnyView(Image(systemName: "chevron.up").accessibilityLabel("Up")), action: {
+                            replacementsManager.moveUp(selection)
+                        }),
+                        ButtonSegment(view: AnyView(Image(systemName: "chevron.down").accessibilityLabel("Down")), action: {
+                            replacementsManager.moveDown(selection)
+                        })
+                    ]
+                )
+                .frame(width: 80)
+                .padding()
                 .disabled(selection.isEmpty)
                 
                 Spacer()
                 
-            }.padding()
+                MomentaryButtons(
+                    segments: [
+                        !selection.isEmpty
+                            ? ButtonSegment(view: AnyView(Text("-")), action: {
+                                replacementsManager.replacements.removeAll(where: { selection.contains($0.id) })
+                                selection = []
+                                onSubmitHandler()
+                            })
+                            : nil,
+                        ButtonSegment(view: AnyView(Text("+")), action: {
+                            let newRow = Replacement.create()
+                            let offsets = replacementsManager.getOffsets(selection)
+                            let offset = offsets.first ?? replacementsManager.replacements.count - 1
+                            replacementsManager.replacements.insert(newRow, at: offset + 1)
+                            selection = [newRow.id]
+                        })
+                    ].compactMap { $0 }
+                )
+                .frame(width: selection.isEmpty ? 44 : 80)
+                .padding()
+            }
+
         }
     }
     
-    private func toggleSelection(of row: Replacement) {
-        if selection.contains(row.id) {
-            print("UN-select \(row.id)")
-            selection.remove(row.id)
-        } else {
-            print("select \(row.id)")
-            selection.insert(row.id)
-        }
-    }
-
 }

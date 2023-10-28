@@ -6,6 +6,7 @@
 //
 
 import KeyboardShortcuts
+import LetterCase
 
 extension KeyboardShortcuts.Name: CaseIterable {
     public static var allCases: [KeyboardShortcuts.Name] {
@@ -29,4 +30,8 @@ extension KeyboardShortcuts.Name: CaseIterable {
     static let decreaseBrightness = Self("decreaseBrightness")
     static let speakSelection = Self("speakSelection")
     static let speakSelectionSlowly = Self("speakSelectionSlowly")
+    
+    var displayName: String {
+        return rawValue.letterCase(.capitalized)
+    }
 }
