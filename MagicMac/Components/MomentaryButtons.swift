@@ -1,5 +1,5 @@
 //
-//  MoveButtons.swift
+//  MomentaryButtons.swift
 //  MagicMac
 //
 //  Created by Tom Grushka on 10/27/23.
@@ -16,7 +16,7 @@ struct ButtonSegment: Identifiable {
 struct MomentaryButtons: View {
     @State private var redrawKey = UUID()
     let segments: [ButtonSegment]
-    
+
     var body: some View {
         Picker("", selection: Binding<Int>(
             get: { -1 },
@@ -25,7 +25,7 @@ struct MomentaryButtons: View {
                 segments[value].action()
             }
         )) {
-            ForEach(0..<segments.count, id: \.self) { index in
+            ForEach(0 ..< segments.count, id: \.self) { index in
                 segments[index].view.tag(index)
             }
         }

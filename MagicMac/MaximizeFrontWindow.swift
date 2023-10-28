@@ -22,7 +22,7 @@ func doMaximizeFrontWindow() {
     var frontWindow: CFTypeRef?
 
     AXUIElementCopyAttributeValue(frontApp, kAXFocusedWindowAttribute as CFString, &frontWindow)
-    guard let frontWindow = frontWindow else { return }
+    guard let frontWindow else { return }
     let axWindow = frontWindow as! AXUIElement
 
     var subrole: CFTypeRef?

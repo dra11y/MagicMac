@@ -12,7 +12,7 @@ class InvertedColorManager: ObservableObject {
     @Published public var isInverted: Bool = false
 
     init() {
-        self.isInverted = getInvertedStatus()
+        isInverted = getInvertedStatus()
     }
 
     private func getInvertedStatus() -> Bool {
@@ -24,9 +24,9 @@ class InvertedColorManager: ObservableObject {
         guard
             let defaults = UserDefaults(suiteName: UserDefaults.Suite.universalAccess)
         else { return }
-        
+
         let newInverted = !isInverted
-        
+
         defaults.set(newInverted, forKey: UserDefaults.UniversalAccess.whiteOnBlack)
 
         // `synchronize()` returns `true` if FDA (Full Disk Access) is granted, `false` otherwise.
@@ -56,5 +56,4 @@ class InvertedColorManager: ObservableObject {
             completion?(newInverted)
         }
     }
-
 }

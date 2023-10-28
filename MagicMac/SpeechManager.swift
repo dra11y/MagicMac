@@ -1,34 +1,34 @@
 //
-//  SpeakOnDemand.swift
+//  SpeechManager.swift
 //  MagicMac
 //
 //  Created by Tom Grushka on 4/11/23.
 //
 
+import AVFoundation
 import Cocoa
 import Foundation
-import AVFoundation
 import SwiftUI
 
 public class SpeechManager: NSObject, AVSpeechSynthesizerDelegate {
-    public func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, willSpeakRangeOfSpeechString characterRange: NSRange, utterance: AVSpeechUtterance) {
+    public func speechSynthesizer(_: AVSpeechSynthesizer, willSpeakRangeOfSpeechString characterRange: NSRange, utterance _: AVSpeechUtterance) {
         currentCharacterIndex = characterRange.location
     }
-    
-    public func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+
+    public func speechSynthesizer(_: AVSpeechSynthesizer, didFinish _: AVSpeechUtterance) {
         if !didChangeRate {
             speechString = ""
             currentCharacterIndex = 0
         }
         didChangeRate = false
     }
-    
+
     var lastSpeechRate: Double?
     var lastSpeechVolume: Double?
-    
+
     var didChangeRate: Bool = false
     var speakSlowly: Bool = false
-    
+
     @AppStorage(.speechRate) private var speechRate: Double = UserDefaults.UniversalAccess.preferredRate
     @AppStorage(.slowSpeechRate) private var slowSpeechRate: Double = UserDefaults.UniversalAccess.preferredSlowRate
     @AppStorage(.speechVolume) private var speechVolume: Double = UserDefaults.UniversalAccess.preferredVolume
@@ -36,7 +36,7 @@ public class SpeechManager: NSObject, AVSpeechSynthesizerDelegate {
 
     static let shared = SpeechManager()
 
-    private override init() {
+    override private init() {
         super.init()
 
         NotificationCenter.default.addObserver(self, selector: #selector(speechRateChanged), name: UserDefaults.didChangeNotification, object: nil)
@@ -47,22 +47,22 @@ public class SpeechManager: NSObject, AVSpeechSynthesizerDelegate {
         speechSynthesizer.delegate = self
     }
 
-    @objc private func speechRateChanged(notification: NSNotification) {
-        if speechRate == lastSpeechRate && speechVolume == lastSpeechVolume {
+    @objc private func speechRateChanged(notification _: NSNotification) {
+        if speechRate == lastSpeechRate, speechVolume == lastSpeechVolume {
             return
         }
 
         speechRateChangeTimer?.invalidate()
         speechRateChangeTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(changeSpeechRate), userInfo: nil, repeats: false)
     }
-    
+
     @objc private func changeSpeechRate() {
         if speechSynthesizer.isSpeaking {
             speechSynthesizer.stopSpeaking(at: .immediate)
         }
-        
+
         didChangeRate = true
-        
+
         startSpeaking()
     }
 
@@ -70,7 +70,7 @@ public class SpeechManager: NSObject, AVSpeechSynthesizerDelegate {
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(systemWillSleep), name: NSWorkspace.willSleepNotification, object: nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(systemDidWake), name: NSWorkspace.didWakeNotification, object: nil)
     }
-    
+
     private func observeAudioConfigurationChanges() {
         NotificationCenter.default.addObserver(self, selector: #selector(audioConfigurationDidChange), name: NSNotification.Name.AVAudioEngineConfigurationChange, object: audioEngine)
     }
@@ -83,27 +83,27 @@ public class SpeechManager: NSObject, AVSpeechSynthesizerDelegate {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AVAudioEngineConfigurationChange, object: audioEngine)
     }
 
-    @objc private func systemWillSleep(notification: NSNotification) {
+    @objc private func systemWillSleep(notification _: NSNotification) {
         stopBackgroundSilence()
     }
 
-    @objc private func systemDidWake(notification: NSNotification) {
+    @objc private func systemDidWake(notification _: NSNotification) {
         print("systemDidWake \(Date.now)")
         startBackgroundSilence()
     }
-    
-    @objc private func audioConfigurationDidChange(notification: NSNotification) {
+
+    @objc private func audioConfigurationDidChange(notification _: NSNotification) {
         print("audioConfigurationDidChange \(Date.now)")
         // Stop and restart the background silence to accommodate the new audio configuration
         stopBackgroundSilence()
         startBackgroundSilence()
     }
-    
+
     private func stopBackgroundSilence() {
         playerNode.stop()
         audioEngine.stop()
     }
-    
+
     private func startBackgroundSilence() {
         audioEngine.attach(playerNode)
         audioEngine.connect(playerNode, to: audioEngine.mainMixerNode, format: nil)
@@ -121,7 +121,7 @@ public class SpeechManager: NSObject, AVSpeechSynthesizerDelegate {
 
         let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: bufferSize)!
         buffer.frameLength = bufferSize
-        
+
         guard let floatChannelData = buffer.floatChannelData else {
             print("Failed to access channel data")
             return
@@ -130,9 +130,9 @@ public class SpeechManager: NSObject, AVSpeechSynthesizerDelegate {
         let channelCount = Int(format.channelCount)
         let frames = Int(bufferSize)
 
-        for channel in 0..<channelCount {
+        for channel in 0 ..< channelCount {
             let channelData = floatChannelData[channel]
-            for frame in 0..<frames {
+            for frame in 0 ..< frames {
                 channelData[frame] = 0.0
             }
         }
@@ -144,13 +144,13 @@ public class SpeechManager: NSObject, AVSpeechSynthesizerDelegate {
     // Silent audio:
     let audioEngine = AVAudioEngine()
     let playerNode = AVAudioPlayerNode()
-    
+
     private let speechSynthesizer = AVSpeechSynthesizer()
-    
+
     private let pasteboardObserver = PasteboardObserver()
-    
+
     private let replacementsManager = ReplacementsManager.shared
-    
+
     private var speechString: String = ""
     private var currentCharacterIndex: Int = 0
     private var speechRateChangeTimer: Timer?
@@ -162,7 +162,7 @@ public class SpeechManager: NSObject, AVSpeechSynthesizerDelegate {
         }
         /// test
         var replacedText = text
-        
+
         // Apply replacements
         for replacement in replacements {
             if replacement.isRegex {
@@ -177,10 +177,10 @@ public class SpeechManager: NSObject, AVSpeechSynthesizerDelegate {
                 replacedText = replacedText.replacingOccurrences(of: replacement.pattern, with: " \(replacement.replacement) ", options: [.diacriticInsensitive, .caseInsensitive])
             }
         }
-        
+
         return replacedText
     }
-    
+
     public func speakSelection() {
         speakFrontmostSelection()
     }
@@ -199,7 +199,7 @@ public class SpeechManager: NSObject, AVSpeechSynthesizerDelegate {
         //     speechSynthesizer.continueSpeaking()
         // }
 
-//        speechSynthesizer.setVoice(NSSpeechSynthesizer.defaultVoice)
+        //        speechSynthesizer.setVoice(NSSpeechSynthesizer.defaultVoice)
 
         speakSlowly = slow
         startCopyText()
@@ -209,14 +209,14 @@ public class SpeechManager: NSObject, AVSpeechSynthesizerDelegate {
         let archive = NSPasteboard.general.save()
         pasteboardObserver.startObserving(interval: 0.01) { [weak self] in
             guard
-                let self = self,
+                let self,
                 let text = NSPasteboard.general.string(forType: .string)
             else { return }
 
-            self.pasteboardObserver.stopObserving()
-            self.speechString = self.replaceText(text)
-            self.currentCharacterIndex = 0
-            self.startSpeaking()
+            pasteboardObserver.stopObserving()
+            speechString = replaceText(text)
+            currentCharacterIndex = 0
+            startSpeaking()
             NSPasteboard.general.restore(archive: archive)
         }
         FakeKey.shared.send(fakeKey: "C", useCommandFlag: true)
@@ -229,7 +229,7 @@ public class SpeechManager: NSObject, AVSpeechSynthesizerDelegate {
         let substring = String(speechString[startIndex...])
         speechString = substring
         currentCharacterIndex = 0
-        
+
         let rate = speakSlowly ? slowSpeechRate : speechRate
 
         lastSpeechRate = rate
@@ -257,8 +257,8 @@ class PasteboardObserver {
         timer?.invalidate()
         let startTime = Date()
         timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
-            guard let self = self else { return }
-            guard let timer = timer, timer.isValid else { return }
+            guard let self else { return }
+            guard let timer, timer.isValid else { return }
 
             let elapsedTime = timer.fireDate.timeIntervalSince(startTime)
             guard elapsedTime < timeout else {
@@ -267,10 +267,10 @@ class PasteboardObserver {
             }
 
             let changeCount = NSPasteboard.general.changeCount
-            guard changeCount != self.lastChangeCount else { return }
+            guard changeCount != lastChangeCount else { return }
 
             handler()
-            self.lastChangeCount = changeCount
+            lastChangeCount = changeCount
         }
         timer?.fire()
     }

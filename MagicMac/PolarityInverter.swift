@@ -1,5 +1,5 @@
 //
-//  ColorInverter.swift
+//  PolarityInverter.swift
 //  MagicMac
 //
 //  Created by Tom Grushka on 8/12/22.
@@ -11,45 +11,45 @@ import Cocoa
 /*
  func getCurrentPolarity() -> (Bool, [CGGammaValue]) {
 
-     let tableSize = 2
-     var redTable = [CGGammaValue](repeating: 0, count: tableSize)
-     var greenTable = [CGGammaValue](repeating: 0, count: tableSize)
-     var blueTable = [CGGammaValue](repeating: 0, count: tableSize)
-     var sampleCount: UInt32 = .zero
+ let tableSize = 2
+ var redTable = [CGGammaValue](repeating: 0, count: tableSize)
+ var greenTable = [CGGammaValue](repeating: 0, count: tableSize)
+ var blueTable = [CGGammaValue](repeating: 0, count: tableSize)
+ var sampleCount: UInt32 = .zero
 
-     CGGetDisplayTransferByTable(CGMainDisplayID(), UInt32(tableSize), &redTable, &greenTable, &blueTable, &sampleCount)
+ CGGetDisplayTransferByTable(CGMainDisplayID(), UInt32(tableSize), &redTable, &greenTable, &blueTable, &sampleCount)
 
-     let isInverted = redTable.first == 1
+ let isInverted = redTable.first == 1
 
-     return (isInverted, greenTable)
+ return (isInverted, greenTable)
  }
 
  func setInitialAppearanceWhenUsingGamma() {
-     let (isInverted, _) = getCurrentPolarity()
-     SLSSetAppearanceThemeLegacy(!isInverted)
+ let (isInverted, _) = getCurrentPolarity()
+ SLSSetAppearanceThemeLegacy(!isInverted)
  }
 
  func setShutdownAppearance() {
-     let isWhiteOnBlack = UAWhiteOnBlackIsEnabled()
-     SLSSetAppearanceThemeLegacy(!isWhiteOnBlack)
+ let isWhiteOnBlack = UAWhiteOnBlackIsEnabled()
+ SLSSetAppearanceThemeLegacy(!isWhiteOnBlack)
  }
 
  func doInvertPolarityGammaTable() {
-     let (wasInverted, greenTable) = getCurrentPolarity()
+ let (wasInverted, greenTable) = getCurrentPolarity()
 
-     let isWhiteOnBlack = UAWhiteOnBlackIsEnabled()
+ let isWhiteOnBlack = UAWhiteOnBlackIsEnabled()
 
-     let isInverted = (wasInverted && isWhiteOnBlack) || (!wasInverted && !isWhiteOnBlack)
+ let isInverted = (wasInverted && isWhiteOnBlack) || (!wasInverted && !isWhiteOnBlack)
 
-     let newTable = greenTable.map { 1 - $0 }
+ let newTable = greenTable.map { 1 - $0 }
 
-     SLSSetAppearanceThemeLegacy(!isInverted)
+ SLSSetAppearanceThemeLegacy(!isInverted)
 
-     let delay = isInverted ? 0.12 : 0.08
+ let delay = isInverted ? 0.12 : 0.08
 
-     DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-         CGSetDisplayTransferByTable(CGMainDisplayID(), UInt32(newTable.count), newTable, newTable, newTable)
-     }
+ DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+ CGSetDisplayTransferByTable(CGMainDisplayID(), UInt32(newTable.count), newTable, newTable, newTable)
+ }
  }
  */
 
@@ -74,11 +74,11 @@ var invertTerminalColorsScript: NSAppleScript = {
 
 // Ensure the correct color scheme is selected on Terminal launch.
 func terminalLaunchObserver() -> NSObjectProtocol {
-    return NSWorkspace.shared.notificationCenter
+    NSWorkspace.shared.notificationCenter
         .addObserver(forName: NSWorkspace.didLaunchApplicationNotification, object: nil, queue: .main) { notification in
             guard
                 let app =
-                notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
+                    notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
                 app.bundleIdentifier == "com.apple.Terminal"
             else { return }
 
@@ -88,13 +88,13 @@ func terminalLaunchObserver() -> NSObjectProtocol {
 
 // Ensure the correct color scheme is selected on Terminal new window.
 func terminalNewWindowObserver() -> NSObjectProtocol {
-    return NSWorkspace.shared.notificationCenter
+    NSWorkspace.shared.notificationCenter
         .addObserver(
             forName: NSWorkspace.didActivateApplicationNotification, object: nil, queue: .main
         ) { notification in
             guard
                 let app =
-                notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
+                    notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
                 app.bundleIdentifier == "com.apple.Terminal"
             else { return }
 
@@ -127,11 +127,11 @@ func doSwitchTerminalTheme(_ isInverted: Bool) {
 
     var error: NSDictionary?
     _ = invertTerminalColorsScript.executeAppleEvent(event, error: &error)
-//    if let error = error {
-//        let alert = NSAlert()
-//        alert.messageText = error.description
-//        alert.runModal()
-//    }
+    //    if let error = error {
+    //        let alert = NSAlert()
+    //        alert.messageText = error.description
+    //        alert.runModal()
+    //    }
 }
 
 func doToggleAppearance(completion _: ((Bool) -> Void)? = nil) {

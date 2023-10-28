@@ -18,10 +18,10 @@ extension KeyboardShortcuts.Name: CaseIterable {
             increaseBrightness,
             decreaseBrightness,
             speakSelection,
-            speakSelectionSlowly,
+            speakSelectionSlowly
         ]
     }
-    
+
     static let toggleAppearance = Self("toggleAppearance")
     static let invertColors = Self("invertColors")
     static let hoverSpeech = Self("hoverSpeech")
@@ -30,8 +30,8 @@ extension KeyboardShortcuts.Name: CaseIterable {
     static let decreaseBrightness = Self("decreaseBrightness")
     static let speakSelection = Self("speakSelection")
     static let speakSelectionSlowly = Self("speakSelectionSlowly")
-    
+
     var displayName: String {
-        return rawValue.letterCase(.capitalized)
+        rawValue.letterCase(.capitalized)
     }
 }

@@ -1,14 +1,13 @@
 //
-//  ContentView.swift
+//  SettingsView.swift
 //  MagicMac
 //
 //  Created by Tom Grushka on 8/12/22.
 //
 
+import AVFoundation
 import KeyboardShortcuts
 import SwiftUI
-import AVFoundation
-
 
 struct SettingsView: View {
     @FocusState public var isFocused: Bool
@@ -24,7 +23,6 @@ struct SettingsView: View {
                     Image(systemName: "textformat.abc.dottedunderline")
                     Text("Substitutions")
                 }
-            
         }
         .frame(minWidth: 450, minHeight: 400)
     }
@@ -33,9 +31,10 @@ struct SettingsView: View {
 extension HorizontalAlignment {
     private enum ControlAlignment: AlignmentID {
         static func defaultValue(in context: ViewDimensions) -> CGFloat {
-            return context[HorizontalAlignment.center]
+            context[HorizontalAlignment.center]
         }
     }
+
     static let controlAlignment = HorizontalAlignment(ControlAlignment.self)
 }
 
@@ -43,7 +42,7 @@ extension Double {
     func display(places: Int = 2) -> String {
         String(format: "%.\(places)f", self)
     }
-    
+
     func displayPercent(places: Int = 0) -> String {
         String(format: "%.\(places)f %%", self * 100)
     }
@@ -56,73 +55,61 @@ struct GeneralTab: View {
     @AppStorage(.speechVoice) private var speechVoice: String = ""
 
     @Namespace var namespace
-    
+
     var body: some View {
         Form {
             VStack(spacing: 20) {
                 GroupBox {
-                    
                     HStack(spacing: 10) {
-                    
                         Slider(value: $speechRate)
                             .accessibilityLabel("Speech Rate")
-                        
+
                         Text(speechRate.displayPercent())
-                    
+
                         Button("Reset") {
                             speechRate = UserDefaults.UniversalAccess.preferredRate
                         }
-                        
                     }
                     .padding()
-                    
+
                 } label: {
                     Text("Speech Rate")
                 }
-                
-                
+
                 GroupBox {
-                    
                     HStack(spacing: 10) {
-                    
                         Slider(value: $slowSpeechRate)
                             .accessibilityLabel("Slow Speech Rate")
                         Text(slowSpeechRate.displayPercent())
-                    
+
                         Button("Reset") {
                             slowSpeechRate = UserDefaults.UniversalAccess.preferredSlowRate
                         }
                     }
                     .padding()
-                    
+
                 } label: {
                     Text("Slow Speech Rate")
                 }
-                
-                
+
                 GroupBox {
-                    
                     HStack(spacing: 10) {
-                    
                         Slider(value: $speechVolume)
                             .accessibilityLabel("Speech Volume")
                         Text(speechVolume.displayPercent())
-                    
+
                         Button("Reset") {
                             speechVolume = UserDefaults.UniversalAccess.preferredVolume
                         }
                     }
                     .padding()
-                    
+
                 } label: {
                     Text("Speech Volume")
                 }
-                
-                
-                GroupBox {
-                    
-                    HStack(spacing: 10) {
 
+                GroupBox {
+                    HStack(spacing: 10) {
                         Picker("Speech Voice", selection: $speechVoice) {
                             ForEach(AVSpeechSynthesisVoice.voiceIdentifiers, id: \.self) { id in
                                 Text(AVSpeechSynthesisVoice.voices[id]!).tag(id)
@@ -134,12 +121,10 @@ struct GeneralTab: View {
                         }
                     }
                     .padding()
-                    
+
                 } label: {
                     Text("Speech Voice")
                 }
-                
-                
             }
         }
         .tabItem {
@@ -150,7 +135,6 @@ struct GeneralTab: View {
     }
 }
 
-
 struct ShortcutsTab: View {
     var body: some View {
         Form {
@@ -158,7 +142,7 @@ struct ShortcutsTab: View {
                 ForEach(KeyboardShortcuts.Name.allCases, id: \.self) { shortcut in
                     ShortcutRecorderView(name: shortcut)
                 }
-                
+
                 Button("Quit") {
                     NSApp.terminate(self)
                 }
@@ -172,11 +156,10 @@ struct ShortcutsTab: View {
     }
 }
 
-
 struct ShortcutRecorderView: View {
     let name: KeyboardShortcuts.Name
     @FocusState var isFocused: Bool
-    
+
     var body: some View {
         GeometryReader { geom in
             HStack {

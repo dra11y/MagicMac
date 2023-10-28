@@ -1,17 +1,17 @@
 //
-//  KeyboardManager.swift
+//  KeyboardShortcutsManager.swift
 //  MagicMac
 //
 //  Created by Tom Grushka on 10/26/23.
 //
 
-import SwiftUI
 import KeyboardShortcuts
+import SwiftUI
 
 class KeyboardShortcutsManager: ObservableObject {
     let invertedColorManager: InvertedColorManager
     let dimmer: DisplayDimmer
-    
+
     init(invertedColorManager: InvertedColorManager, dimmer: DisplayDimmer) {
         self.invertedColorManager = invertedColorManager
         self.dimmer = dimmer
@@ -23,17 +23,16 @@ class KeyboardShortcutsManager: ObservableObject {
             doToggleAppearance()
         }
         KeyboardShortcuts.onKeyDown(
-            for: .invertColors)
-        { [weak self] in
-            guard let self = self else { return }
-            self.invertedColorManager.toggle { isInverted in
+            for: .invertColors) { [weak self] in
+            guard let self else { return }
+            invertedColorManager.toggle { _ in
                 self.dimmer.updateGamma()
-//                if
-//                    let menuIcon = self.delegate.menuIcon,
-//                    let statusItem = self.delegate.statusItem
-//                {
-//                    statusItem.button?.image = isInverted ? menuIcon.inverted() : menuIcon
-//                }
+                //                if
+                //                    let menuIcon = self.delegate.menuIcon,
+                //                    let statusItem = self.delegate.statusItem
+                //                {
+                //                    statusItem.button?.image = isInverted ? menuIcon.inverted() : menuIcon
+                //                }
             }
         }
         KeyboardShortcuts.onKeyDown(

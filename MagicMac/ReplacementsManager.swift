@@ -11,12 +11,12 @@ class ReplacementsManager: ObservableObject {
     static let shared = ReplacementsManager()
 
     private init() {
-        self.replacements = []
-        self.reloadReplacements()
+        replacements = []
+        reloadReplacements()
     }
 
     private static let replacementsFilename = "replacements.json"
-    
+
     private static var replacementsURL: URL {
         guard
             let productName = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String,
@@ -57,19 +57,19 @@ class ReplacementsManager: ObservableObject {
     }
 
     @Published var replacements: [Replacement]
-    
+
     public func getOffsets(_ selection: Set<UUID>) -> IndexSet {
         IndexSet(replacements.enumerated().compactMap { index, element in
             selection.contains(element.id) ? index : nil
         })
     }
-    
+
     public func moveDown(_ selection: Set<UUID>) {
         let offsets = getOffsets(selection)
         let offset = min(offsets.max()!, replacements.count - 2) + 2
         replacements.move(fromOffsets: offsets, toOffset: offset)
     }
-    
+
     public func moveUp(_ selection: Set<UUID>) {
         let offsets = getOffsets(selection)
         let offset = max(offsets.min()!, 1) - 1

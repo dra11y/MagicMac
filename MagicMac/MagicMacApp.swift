@@ -5,18 +5,16 @@
 //  Created by Tom Grushka on 8/12/22.
 //
 
+import AVFoundation
 import Cocoa
 import ServiceManagement
-import SwiftUI
 import SettingsAccess
-import AVFoundation
-
+import SwiftUI
 
 extension NSImage.Name {
     static let menuExtra = NSImage.Name("MenuExtra")
     static let menuExtraInverted = NSImage.Name("MenuExtraInverted")
 }
-
 
 @available(macOS 14.0, *)
 struct MenuBarExtraIconView: View {
@@ -42,63 +40,63 @@ extension String {
 }
 
 extension UserDefaults {
-    struct Suite {
+    enum Suite {
         static let universalAccess = "com.apple.universalaccess"
     }
-    
-    struct UniversalAccess {
+
+    enum UniversalAccess {
         static let whiteOnBlack = "whiteOnBlack"
         static let spokenContentPreferredVoiceForLanguage = "spokenContentPreferredVoiceForLanguage"
         static let spokenContentSpeakingRateForVoice = "spokenContentSpeakingRateForVoice"
         static let spokenContentSpeakingVolumeForVoice = "spokenContentSpeakingVolumeForVoice"
-        
+
         static var defaults: UserDefaults? {
             UserDefaults(suiteName: UserDefaults.Suite.universalAccess)
         }
-        
+
         static var preferredVoice: String? {
             guard
                 let languageCode = Locale.current.language.languageCode?.identifier,
                 let preferredVoiceDict = defaults?.dictionary(forKey: UserDefaults.UniversalAccess.spokenContentPreferredVoiceForLanguage),
                 let preferredVoice = preferredVoiceDict[languageCode] as? String
             else { return nil }
-            
+
             return preferredVoice
         }
-        
+
         static let defaultRate: Double = 0.5
-        
+
         static var preferredSlowRate: Double {
             preferredRate / 2
         }
-        
+
         static var preferredRate: Double {
             guard
                 let voice = preferredVoice,
-                let defaults = defaults
+                let defaults
             else { return defaultRate }
-            
+
             guard
                 let rateDict = defaults.dictionary(forKey: UserDefaults.UniversalAccess.spokenContentSpeakingRateForVoice),
                 let rawRate = rateDict[voice] as? Double
             else { return defaultRate }
-            
+
             return (rawRate - 50.0) / 250.0
         }
-        
+
         static let defaultVolume: Double = 1.0
-        
+
         static var preferredVolume: Double {
             guard
                 let voice = preferredVoice,
-                let defaults = defaults
+                let defaults
             else { return defaultVolume }
-            
+
             guard
                 let volumeDict = defaults.dictionary(forKey: UserDefaults.UniversalAccess.spokenContentSpeakingVolumeForVoice),
                 let volume = volumeDict[voice] as? Double
             else { return defaultVolume }
-            
+
             return volume
         }
     }
@@ -106,9 +104,9 @@ extension UserDefaults {
 
 extension AVSpeechSynthesisVoice {
     static var voiceIdentifiers: [String] = Array(
-        voices.sorted { $0.value < $1.value }.map { $0.key }
+        voices.sorted { $0.value < $1.value }.map(\.key)
     )
-    
+
     static var voices: [String: String] =
         Dictionary(
             uniqueKeysWithValues:
@@ -120,7 +118,6 @@ extension AVSpeechSynthesisVoice {
         )
 }
 
-
 @available(macOS 14.0, *)
 struct MenuExtraMenuContent: View {
     @Environment(\.openSettings) private var openSettings
@@ -130,7 +127,6 @@ struct MenuExtraMenuContent: View {
     @AppStorage(.speechVoice) var speechVoice: String = UserDefaults.UniversalAccess.preferredVoice ?? ""
 
     var body: some View {
-        
         VStack(spacing: 20) {
             Slider(value: $speechRate) {
                 Text("Rate")
@@ -149,7 +145,6 @@ struct MenuExtraMenuContent: View {
             }
             .id(speechVoice)
 
-            
             HStack {
                 Button {
                     NSApplication.shared.terminate(nil)
@@ -169,9 +164,7 @@ struct MenuExtraMenuContent: View {
 
                     try? openSettings()
                 }
-
             }
-
         }
         .scenePadding()
     }
@@ -184,9 +177,7 @@ final class MagicMacApp: App {
     private var observers = [NSObjectProtocol]()
     private let dimmer = DisplayDimmer()
 
-    lazy var keyboardShortcutsManager: KeyboardShortcutsManager = {
-        KeyboardShortcutsManager(invertedColorManager: invertedColorManager, dimmer: dimmer)
-    }()
+    lazy var keyboardShortcutsManager: KeyboardShortcutsManager = .init(invertedColorManager: invertedColorManager, dimmer: dimmer)
 
     init() {
         keyboardShortcutsManager.enableShortcuts()
@@ -194,17 +185,16 @@ final class MagicMacApp: App {
         addObservers()
         terminateLauncher()
     }
-    
+
     var body: some Scene {
         @State var imageName: NSImage.Name = .menuExtra
-        
+
         Settings {
             SettingsView()
                 .environmentObject(keyboardShortcutsManager)
                 .frame(alignment: .center)
         }
-        
-        
+
         if #available(macOS 14.0, *) {
             MenuBarExtra {
                 MenuExtraMenuContent()
@@ -215,9 +205,7 @@ final class MagicMacApp: App {
             }
             .menuBarExtraStyle(.window)
         }
-        
     }
-
 
     private func addObservers() {
         observers.append(
