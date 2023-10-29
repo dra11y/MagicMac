@@ -14,6 +14,8 @@ struct SettingsView: View {
 
     var body: some View {
         TabView {
+            DisplayTab()
+            
             SpeechTab()
 
             ShortcutsTab()

@@ -7,9 +7,12 @@
 
 import Combine
 import SwiftUI
+import CoreGraphics
 
 class InvertedColorManager: ObservableObject {
     @Published public var isInverted: Bool = false
+    @AppStorage(.invertColorsDelay) var invertColorsDelay: Double = 0
+    @AppStorage(.switchThemeDelay) var switchThemeDelay: Double = 0
 
     init() {
         isInverted = getInvertedStatus()
@@ -27,8 +30,11 @@ class InvertedColorManager: ObservableObject {
 
         let newInverted = !isInverted
 
+        /// UAWhiteOnBlackSetEnabled(bool) legacy API does not require setting the
+        /// Universal Access default. However, there is a nasty "Invert Display Color off/on"
+        /// popup that pre-setting this default to the desired value helps to alleviate.
         defaults.set(newInverted, forKey: UserDefaults.UniversalAccess.whiteOnBlack)
-
+        
         // `synchronize()` returns `true` if FDA (Full Disk Access) is granted, `false` otherwise.
         let result = defaults.synchronize()
         if !result {
@@ -39,21 +45,19 @@ class InvertedColorManager: ObservableObject {
             NSWorkspace.shared.open(url)
             return
         }
-
-        SLSSetAppearanceThemeLegacy(!newInverted)
-
-        let delay = newInverted ? 0.13 : 0.13
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
-            // But setting the pref doesn't change it, so use the legacy API.
-            // A nice side effect is that the popup does not seem to show anymore.
-            UAWhiteOnBlackSetEnabled(newInverted)
-
-            doSwitchTerminalTheme(newInverted)
-
-            self?.isInverted = newInverted
-
-            completion?(newInverted)
+        
+        DispatchQueue.global().asyncAfter(deadline: .now() + switchThemeDelay) {
+            SLSSetAppearanceThemeLegacy(!newInverted)
         }
+
+        DispatchQueue.global().asyncAfter(deadline: .now() + invertColorsDelay) {
+            UAWhiteOnBlackSetEnabled(newInverted)
+        }
+        
+        doSwitchTerminalTheme(newInverted)
+
+        isInverted = newInverted
+
+        completion?(newInverted)
     }
 }

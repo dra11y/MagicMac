@@ -26,6 +26,7 @@
 		E278F7AF2AEEE8D700AFC7B5 /* ShortcutsTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = E278F7AE2AEEE8D700AFC7B5 /* ShortcutsTab.swift */; };
 		E278F7B12AEEE8F300AFC7B5 /* ReplacementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E278F7B02AEEE8F300AFC7B5 /* ReplacementsView.swift */; };
 		E278F7B32AEEEAEB00AFC7B5 /* CustomGroupBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = E278F7B22AEEEAEB00AFC7B5 /* CustomGroupBox.swift */; };
+		E278F7B52AEEF4A300AFC7B5 /* DisplayTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = E278F7B42AEEF4A300AFC7B5 /* DisplayTab.swift */; };
 		E28298DD29E620B60088437C /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28298DC29E620B60088437C /* SpeechManager.swift */; };
 		E282F0862AEA4DBD003035E2 /* KeyboardShortcutsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E282F0852AEA4DBD003035E2 /* KeyboardShortcutsManager.swift */; };
 		E282F0892AEA6857003035E2 /* SettingsAccess in Frameworks */ = {isa = PBXBuildFile; productRef = E282F0882AEA6857003035E2 /* SettingsAccess */; };
@@ -89,6 +90,7 @@
 		E278F7AE2AEEE8D700AFC7B5 /* ShortcutsTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutsTab.swift; sourceTree = "<group>"; };
 		E278F7B02AEEE8F300AFC7B5 /* ReplacementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplacementsView.swift; sourceTree = "<group>"; };
 		E278F7B22AEEEAEB00AFC7B5 /* CustomGroupBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomGroupBox.swift; sourceTree = "<group>"; };
+		E278F7B42AEEF4A300AFC7B5 /* DisplayTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayTab.swift; sourceTree = "<group>"; };
 		E28298DC29E620B60088437C /* SpeechManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechManager.swift; sourceTree = "<group>"; };
 		E282F0852AEA4DBD003035E2 /* KeyboardShortcutsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardShortcutsManager.swift; sourceTree = "<group>"; };
 		E28617C02AEEDD9A00EAD806 /* VoicePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoicePicker.swift; sourceTree = "<group>"; };
@@ -230,6 +232,7 @@
 				E278F7AC2AEEE8C300AFC7B5 /* SpeechTab.swift */,
 				E278F7AE2AEEE8D700AFC7B5 /* ShortcutsTab.swift */,
 				E278F7B02AEEE8F300AFC7B5 /* ReplacementsView.swift */,
+				E278F7B42AEEF4A300AFC7B5 /* DisplayTab.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -383,6 +386,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E278F7B52AEEF4A300AFC7B5 /* DisplayTab.swift in Sources */,
 				E278F7B32AEEEAEB00AFC7B5 /* CustomGroupBox.swift in Sources */,
 				E278F7AB2AEEE66E00AFC7B5 /* PasteboardObserver.swift in Sources */,
 				E278F7AD2AEEE8C300AFC7B5 /* SpeechTab.swift in Sources */,

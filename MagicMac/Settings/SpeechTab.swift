@@ -44,10 +44,10 @@ struct SpeechTab: View {
                 }
             }
         }
+        .scenePadding()
         .tabItem {
             Image(systemName: "speaker.wave.3")
             Text("Speech")
         }
-        .scenePadding()
     }
 }
