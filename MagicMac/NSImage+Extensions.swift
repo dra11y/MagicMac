@@ -10,9 +10,14 @@ import Foundation
 import os
 import SwiftUI
 
+extension NSImage.Name {
+    static let menuExtra = NSImage.Name("MenuExtra")
+    static let menuExtraInverted = NSImage.Name("MenuExtraInverted")
+}
+
 // https://stackoverflow.com/questions/2137744/draw-standard-nsimage-inverted-white-instead-of-black
 public extension NSImage {
-    func inverted() -> NSImage {
+    var inverted: NSImage {
         guard let cgImage = cgImage(forProposedRect: nil, context: nil, hints: nil) else {
             os_log("Could not create CGImage from NSImage")
             return self
@@ -30,21 +35,11 @@ public extension NSImage {
             return self
         }
 
-        guard let outputCgImage = outputImage.toCGImage() else {
+        guard let outputCgImage = outputImage.cgImage else {
             os_log(.error, "Could not create CGImage from CIImage")
             return self
         }
 
         return NSImage(cgImage: outputCgImage, size: size)
-    }
-}
-
-private extension CIImage {
-    func toCGImage() -> CGImage? {
-        let context = CIContext(options: nil)
-        if let cgImage = context.createCGImage(self, from: extent) {
-            return cgImage
-        }
-        return nil
     }
 }

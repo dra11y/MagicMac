@@ -33,7 +33,3 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         NSWorkspace.shared.openApplication(at: url, configuration: NSWorkspace.OpenConfiguration())
     }
 }
-
-extension Notification.Name {
-    static let killLauncher = Notification.Name("killLauncher")
-}

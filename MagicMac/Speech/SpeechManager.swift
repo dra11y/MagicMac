@@ -9,6 +9,8 @@ import AVFoundation
 import Cocoa
 import Foundation
 import SwiftUI
+import Security
+import WakeAudio
 
 public class SpeechManager: NSObject, AVSpeechSynthesizerDelegate {
     public func speechSynthesizer(_: AVSpeechSynthesizer, willSpeakRangeOfSpeechString characterRange: NSRange, utterance _: AVSpeechUtterance) {
@@ -33,6 +35,7 @@ public class SpeechManager: NSObject, AVSpeechSynthesizerDelegate {
     @AppStorage(.slowSpeechRate) private var slowSpeechRate: Double = UserDefaults.UniversalAccess.preferredSlowRate
     @AppStorage(.speechVolume) private var speechVolume: Double = UserDefaults.UniversalAccess.preferredVolume
     @AppStorage(.speechVoice) private var speechVoice: String = ""
+    @AppStorage(.enableReplacements) private var enableReplacements: Bool = true
 
     static let shared = SpeechManager()
 
@@ -69,6 +72,7 @@ public class SpeechManager: NSObject, AVSpeechSynthesizerDelegate {
     private func observeSleepWakeNotifications() {
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(systemWillSleep), name: NSWorkspace.willSleepNotification, object: nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(systemDidWake), name: NSWorkspace.didWakeNotification, object: nil)
+        NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(screenDidWake), name: NSWorkspace.screensDidWakeNotification, object: nil)
     }
 
     private func observeAudioConfigurationChanges() {
@@ -89,6 +93,21 @@ public class SpeechManager: NSObject, AVSpeechSynthesizerDelegate {
 
     @objc private func systemDidWake(notification _: NSNotification) {
         print("systemDidWake \(Date.now)")
+    }
+
+    @objc private func screenDidWake(notification _: NSNotification) {
+        print("screenDidWake \(Date.now)")
+
+        print("wake getting isAudioAsleep \(Date.now)")
+        let asleep = isAudioAsleep()
+        print("wake isAudioAsleep = \(asleep) \(Date.now)")
+
+        if asleep {
+            print("wake audio interfaces... \(Date.now)")
+            wakeAudioInterfaces()
+            print("wake done! \(Date.now)")
+        }
+
         startBackgroundSilence()
     }
 
@@ -156,6 +175,10 @@ public class SpeechManager: NSObject, AVSpeechSynthesizerDelegate {
     private var speechRateChangeTimer: Timer?
 
     private func replaceText(_ text: String) -> String {
+        if !enableReplacements {
+            return text
+        }
+
         replacementsManager.reloadReplacements()
         let replacements = replacementsManager.replacements.filter { replacement in
             replacement.isEnabled
@@ -241,63 +264,5 @@ public class SpeechManager: NSObject, AVSpeechSynthesizerDelegate {
             utterance.voice = AVSpeechSynthesisVoice(identifier: speechVoice)
         }
         speechSynthesizer.speak(utterance)
-    }
-}
-
-class PasteboardObserver {
-    private var timer: Timer?
-    private var lastChangeCount: Int
-
-    init() {
-        lastChangeCount = NSPasteboard.general.changeCount
-    }
-
-    func startObserving(interval: TimeInterval = 0.01, timeout: TimeInterval = 1, handler: @escaping () -> Void) {
-        lastChangeCount = NSPasteboard.general.changeCount
-        timer?.invalidate()
-        let startTime = Date()
-        timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
-            guard let self else { return }
-            guard let timer, timer.isValid else { return }
-
-            let elapsedTime = timer.fireDate.timeIntervalSince(startTime)
-            guard elapsedTime < timeout else {
-                self.timer?.invalidate()
-                return
-            }
-
-            let changeCount = NSPasteboard.general.changeCount
-            guard changeCount != lastChangeCount else { return }
-
-            handler()
-            lastChangeCount = changeCount
-        }
-        timer?.fire()
-    }
-
-    func stopObserving() {
-        timer?.invalidate()
-        timer = nil
-    }
-}
-
-extension NSPasteboard {
-    func save() -> [NSPasteboardItem] {
-        var archive = [NSPasteboardItem]()
-        for item in pasteboardItems ?? [] {
-            let archivedItem = NSPasteboardItem()
-            for type in item.types {
-                if let data = item.data(forType: type) {
-                    archivedItem.setData(data, forType: type)
-                }
-            }
-            archive.append(archivedItem)
-        }
-        return archive
-    }
-
-    func restore(archive: [NSPasteboardItem]) {
-        clearContents()
-        writeObjects(archive)
     }
 }

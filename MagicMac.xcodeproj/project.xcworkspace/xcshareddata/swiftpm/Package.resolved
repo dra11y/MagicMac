@@ -14,17 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sindresorhus/KeyboardShortcuts",
       "state" : {
-        "revision" : "1522654b590eda02d970ca855e058fd1fc5e7dfd",
-        "version" : "1.7.1"
-      }
-    },
-    {
-      "identity" : "lettercase",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/rwbutler/LetterCase",
-      "state" : {
-        "revision" : "03589da8c6554655b276ba187cfc1cd35ad711d2",
-        "version" : "1.6.1"
+        "revision" : "ac302e21da5883f4bd0490cbd0cb710b08740500",
+        "version" : "1.15.0"
       }
     },
     {

@@ -74,9 +74,3 @@ func doMaximizeFrontWindow() {
 
     AXUIElementSetAttributeValue(axWindow, kAXPositionAttribute as CFString, originValue)
 }
-
-extension CGRect {
-    var area: CGFloat {
-        width * height
-    }
-}

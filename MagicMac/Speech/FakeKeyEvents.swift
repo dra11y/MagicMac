@@ -35,18 +35,20 @@ class FakeKey {
         var char = UniChar()
         var length = 0
 
-        CoreServices.UCKeyTranslate(unsafeBitCast(CFDataGetBytePtr(inputSource),
-                                                  to: UnsafePointer<CoreServices.UCKeyboardLayout>.self),
-                                    UInt16(keyCode),
-                                    UInt16(CoreServices.kUCKeyActionDisplay),
-                                    UInt32(0),
-                                    UInt32(LMGetKbdType()),
-                                    OptionBits(CoreServices.kUCKeyTranslateNoDeadKeysBit),
+        CoreServices.UCKeyTranslate(
+            unsafeBitCast(
+                CFDataGetBytePtr(inputSource),
+                to: UnsafePointer<CoreServices.UCKeyboardLayout>.self),
+            UInt16(keyCode),
+            UInt16(CoreServices.kUCKeyActionDisplay),
+            UInt32(0),
+            UInt32(LMGetKbdType()),
+            OptionBits(CoreServices.kUCKeyTranslateNoDeadKeysBit),
 
-                                    &deadKeyState,
-                                    1,
-                                    &length,
-                                    &char)
+            &deadKeyState,
+            1,
+            &length,
+            &char)
 
         return NSString(characters: &char, length: length).uppercased
     }

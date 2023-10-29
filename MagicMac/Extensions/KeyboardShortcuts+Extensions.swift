@@ -1,12 +1,11 @@
 //
-//  KeyboardShortcuts.swift
+//  KeyboardShortcuts+Extensions.swift
 //  MagicMac
 //
-//  Created by Tom Grushka on 8/12/22.
+//  Created by Tom Grushka on 10/29/23.
 //
 
 import KeyboardShortcuts
-import LetterCase
 
 extension KeyboardShortcuts.Name: CaseIterable {
     public static var allCases: [KeyboardShortcuts.Name] {
@@ -32,6 +31,6 @@ extension KeyboardShortcuts.Name: CaseIterable {
     static let speakSelectionSlowly = Self("speakSelectionSlowly")
 
     var displayName: String {
-        rawValue.letterCase(.capitalized)
+        rawValue.sentenceCased
     }
 }

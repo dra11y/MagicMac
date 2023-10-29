@@ -27,12 +27,6 @@ class KeyboardShortcutsManager: ObservableObject {
             guard let self else { return }
             invertedColorManager.toggle { _ in
                 self.dimmer.updateGamma()
-                //                if
-                //                    let menuIcon = self.delegate.menuIcon,
-                //                    let statusItem = self.delegate.statusItem
-                //                {
-                //                    statusItem.button?.image = isInverted ? menuIcon.inverted() : menuIcon
-                //                }
             }
         }
         KeyboardShortcuts.onKeyDown(
