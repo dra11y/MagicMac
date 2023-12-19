@@ -53,17 +53,33 @@ import Cocoa
  }
  */
 
-var invertTerminalColorsScript: NSAppleScript = {
+let invertTerminalColorsScript: NSAppleScript = {
     let script = NSAppleScript(source: """
-        on invertTerminalColors(themeName)
-            tell application "Terminal"
-                repeat with w from 1 to count windows
-                    repeat with t from 1 to count tabs of window w
-                        set current settings of tab t of window w to (first settings set whose name is (themeName as Text))
-                    end repeat
+    on invertTerminalColors(themeName)
+        tell application "Terminal"
+            set maxAttempts to 5
+            set windowsToRetry to {}
+
+            -- Initialize the list with all window indexes
+            repeat with w from 1 to (count windows)
+                set end of windowsToRetry to w
+            end repeat
+
+            repeat until length of windowsToRetry is 0 or maxAttempts is 0
+                set newWindowsToRetry to {}
+                repeat with w in windowsToRetry
+                    try
+                        set current settings of window w to (first settings set whose name is themeName)
+                    on error
+                        set end of newWindowsToRetry to w
+                    end try
                 end repeat
-            end tell
-        end invertTerminalColors
+                set windowsToRetry to newWindowsToRetry
+                set maxAttempts to maxAttempts - 1
+                if length of windowsToRetry is not 0 then delay 1
+            end repeat
+        end tell
+    end invertTerminalColors
     """)!
 
     var error: NSDictionary?
@@ -105,12 +121,12 @@ func terminalNewWindowObserver() -> NSObjectProtocol {
 }
 
 func doSwitchTerminalTheme(_ isInverted: Bool) {
-    let parameters = NSAppleEventDescriptor.list()
-    parameters.insert(NSAppleEventDescriptor(string: isInverted ? "Inverted" : "Basic"), at: 0)
-
     if !NSWorkspace.shared.runningApplications.contains(where: { $0.localizedName == "Terminal" }) {
         return
     }
+
+    let parameters = NSAppleEventDescriptor.list()
+    parameters.insert(NSAppleEventDescriptor(string: isInverted ? "Inverted" : "Basic"), at: 0)
 
     let event = NSAppleEventDescriptor(
         eventClass: AEEventClass(kASAppleScriptSuite),
