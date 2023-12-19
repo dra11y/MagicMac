@@ -58,25 +58,21 @@ let invertTerminalColorsScript: NSAppleScript = {
     on invertTerminalColors(themeName)
         tell application "Terminal"
             set maxAttempts to 5
-            set windowsToRetry to {}
-
-            -- Initialize the list with all window indexes
-            repeat with w from 1 to (count windows)
-                set end of windowsToRetry to w
-            end repeat
-
-            repeat until length of windowsToRetry is 0 or maxAttempts is 0
+            
+            -- Initially, all windows need to be tried.
+            set windowsToRetry to every window
+            repeat while maxAttempts > 0 and (count of windowsToRetry) > 0
+                set maxAttempts to maxAttempts - 1
                 set newWindowsToRetry to {}
                 repeat with w in windowsToRetry
                     try
-                        set current settings of window w to (first settings set whose name is themeName)
+                        set current settings of w to (first settings set whose name is themeName)
                     on error
                         set end of newWindowsToRetry to w
                     end try
                 end repeat
                 set windowsToRetry to newWindowsToRetry
-                set maxAttempts to maxAttempts - 1
-                if length of windowsToRetry is not 0 then delay 1
+                if (count of windowsToRetry) > 0 and maxAttempts > 0 then delay 0.05
             end repeat
         end tell
     end invertTerminalColors
