@@ -10,10 +10,12 @@ import SwiftUI
 
 class KeyboardShortcutsManager: ObservableObject {
     let invertedColorManager: InvertedColorManager
+    let speechManager: SpeechManager
     let dimmer: DisplayDimmer
 
-    init(invertedColorManager: InvertedColorManager, dimmer: DisplayDimmer) {
+    init(invertedColorManager: InvertedColorManager, speechManager: SpeechManager, dimmer: DisplayDimmer) {
         self.invertedColorManager = invertedColorManager
+        self.speechManager = speechManager
         self.dimmer = dimmer
     }
 
@@ -26,6 +28,7 @@ class KeyboardShortcutsManager: ObservableObject {
             for: .invertColors) { [weak self] in
             guard let self else { return }
             invertedColorManager.toggle { _ in
+                print("Should update dimmer due to inverted color")
                 self.dimmer.updateGamma()
             }
         }
@@ -47,11 +50,11 @@ class KeyboardShortcutsManager: ObservableObject {
         )
         KeyboardShortcuts.onKeyDown(
             for: .speakSelection,
-            action: SpeechManager.shared.speakSelection
+            action: speechManager.speakSelection
         )
         KeyboardShortcuts.onKeyDown(
             for: .speakSelectionSlowly,
-            action: SpeechManager.shared.speakSelectionSlowly
+            action: speechManager.speakSelectionSlowly
         )
     }
 }

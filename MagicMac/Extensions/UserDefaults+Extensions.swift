@@ -15,6 +15,7 @@ enum StorageKeys: String, CaseIterable {
     case enableReplacements
     case invertColorsDelay
     case switchThemeDelay
+    case debugSpeechHUD
 }
 
 extension String {
@@ -25,6 +26,7 @@ extension String {
     static let enableReplacements = StorageKeys.enableReplacements.rawValue
     static let invertColorsDelay = StorageKeys.invertColorsDelay.rawValue
     static let switchThemeDelay = StorageKeys.switchThemeDelay.rawValue
+    static let debugSpeechHUD = StorageKeys.debugSpeechHUD.rawValue
 }
 
 extension UserDefaults {

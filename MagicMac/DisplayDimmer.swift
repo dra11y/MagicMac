@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-final class DisplayDimmer: ObservableObject {
+final class DisplayDimmer {
     func increase() {
         brightness += 0.1
     }
@@ -19,7 +19,17 @@ final class DisplayDimmer: ObservableObject {
     public func updateGamma() {
         let isWhiteOnBlack = UAWhiteOnBlackIsEnabled()
         let table: [CGGammaValue] = isWhiteOnBlack ? [1 - brightness, 1] : [0, brightness]
-        CGSetDisplayTransferByTable(CGMainDisplayID(), UInt32(table.count), table, table, table)
+//        CGSetDisplayTransferByTable(CGMainDisplayID(), UInt32(table.count), table, table, table)
+        
+        let onlineDisplayIDs = UnsafeMutablePointer<CGDirectDisplayID>.allocate(capacity: 16)
+        var displayCount: UInt32 = 0
+        CGGetOnlineDisplayList(16, onlineDisplayIDs, &displayCount)
+
+        for i in 0..<Int(displayCount) {
+            CGSetDisplayTransferByTable(onlineDisplayIDs[i], UInt32(table.count), table, table, table)
+        }
+
+        onlineDisplayIDs.deallocate()
     }
 
     private var brightness: CGGammaValue = 1.0 {

@@ -15,6 +15,7 @@ struct MenuExtraMenuContent: View {
     @AppStorage(.speechVolume) var speechVolume: Double = UserDefaults.UniversalAccess.preferredVolume
     @AppStorage(.speechVoice) var speechVoice: String = UserDefaults.UniversalAccess.preferredVoice ?? ""
     @AppStorage(.enableReplacements) var enableReplacements: Bool = true
+    @AppStorage(.debugSpeechHUD) private var debugSpeechHUD: Bool = false
 
     var body: some View {
         VStack(spacing: 20) {
@@ -36,6 +37,15 @@ struct MenuExtraMenuContent: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 Spacer()
                 Toggle("", isOn: $enableReplacements)
+                    .labelsHidden()
+                    .toggleStyle(.switch)
+            }
+
+            HStack {
+                Text("Debug Speech HUD")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                Spacer()
+                Toggle("", isOn: $debugSpeechHUD)
                     .labelsHidden()
                     .toggleStyle(.switch)
             }

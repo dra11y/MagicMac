@@ -83,6 +83,8 @@ func terminalLaunchObserver() -> NSObjectProtocol {
             else { return }
 
             doSwitchTerminalTheme(UAWhiteOnBlackIsEnabled())
+            app.activate()
+            doMaximizeFrontWindow()
         }
 }
 

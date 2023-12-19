@@ -28,18 +28,30 @@ struct ReplacementsView: View {
                         Toggle(isOn: $row.isEnabled) {
                             EmptyView()
                         }
-                        .onSubmit(onSubmitHandler)
+                        .onChange(of: row.isEnabled) {
+                            onSubmitHandler()
+                        }
                     }
                     .width(50)
 
                     TableColumn("Pattern") { $row in
-                        TextField("", text: $row.pattern)
+                        TextField("", text: $row.pattern, onEditingChanged: { editing in
+                            if !editing {
+                                print("SAVED ... edit pattern")
+                                onSubmitHandler()
+                            }
+                        })
                             .onSubmit(onSubmitHandler)
                             .accessibilityTextContentType(.sourceCode)
                     }
 
                     TableColumn("Replacement") { $row in
-                        TextField("", text: $row.replacement)
+                        TextField("", text: $row.replacement, onEditingChanged: { editing in
+                            if !editing {
+                                print("SAVED ... edit replacement")
+                                onSubmitHandler()
+                            }
+                        })
                             .accessibilityTextContentType(.sourceCode)
                             .onSubmit(onSubmitHandler)
                     }
@@ -48,14 +60,18 @@ struct ReplacementsView: View {
                         Toggle(isOn: $row.isRegex) {
                             EmptyView()
                         }
-                        .onSubmit(onSubmitHandler)
+                        .onChange(of: row.isRegex) {
+                            onSubmitHandler()
+                        }
                     }
 
                     TableColumn("Ignore Case") { $row in
                         Toggle(isOn: $row.ignoreCase) {
                             EmptyView()
                         }
-                        .onSubmit(onSubmitHandler)
+                        .onChange(of: row.ignoreCase) {
+                            onSubmitHandler()
+                        }
                     }
                 }
                 .onChange(of: selection) { _, newValue in

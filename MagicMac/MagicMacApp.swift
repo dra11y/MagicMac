@@ -10,21 +10,30 @@ import Cocoa
 import ServiceManagement
 import SettingsAccess
 import SwiftUI
+import WakeAudio
 
 @main
 final class MagicMacApp: App {
     let invertedColorManager = InvertedColorManager()
 
+    lazy var speechManager = SpeechManager(invertedColorManager: invertedColorManager)
+
     private var observers = [NSObjectProtocol]()
     private let dimmer = DisplayDimmer()
 
-    lazy var keyboardShortcutsManager: KeyboardShortcutsManager = .init(invertedColorManager: invertedColorManager, dimmer: dimmer)
+    lazy var keyboardShortcutsManager = KeyboardShortcutsManager(
+        invertedColorManager: invertedColorManager,
+        speechManager: speechManager,
+        dimmer: dimmer)
 
     init() {
         keyboardShortcutsManager.enableShortcuts()
         // setInitialAppearanceWhenUsingGamma()
         addObservers()
         terminateLauncher()
+        if isAudioAsleep() {
+            wakeAudioInterfaces()
+        }
     }
 
     var body: some Scene {
@@ -43,6 +52,7 @@ final class MagicMacApp: App {
             } label: {
                 MenuBarExtraIconView()
                     .environmentObject(invertedColorManager)
+                    .environmentObject(speechManager)
             }
             .menuBarExtraStyle(.window)
         }

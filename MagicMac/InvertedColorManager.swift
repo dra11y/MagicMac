@@ -10,15 +10,15 @@ import SwiftUI
 import CoreGraphics
 
 class InvertedColorManager: ObservableObject {
-    @Published public var isInverted: Bool = false
+    @Published public var isInverted: Bool
     @AppStorage(.invertColorsDelay) var invertColorsDelay: Double = 0
     @AppStorage(.switchThemeDelay) var switchThemeDelay: Double = 0
 
     init() {
-        isInverted = getInvertedStatus()
+        isInverted = Self.getInvertedStatus()
     }
 
-    private func getInvertedStatus() -> Bool {
+    private static func getInvertedStatus() -> Bool {
         guard let defaults = UserDefaults(suiteName: UserDefaults.Suite.universalAccess) else { return false }
         return defaults.bool(forKey: UserDefaults.UniversalAccess.whiteOnBlack)
     }

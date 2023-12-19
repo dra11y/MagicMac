@@ -68,12 +68,14 @@ class ReplacementsManager: ObservableObject {
         let offsets = getOffsets(selection)
         let offset = min(offsets.max()!, replacements.count - 2) + 2
         replacements.move(fromOffsets: offsets, toOffset: offset)
+        saveData()
     }
 
     public func moveUp(_ selection: Set<UUID>) {
         let offsets = getOffsets(selection)
         let offset = max(offsets.min()!, 1) - 1
         replacements.move(fromOffsets: offsets, toOffset: offset)
+        saveData()
     }
 
     public func reloadReplacements() {
@@ -84,6 +86,7 @@ class ReplacementsManager: ObservableObject {
         } catch {
             fatalError("Can't decode: \(error)")
         }
+        objectWillChange.send()
     }
 
     func saveData() {
@@ -95,5 +98,7 @@ class ReplacementsManager: ObservableObject {
         } catch {
             fatalError("Error encoding JSON: \(error)")
         }
+        print("SAVED! \(Date.now)")
+        objectWillChange.send()
     }
 }
