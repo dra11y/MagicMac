@@ -11,6 +11,8 @@ struct ReplacementsView: View {
     @StateObject private var replacementsManager = ReplacementsManager.shared
     @State private var selection = Set<UUID>()
     @FocusState private var focused: UUID?
+    @State private var searchQuery = ""
+    @State private var filteredReplacements: [Replacement] = []
 
     private func index(of row: Replacement) -> Int {
         replacementsManager.replacements.firstIndex(where: { $0.id == row.id })!
@@ -19,11 +21,26 @@ struct ReplacementsView: View {
     private func onSubmitHandler() {
         replacementsManager.saveData()
     }
+    
+    private func filterReplacements() {
+        if searchQuery.isEmpty {
+            filteredReplacements = replacementsManager.replacements
+        } else {
+            filteredReplacements = replacementsManager.replacements.filter { replacement in
+                replacement.pattern.lowercased().contains(searchQuery.lowercased()) ||
+                replacement.replacement.lowercased().contains(searchQuery.lowercased())
+            }
+        }
+    }
 
     var body: some View {
         VStack {
+            TextField("Search...", text: $searchQuery)
+                .padding([.top, .leading, .trailing])
+                .onChange(of: searchQuery, filterReplacements)
+
             ScrollViewReader { proxy in
-                Table($replacementsManager.replacements, selection: $selection) {
+                Table($filteredReplacements, selection: $selection) {
                     TableColumn("Enabled") { $row in
                         Toggle(isOn: $row.isEnabled) {
                             EmptyView()
@@ -120,6 +137,8 @@ struct ReplacementsView: View {
                 .padding()
             }
         }
+        .onAppear(perform: filterReplacements)
+        .onChange(of: replacementsManager.replacements, filterReplacements)
         .tabItem {
             Image(systemName: "textformat.abc.dottedunderline")
             Text("Substitutions")
