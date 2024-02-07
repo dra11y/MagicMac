@@ -127,12 +127,12 @@ public class SpeechManager: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
     @Published public var state: SpeechState = .stopped
 
     public func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didStart utterance: AVSpeechUtterance) {
-        print("did start speaking")
+//        print("did start speaking")
         state = .speaking
     }
     
     public func speechSynthesizer(_: AVSpeechSynthesizer, willSpeakRangeOfSpeechString characterRange: NSRange, utterance: AVSpeechUtterance) {
-        print("willSpeakRangeOfSpeechString: \(characterRange) of utterance: \(utterance)")
+//        print("willSpeakRangeOfSpeechString: \(characterRange) of utterance: \(utterance)")
         if debugSpeechHUD {
             hudWindow.update(range: characterRange, utterance: utterance)
         } else if hudWindow.isVisible {
@@ -223,31 +223,33 @@ public class SpeechManager: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
         print("\n\n\n[WAKEAUDIO] *** systemDidWake *** \(Date.now)\n\n\n")
     }
     
-    private func wakeAudio() {
-        print("[WAKEAUDIO] \(Date.now) Checking if audio is asleep...")
+    public static func wakeAudio() {
+//        print("[WAKEAUDIO] \(Date.now) Checking if audio is asleep...")
         let isAsleep = isAudioAsleep()
         if isAsleep {
-            print("[WAKEAUDIO] \(Date.now) Waking audio...")
-            wakeAudioInterfaces()
-            wakeAudio()
+//            print("[WAKEAUDIO] \(Date.now) Waking audio...")
+            wakeAudioInterfaces(false)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                Self.wakeAudio()
+            }
             return
         }
-        print("[WAKEAUDIO] \(Date.now) Audio is awake!")
+//        print("[WAKEAUDIO] \(Date.now) Audio is awake!")
     }
     
     @objc private func screenDidWake(notification _: NSNotification) {
-        print("\n\n\n[WAKEAUDIO] *** screenDidWake *** \(Date.now)\n\n\n")
+//        print("\n\n\n[WAKEAUDIO] *** screenDidWake *** \(Date.now)\n\n\n")
 
         speechSynthesizer.stopSpeaking(at: .immediate)
         speechSynthesizer = AVSpeechSynthesizer()
         
-        wakeAudio()
+        Self.wakeAudio()
 
         startBackgroundSilence()
     }
 
     @objc private func audioConfigurationDidChange(notification _: NSNotification) {
-        print("[WAKEAUDIO] audioConfigurationDidChange \(Date.now)")
+//        print("[WAKEAUDIO] audioConfigurationDidChange \(Date.now)")
         if isAudioAsleep() {
             return;
         }
@@ -317,8 +319,9 @@ public class SpeechManager: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
             /// We must "escape" left double square brackets `[[`
             return text.replacingOccurrences(of: "[[", with: "[ [")
         }
-        
-        var replacedText = text
+
+        /// Initially escape double left square brackets.
+        var replacedText = text.replacingOccurrences(of: "[[", with: "[ [")
 
         replacementsManager.reloadReplacements()
         let replacements = replacementsManager.replacements.filter { replacement in
@@ -329,18 +332,18 @@ public class SpeechManager: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
         for replacement in replacements {
             if replacement.isRegex {
                 /// Replace using regex
+                let options: NSRegularExpression.Options = replacement.ignoreCase ? [.caseInsensitive] : []
                 guard
-                    let regex = try? NSRegularExpression(pattern: replacement.pattern, options: [.caseInsensitive])
+                    let regex = try? NSRegularExpression(pattern: replacement.pattern, options: options)
                 else { continue }
                 let range = NSRange(replacedText.startIndex..., in: replacedText)
                 replacedText = regex.stringByReplacingMatches(in: replacedText, range: range, withTemplate: " \(replacement.replacement) ")
             } else {
                 // Replace using plain text
-                replacedText = replacedText.replacingOccurrences(of: replacement.pattern, with: " \(replacement.replacement) ", options: [.diacriticInsensitive, .caseInsensitive])
+                let options: String.CompareOptions = replacement.ignoreCase ? [.caseInsensitive, .diacriticInsensitive] : [.diacriticInsensitive]
+                replacedText = replacedText.replacingOccurrences(of: replacement.pattern, with: " \(replacement.replacement) ", options: options)
             }
         }
-
-        replacedText = replacedText.replacingOccurrences(of: "[[", with: "[ [")
 
         return replacedText
     }
