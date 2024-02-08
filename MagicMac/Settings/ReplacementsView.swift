@@ -14,14 +14,14 @@ struct ReplacementsView: View {
     @State private var searchQuery = ""
     @State private var filteredReplacements: [Replacement] = []
 
-    private func index(of row: Replacement) -> Int {
-        replacementsManager.replacements.firstIndex(where: { $0.id == row.id })!
+    private func index(of row: Replacement) -> Int? {
+        replacementsManager.replacements.firstIndex(where: { $0.id == row.id })
     }
 
-    private func onSubmitHandler() {
-        replacementsManager.saveData()
+    private func update(_ row: Replacement) {
+        replacementsManager.update(row)
     }
-    
+
     private func filterReplacements() {
         if searchQuery.isEmpty {
             filteredReplacements = replacementsManager.replacements
@@ -36,29 +36,26 @@ struct ReplacementsView: View {
     var body: some View {
         VStack {
             TextField("Search...", text: $searchQuery)
+                .textFieldStyle(.roundedBorder)
                 .padding([.top, .leading, .trailing])
                 .onChange(of: searchQuery, filterReplacements)
 
             ScrollViewReader { proxy in
                 Table($filteredReplacements, selection: $selection) {
                     TableColumn("Enabled") { $row in
-                        Toggle(isOn: $row.isEnabled) {
-                            EmptyView()
-                        }
-                        .onChange(of: row.isEnabled) {
-                            onSubmitHandler()
-                        }
+                        EnabledToggleView(row: $row, updateHandler: update)
                     }
                     .width(50)
 
                     TableColumn("Pattern") { $row in
                         TextField("", text: $row.pattern, onEditingChanged: { editing in
                             if !editing {
-                                print("SAVED ... edit pattern")
-                                onSubmitHandler()
+                                update(row)
                             }
                         })
-                            .onSubmit(onSubmitHandler)
+                            .onSubmit {
+                                update(row)
+                            }
                             .accessibilityTextContentType(.sourceCode)
                     }
 
@@ -66,11 +63,13 @@ struct ReplacementsView: View {
                         TextField("", text: $row.replacement, onEditingChanged: { editing in
                             if !editing {
                                 print("SAVED ... edit replacement")
-                                onSubmitHandler()
+                                update(row)
                             }
                         })
                             .accessibilityTextContentType(.sourceCode)
-                            .onSubmit(onSubmitHandler)
+                            .onSubmit {
+                                update(row)
+                            }
                     }
 
                     TableColumn("Regex") { $row in
@@ -78,7 +77,7 @@ struct ReplacementsView: View {
                             EmptyView()
                         }
                         .onChange(of: row.isRegex) {
-                            onSubmitHandler()
+                            update(row)
                         }
                     }
 
@@ -87,7 +86,7 @@ struct ReplacementsView: View {
                             EmptyView()
                         }
                         .onChange(of: row.ignoreCase) {
-                            onSubmitHandler()
+                            update(row)
                         }
                     }
                 }
@@ -119,17 +118,17 @@ struct ReplacementsView: View {
                     segments: [
                         !selection.isEmpty
                             ? ButtonSegment(view: AnyView(Text("-")), action: {
-                                replacementsManager.replacements.removeAll(where: { selection.contains($0.id) })
+                                replacementsManager.delete(selection)
                                 selection = []
-                                onSubmitHandler()
                             })
                             : nil,
                         ButtonSegment(view: AnyView(Text("+")), action: {
                             let newRow = Replacement.create()
                             let offsets = replacementsManager.getOffsets(selection)
                             let offset = offsets.first ?? replacementsManager.replacements.count - 1
-                            replacementsManager.replacements.insert(newRow, at: offset + 1)
+                            replacementsManager.add(newRow, at: offset)
                             selection = [newRow.id]
+                            filterReplacements()
                         })
                     ].compactMap { $0 }
                 )
@@ -140,8 +139,21 @@ struct ReplacementsView: View {
         .onAppear(perform: filterReplacements)
         .onChange(of: replacementsManager.replacements, filterReplacements)
         .tabItem {
-            Image(systemName: "textformat.abc.dottedunderline")
-            Text("Substitutions")
+            Label("Substitutions", systemImage: "textformat.abc.dottedunderline")
+        }
+    }
+}
+
+struct EnabledToggleView: View {
+    @Binding var row: Replacement
+    var updateHandler: (_ row: Replacement) -> Void
+
+    var body: some View {
+        Toggle(isOn: $row.isEnabled) {
+            EmptyView()
+        }
+        .onChange(of: row.isEnabled) { _ in
+            updateHandler(row)
         }
     }
 }

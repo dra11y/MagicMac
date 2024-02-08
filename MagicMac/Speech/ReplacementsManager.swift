@@ -57,13 +57,31 @@ class ReplacementsManager: ObservableObject {
     }
 
     @Published var replacements: [Replacement]
+    
+    func add(_ replacement: Replacement, at offset: Int? = nil) {
+        let insertionIndex = offset.map { $0 + 1 } ?? replacements.count
+        replacements.insert(replacement, at: insertionIndex)
+        saveData()
+    }
+    
+    func update(_ replacement: Replacement) {
+        if let index = replacements.firstIndex(where: { $0.id == replacement.id }) {
+            replacements[index] = replacement
+            saveData()
+        }
+    }
+    
+    func delete(_ ids: Set<UUID>) {
+        replacements.removeAll(where: { ids.contains($0.id) })
+        saveData()
+    }
 
     public func getOffsets(_ selection: Set<UUID>) -> IndexSet {
         IndexSet(replacements.enumerated().compactMap { index, element in
             selection.contains(element.id) ? index : nil
         })
     }
-
+    
     public func moveDown(_ selection: Set<UUID>) {
         let offsets = getOffsets(selection)
         let offset = min(offsets.max()!, replacements.count - 2) + 2
@@ -89,7 +107,7 @@ class ReplacementsManager: ObservableObject {
         objectWillChange.send()
     }
 
-    func saveData() {
+    private func saveData() {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
         do {
