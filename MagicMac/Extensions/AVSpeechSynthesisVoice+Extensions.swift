@@ -15,7 +15,7 @@ extension AVSpeechSynthesisVoice {
     static var voices: [String: String] =
         Dictionary(
             uniqueKeysWithValues:
-                AVSpeechSynthesisVoice.speechVoices()
+            AVSpeechSynthesisVoice.speechVoices()
                 .filter {
                     $0.language.split(separator: "-").first ?? "" == Locale.current.language.languageCode?.identifier ?? ""
                 }

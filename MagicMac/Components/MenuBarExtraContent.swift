@@ -79,9 +79,9 @@ struct MenuExtraMenuContent: View {
 
                     try? openSettings()
                 }
-                
+
                 Spacer()
-                
+
                 Button {
                     wakeAudioInterfaces(true)
                 } label: {

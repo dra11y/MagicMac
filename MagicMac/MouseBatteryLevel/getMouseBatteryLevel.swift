@@ -21,7 +21,8 @@ func getMouseBatteryLevel() -> Int? {
             == KERN_SUCCESS, let propertiesDict = properties?.takeRetainedValue() as? [String: Any]
         {
             if let product = propertiesDict["Product"] as? String,
-               product.lowercased().contains("mouse") {
+               product.lowercased().contains("mouse")
+            {
                 if let batteryPercent = propertiesDict["BatteryPercent"] as? Int {
                     batteryLevel = batteryPercent
                 }

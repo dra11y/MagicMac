@@ -21,11 +21,13 @@ class KeyboardShortcutsManager: ObservableObject {
 
     public func enableShortcuts() {
         KeyboardShortcuts.onKeyDown(
-            for: .toggleAppearance) {
+            for: .toggleAppearance)
+        {
             doToggleAppearance()
         }
         KeyboardShortcuts.onKeyDown(
-            for: .invertColors) { [weak self] in
+            for: .invertColors)
+        { [weak self] in
             guard let self else { return }
             invertedColorManager.toggle { _ in
                 print("Should update dimmer due to inverted color")

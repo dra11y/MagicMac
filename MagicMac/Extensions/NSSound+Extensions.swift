@@ -1,5 +1,5 @@
 //
-//  NSSound.swift
+//  NSSound+Extensions.swift
 //  MagicMac
 //
 //  Created by Tom Grushka on 8/13/22.

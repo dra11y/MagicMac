@@ -38,7 +38,8 @@ class FakeKey {
         CoreServices.UCKeyTranslate(
             unsafeBitCast(
                 CFDataGetBytePtr(inputSource),
-                to: UnsafePointer<CoreServices.UCKeyboardLayout>.self),
+                to: UnsafePointer<CoreServices.UCKeyboardLayout>.self
+            ),
             UInt16(keyCode),
             UInt16(CoreServices.kUCKeyActionDisplay),
             UInt32(0),
@@ -48,7 +49,8 @@ class FakeKey {
             &deadKeyState,
             1,
             &length,
-            &char)
+            &char
+        )
 
         return NSString(characters: &char, length: length).uppercased
     }

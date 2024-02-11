@@ -58,7 +58,7 @@ let invertTerminalColorsScript: NSAppleScript = {
     on invertTerminalColors(themeName)
         tell application "Terminal"
             set maxAttempts to 5
-            
+
             -- Initially, all windows need to be tried.
             set windowsToRetry to every window
             repeat while maxAttempts > 0 and (count of windowsToRetry) > 0
@@ -90,7 +90,7 @@ func terminalLaunchObserver() -> NSObjectProtocol {
         .addObserver(forName: NSWorkspace.didLaunchApplicationNotification, object: nil, queue: .main) { notification in
             guard
                 let app =
-                    notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
+                notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
                 app.bundleIdentifier == "com.apple.Terminal"
             else { return }
 
@@ -108,7 +108,7 @@ func terminalNewWindowObserver() -> NSObjectProtocol {
         ) { notification in
             guard
                 let app =
-                    notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
+                notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
                 app.bundleIdentifier == "com.apple.Terminal"
             else { return }
 

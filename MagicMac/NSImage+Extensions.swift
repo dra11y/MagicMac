@@ -1,5 +1,5 @@
 //
-//  NSImage.swift
+//  NSImage+Extensions.swift
 //  MagicMac
 //
 //  Created by Tom Grushka on 8/14/22.

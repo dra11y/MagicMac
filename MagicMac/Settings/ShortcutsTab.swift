@@ -5,8 +5,8 @@
 //  Created by Tom Grushka on 10/29/23.
 //
 
-import SwiftUI
 import KeyboardShortcuts
+import SwiftUI
 
 struct ShortcutsTab: View {
     var body: some View {

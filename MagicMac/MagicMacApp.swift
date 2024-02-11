@@ -28,17 +28,19 @@ final class MagicMacApp: App {
     lazy var keyboardShortcutsManager = KeyboardShortcutsManager(
         invertedColorManager: invertedColorManager,
         speechManager: speechManager,
-        dimmer: dimmer)
+        dimmer: dimmer
+    )
 
     private lazy var mouseBatteryWarnTimer = Timer.scheduledTimer(withTimeInterval: 3600, repeats: true) { [weak self] _ in
         self?.warnMouseBatteryLevel()
     }
-    
+
     private lazy var synth = AVSpeechSynthesizer()
 
     private func warnMouseBatteryLevel() {
         if let percent = getMouseBatteryLevel(),
-           percent < 50 {
+           percent < 50
+        {
             print("WARN MOUSE BATTERY \(percent) \(synth.debugDescription)")
             let speechString = "Mouse battery at \(percent) percent."
             let utterance = AVSpeechUtterance(string: speechString)
@@ -52,6 +54,7 @@ final class MagicMacApp: App {
             }
         }
     }
+
     init() {
         keyboardShortcutsManager.enableShortcuts()
         // setInitialAppearanceWhenUsingGamma()
@@ -101,11 +104,18 @@ final class MagicMacApp: App {
         let runningApps = NSWorkspace.shared.runningApplications
         let isRunning = !runningApps.filter { $0.bundleIdentifier == launcherAppId }.isEmpty
 
-        let result = SMLoginItemSetEnabled(launcherAppId as CFString, true)
-
-        if !result {
+        let service = SMAppService.loginItem(identifier: launcherAppId)
+        do {
+            try service.register()
+        } catch {
             fatalError("Could not add login item.")
         }
+
+//        let result = SMLoginItemSetEnabled(launcherAppId as CFString, true)
+
+//        if !result {
+//            fatalError("Could not add login item.")
+//        }
 
         if isRunning {
             DistributedNotificationCenter.default().post(name: .killLauncher, object: Bundle.main.bundleIdentifier!)

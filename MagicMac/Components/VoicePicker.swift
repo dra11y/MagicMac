@@ -5,8 +5,8 @@
 //  Created by Tom Grushka on 10/29/23.
 //
 
-import SwiftUI
 import AVFoundation
+import SwiftUI
 
 struct VoicePicker: View {
     var label: String?
@@ -15,7 +15,7 @@ struct VoicePicker: View {
 
     public init(_ label: String?, selection speechVoice: Binding<String>, systemDefaultLabel: String = "Default: ") {
         self.label = label
-        self._speechVoice = speechVoice
+        _speechVoice = speechVoice
         self.systemDefaultLabel = systemDefaultLabel
     }
 

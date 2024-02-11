@@ -9,7 +9,7 @@ import SwiftUI
 
 extension NSColor {
     var inverted: NSColor {
-        guard let rgbColor = self.usingColorSpace(.deviceRGB) else {
+        guard let rgbColor = usingColorSpace(.deviceRGB) else {
             return self
         }
         return NSColor(red: 1 - rgbColor.redComponent,
@@ -21,12 +21,12 @@ extension NSColor {
 
 extension NSImage {
     func padded(minWidth: CGFloat, alignment: Alignment = .leading) -> NSImage {
-        if self.size.width >= minWidth {
+        if size.width >= minWidth {
             return self
         }
 
-        let padding = minWidth - self.size.width
-        let newImage = NSImage(size: NSSize(width: minWidth, height: self.size.height))
+        let padding = minWidth - size.width
+        let newImage = NSImage(size: NSSize(width: minWidth, height: size.height))
 
         newImage.lockFocus()
         let xOrigin: CGFloat
@@ -39,28 +39,28 @@ extension NSImage {
             xOrigin = padding / 2
         }
 
-        self.draw(at: NSPoint(x: xOrigin, y: 0),
-                  from: NSRect(x: 0, y: 0, width: self.size.width, height: self.size.height),
-                  operation: .sourceOver,
-                  fraction: 1)
+        draw(at: NSPoint(x: xOrigin, y: 0),
+             from: NSRect(x: 0, y: 0, width: size.width, height: size.height),
+             operation: .sourceOver,
+             fraction: 1)
         newImage.unlockFocus()
 
         return newImage
     }
 
     func tint(color: NSColor) -> NSImage {
-        guard let cgImage = self.cgImage(forProposedRect: nil, context: nil, hints: nil) else { return self }
-        
+        guard let cgImage = cgImage(forProposedRect: nil, context: nil, hints: nil) else { return self }
+
         let rect = CGRect(origin: CGPoint.zero, size: size)
         let newImage = NSImage(size: size)
-        
+
         newImage.lockFocus()
         guard let context = NSGraphicsContext.current?.cgContext else { return self }
         context.clip(to: rect, mask: cgImage)
         color.set()
         context.fill(rect)
         newImage.unlockFocus()
-        
+
         return newImage
     }
 }
@@ -69,23 +69,23 @@ extension NSImage {
 struct MenuBarExtraIconView: View {
     @EnvironmentObject var invertedColorManager: InvertedColorManager
     @EnvironmentObject var speechManager: SpeechManager
-    
+
     var foregroundColor: Color? {
         if speechManager.state == .stopped {
             return nil
         }
-        
+
         return invertedColorManager.isInverted ? .blue : .yellow
     }
-    
+
     func smartInvert(_ color: NSColor) -> NSColor {
         invertedColorManager.isInverted ? color.inverted : color
     }
-    
+
     var image: some View {
         let color = smartInvert(NSColor(red: 1.0, green: 0.753, blue: 0.00784, alpha: 1.0))
         let minWidth: Double = 24
-        
+
         let symbolName: String
 
         switch speechManager.state {

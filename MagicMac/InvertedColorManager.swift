@@ -6,8 +6,8 @@
 //
 
 import Combine
-import SwiftUI
 import CoreGraphics
+import SwiftUI
 
 class InvertedColorManager: ObservableObject {
     @Published public var isInverted: Bool
@@ -34,7 +34,7 @@ class InvertedColorManager: ObservableObject {
         /// Universal Access default. However, there is a nasty "Invert Display Color off/on"
         /// popup that pre-setting this default to the desired value helps to alleviate.
         defaults.set(newInverted, forKey: UserDefaults.UniversalAccess.whiteOnBlack)
-        
+
         // `synchronize()` returns `true` if FDA (Full Disk Access) is granted, `false` otherwise.
         let result = defaults.synchronize()
         if !result {
@@ -45,7 +45,7 @@ class InvertedColorManager: ObservableObject {
             NSWorkspace.shared.open(url)
             return
         }
-        
+
         DispatchQueue.global().asyncAfter(deadline: .now() + switchThemeDelay) {
             SLSSetAppearanceThemeLegacy(!newInverted)
         }
@@ -53,7 +53,7 @@ class InvertedColorManager: ObservableObject {
         DispatchQueue.global().asyncAfter(deadline: .now() + invertColorsDelay) {
             UAWhiteOnBlackSetEnabled(newInverted)
         }
-        
+
         doSwitchTerminalTheme(newInverted)
 
         isInverted = newInverted

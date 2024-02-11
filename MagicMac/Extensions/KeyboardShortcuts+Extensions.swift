@@ -17,7 +17,7 @@ extension KeyboardShortcuts.Name: CaseIterable {
             increaseBrightness,
             decreaseBrightness,
             speakSelection,
-            speakSelectionSlowly
+            speakSelectionSlowly,
         ]
     }
 

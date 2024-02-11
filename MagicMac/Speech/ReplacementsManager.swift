@@ -57,20 +57,20 @@ class ReplacementsManager: ObservableObject {
     }
 
     @Published var replacements: [Replacement]
-    
+
     func add(_ replacement: Replacement, at offset: Int? = nil) {
         let insertionIndex = offset.map { $0 + 1 } ?? replacements.count
         replacements.insert(replacement, at: insertionIndex)
         saveData()
     }
-    
+
     func update(_ replacement: Replacement) {
         if let index = replacements.firstIndex(where: { $0.id == replacement.id }) {
             replacements[index] = replacement
             saveData()
         }
     }
-    
+
     func delete(_ ids: Set<UUID>) {
         replacements.removeAll(where: { ids.contains($0.id) })
         saveData()
@@ -81,19 +81,25 @@ class ReplacementsManager: ObservableObject {
             selection.contains(element.id) ? index : nil
         })
     }
-    
-    public func moveDown(_ selection: Set<UUID>) {
+
+    private func move(_ selection: Set<UUID>, up: Bool) {
+        if selection.isEmpty {
+            return
+        }
         let offsets = getOffsets(selection)
-        let offset = min(offsets.max()!, replacements.count - 2) + 2
+        let offset = up
+            ? max(offsets.min()!, 1) - 1
+            : min(offsets.max()!, replacements.count - 2) + 2
         replacements.move(fromOffsets: offsets, toOffset: offset)
         saveData()
     }
 
+    public func moveDown(_ selection: Set<UUID>) {
+        move(selection, up: false)
+    }
+
     public func moveUp(_ selection: Set<UUID>) {
-        let offsets = getOffsets(selection)
-        let offset = max(offsets.min()!, 1) - 1
-        replacements.move(fromOffsets: offsets, toOffset: offset)
-        saveData()
+        move(selection, up: true)
     }
 
     public func reloadReplacements() {
@@ -116,7 +122,7 @@ class ReplacementsManager: ObservableObject {
         } catch {
             fatalError("Error encoding JSON: \(error)")
         }
-        print("SAVED! \(Date.now)")
+        // print("SAVED! \(Date.now)")
         objectWillChange.send()
     }
 }
