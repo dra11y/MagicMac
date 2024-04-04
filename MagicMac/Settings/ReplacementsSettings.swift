@@ -12,7 +12,7 @@ struct Replacement: Codable, Equatable, Identifiable, Transferable {
     var id: UUID = .init()
     var isEnabled: Bool = true
     var isRegex: Bool
-    var ignoreCase: Bool = false
+    var caseSensitive: Bool = true
     var pattern: String
     var replacement: String
 
@@ -25,12 +25,12 @@ struct Replacement: Codable, Equatable, Identifiable, Transferable {
     enum CodingKeys: CodingKey {
         case isEnabled
         case isRegex
-        case ignoreCase
+        case caseSensitive
         case pattern
         case replacement
     }
 
-    init(id: UUID? = nil, isEnabled: Bool? = nil, isRegex: Bool, ignoreCase: Bool? = nil, pattern: String, replacement: String) {
+    init(id: UUID? = nil, isEnabled: Bool? = nil, isRegex: Bool, caseSensitive: Bool? = nil, pattern: String, replacement: String) {
         if let id {
             self.id = id
         }
@@ -38,8 +38,8 @@ struct Replacement: Codable, Equatable, Identifiable, Transferable {
             self.isEnabled = isEnabled
         }
         self.isRegex = isRegex
-        if let ignoreCase {
-            self.ignoreCase = ignoreCase
+        if let caseSensitive {
+            self.caseSensitive = caseSensitive
         }
         self.pattern = pattern
         self.replacement = replacement
@@ -49,12 +49,12 @@ struct Replacement: Codable, Equatable, Identifiable, Transferable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         isEnabled = try container.decode(Bool.self, forKey: .isEnabled)
         isRegex = try container.decode(Bool.self, forKey: .isRegex)
-        ignoreCase = (try? container.decode(Bool.self, forKey: .ignoreCase)) ?? false
+        caseSensitive = (try? container.decode(Bool.self, forKey: .caseSensitive)) ?? true
         pattern = try container.decode(String.self, forKey: .pattern)
         replacement = try container.decode(String.self, forKey: .replacement)
     }
 
-    static func create(isRegex: Bool = false, ignoreCase: Bool = false) -> Replacement {
-        Replacement(isRegex: isRegex, ignoreCase: ignoreCase, pattern: "", replacement: "")
+    static func create(isRegex: Bool = false, caseSensitive: Bool = true) -> Replacement {
+        Replacement(isRegex: isRegex, caseSensitive: caseSensitive, pattern: "", replacement: "")
     }
 }

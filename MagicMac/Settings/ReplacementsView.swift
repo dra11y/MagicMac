@@ -24,7 +24,7 @@ struct ReplacementsView: View {
     @StateObject private var replacementsManager = ReplacementsManager.shared
     @State private var selection = Set<UUID>()
 
-    enum FieldType { case pattern, replacement, regex, ignoreCase }
+    enum FieldType { case pattern, replacement, regex, caseSensitive }
     struct FocusIdentifier: Hashable {
         let id: UUID
         let field: FieldType
@@ -75,6 +75,30 @@ struct ReplacementsView: View {
                     EnabledToggleView(row: $row, updateHandler: update)
                 }
                 .width(50)
+                
+                TableColumn("Regex") { $row in
+                    Toggle(isOn: $row.isRegex) {
+                        EmptyView()
+                    }
+                    .focusable()
+                    .focused($focused, equals: FocusIdentifier(row.id, .regex))
+                    .onChange(of: row.isRegex) {
+                        update(row)
+                    }
+                }
+                .width(50)
+
+                TableColumn("Case Sensitive") { $row in
+                    Toggle(isOn: $row.caseSensitive) {
+                        EmptyView()
+                    }
+                    .focusable()
+                    .focused($focused, equals: FocusIdentifier(row.id, .caseSensitive))
+                    .onChange(of: row.caseSensitive) {
+                        update(row)
+                    }
+                }
+                .width(50)
 
                 TableColumn("Pattern") { $row in
                     TextField("", text: $row.pattern, onEditingChanged: { editing in
@@ -82,6 +106,8 @@ struct ReplacementsView: View {
                             update(row)
                         }
                     })
+                    .fontDesign(.monospaced)
+                    .font(.system(size: 20))
                     .focused($focused, equals: FocusIdentifier(row.id, .pattern))
                     .onSubmit { update(row) }
                     .accessibilityTextContentType(.sourceCode)
@@ -93,31 +119,11 @@ struct ReplacementsView: View {
                             update(row)
                         }
                     })
+                    .fontDesign(.monospaced)
+                    .font(.system(size: 20))
                     .focused($focused, equals: FocusIdentifier(row.id, .replacement))
                     .accessibilityTextContentType(.sourceCode)
                     .onSubmit {
-                        update(row)
-                    }
-                }
-
-                TableColumn("Regex") { $row in
-                    Toggle(isOn: $row.isRegex) {
-                        EmptyView()
-                    }
-                    .focusable()
-                    .focused($focused, equals: FocusIdentifier(row.id, .regex))
-                    .onChange(of: row.isRegex) {
-                        update(row)
-                    }
-                }
-
-                TableColumn("Ignore Case") { $row in
-                    Toggle(isOn: $row.ignoreCase) {
-                        EmptyView()
-                    }
-                    .focusable()
-                    .focused($focused, equals: FocusIdentifier(row.id, .ignoreCase))
-                    .onChange(of: row.ignoreCase) {
                         update(row)
                     }
                 }

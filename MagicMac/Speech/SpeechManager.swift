@@ -13,16 +13,21 @@ import SwiftUI
 import WakeAudio
 
 class SpeechHUDWindow: NSWindow {
-    private let invertedColorManager: InvertedColorManager
-    private let textView: NSTextView
+    private var invertedColorManager: InvertedColorManager?
+    private var textView: NSTextView?
     private var utterance: AVSpeechUtterance?
 
     private func computeBackgroundColor() -> NSColor {
         (isInverted ? NSColor.white : NSColor.black).withAlphaComponent(0.5)
     }
 
+    override var canBecomeKey: Bool {
+        get { true }
+        set { }
+    }
+
     private var isInverted: Bool {
-        invertedColorManager.isInverted
+        return invertedColorManager?.isInverted ?? false
     }
 
     private var textColor: NSColor {
@@ -33,10 +38,8 @@ class SpeechHUDWindow: NSWindow {
         isInverted ? .blue : .yellow
     }
 
-    // Custom initializer with dependency
     init(invertedColorManager: InvertedColorManager) {
         self.invertedColorManager = invertedColorManager
-        textView = NSTextView()
 
         let screenRect = NSScreen.main?.visibleFrame ?? NSRect.zero
         let windowSize = CGSize(width: screenRect.width * 0.8, height: screenRect.height * 0.5)
@@ -47,7 +50,8 @@ class SpeechHUDWindow: NSWindow {
             height: windowSize.height
         )
 
-        super.init(contentRect: windowRect, styleMask: [.titled], backing: .buffered, defer: false)
+        super.init(contentRect: windowRect, styleMask: [.titled], backing: .buffered, defer: true)
+
         setupHUD()
     }
 
@@ -55,8 +59,19 @@ class SpeechHUDWindow: NSWindow {
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
+    deinit {
+        print("HUD Window deinit")
+        for subview in contentView?.subviews ?? [] {
+            subview.removeFromSuperview()
+        }
+        textView = nil
+        invertedColorManager = nil
+    }
+    
     private func setupHUD() {
+        let textView = NSTextView()
+        self.textView = textView
         contentView!.addSubview(textView)
         textView.translatesAutoresizingMaskIntoConstraints = false
 
@@ -75,9 +90,12 @@ class SpeechHUDWindow: NSWindow {
         textView.isEditable = false
         textView.backgroundColor = .clear
         textView.font = NSFont.systemFont(ofSize: 30)
+        print("done setupHUD")
     }
 
     func update(range: NSRange, utterance: AVSpeechUtterance) {
+        guard let textView = textView else { return }
+        
         if !isVisible {
             show()
         }
@@ -115,7 +133,7 @@ class SpeechHUDWindow: NSWindow {
 public class SpeechManager: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
     let invertedColorManager: InvertedColorManager
 
-    lazy var hudWindow = SpeechHUDWindow(invertedColorManager: invertedColorManager)
+    var hudWindow: SpeechHUDWindow?
 
     public enum SpeechState: String {
         case stopped
@@ -127,17 +145,12 @@ public class SpeechManager: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
     @Published public var state: SpeechState = .stopped
 
     public func speechSynthesizer(_: AVSpeechSynthesizer, didStart _: AVSpeechUtterance) {
-//        print("did start speaking")
         state = .speaking
     }
 
     public func speechSynthesizer(_: AVSpeechSynthesizer, willSpeakRangeOfSpeechString characterRange: NSRange, utterance: AVSpeechUtterance) {
-//        print("willSpeakRangeOfSpeechString: \(characterRange) of utterance: \(utterance)")
-        if debugSpeechHUD {
-            hudWindow.update(range: characterRange, utterance: utterance)
-        } else if hudWindow.isVisible {
-            hudWindow.hide()
-        }
+        showSpeechHUDWindowIfNeeded()
+        hudWindow?.update(range: characterRange, utterance: utterance)
         state = .speaking
         currentCharacterIndex = characterRange.location
     }
@@ -148,7 +161,7 @@ public class SpeechManager: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
             currentCharacterIndex = 0
         }
         didChangeRate = false
-        hudWindow.hide()
+        hudWindow?.hide()
         state = .stopped
     }
 
@@ -178,7 +191,7 @@ public class SpeechManager: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
 
         startBackgroundSilence()
         observeSleepWakeNotifications()
-        observeAudioConfigurationChanges()
+        observeAudioConfigurationChanged()
         speechSynthesizer.delegate = self
     }
 
@@ -207,7 +220,7 @@ public class SpeechManager: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(screenDidWake), name: NSWorkspace.screensDidWakeNotification, object: nil)
     }
 
-    private func observeAudioConfigurationChanges() {
+    private func observeAudioConfigurationChanged() {
         NotificationCenter.default.addObserver(self, selector: #selector(audioConfigurationDidChange), name: NSNotification.Name.AVAudioEngineConfigurationChange, object: audioEngine)
     }
 
@@ -222,29 +235,27 @@ public class SpeechManager: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
     @objc private func systemWillSleep(notification _: NSNotification) {
         stopSpeaking(force: true)
         stopBackgroundSilence()
+        hudWindow = nil
+        speechSynthesizer.delegate = nil
     }
 
     @objc private func systemDidWake(notification _: NSNotification) {
-        print("\n\n\n[WAKEAUDIO] *** systemDidWake *** \(Date.now)\n\n\n")
         audioConfigurationDidChange()
+        speechSynthesizer.delegate = self
     }
 
     public static func wakeAudio() {
-//        print("[WAKEAUDIO] \(Date.now) Checking if audio is asleep...")
         let isAsleep = isAudioAsleep()
         if isAsleep {
-//            print("[WAKEAUDIO] \(Date.now) Waking audio...")
             wakeAudioInterfaces(false)
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 Self.wakeAudio()
             }
             return
         }
-//        print("[WAKEAUDIO] \(Date.now) Audio is awake!")
     }
 
     @objc private func screenDidWake(notification _: NSNotification) {
-//        print("\n\n\n[WAKEAUDIO] *** screenDidWake *** \(Date.now)\n\n\n")
 
         speechSynthesizer.stopSpeaking(at: .immediate)
         speechSynthesizer = AVSpeechSynthesizer()
@@ -255,7 +266,6 @@ public class SpeechManager: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
     }
 
     @objc private func audioConfigurationDidChange(notification _: NSNotification? = nil) {
-//        print("[WAKEAUDIO] audioConfigurationDidChange \(Date.now)")
         if isAudioAsleep() {
             return
         }
@@ -339,7 +349,7 @@ public class SpeechManager: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
         for replacement in replacements {
             if replacement.isRegex {
                 /// Replace using regex
-                let options: NSRegularExpression.Options = replacement.ignoreCase ? [.caseInsensitive] : []
+                let options: NSRegularExpression.Options = replacement.caseSensitive ? [] : [.caseInsensitive]
                 guard
                     let regex = try? NSRegularExpression(pattern: replacement.pattern, options: options)
                 else { continue }
@@ -347,7 +357,7 @@ public class SpeechManager: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
                 replacedText = regex.stringByReplacingMatches(in: replacedText, range: range, withTemplate: " \(replacement.replacement) ")
             } else {
                 // Replace using plain text
-                let options: String.CompareOptions = replacement.ignoreCase ? [.caseInsensitive, .diacriticInsensitive] : [.diacriticInsensitive]
+                let options: String.CompareOptions = replacement.caseSensitive ? [.diacriticInsensitive] : [.diacriticInsensitive, .caseInsensitive]
                 replacedText = replacedText.replacingOccurrences(of: replacement.pattern, with: " \(replacement.replacement) ", options: options)
             }
         }
@@ -395,6 +405,18 @@ public class SpeechManager: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
         }
         FakeKey.shared.send(fakeKey: "C", useCommandFlag: true)
     }
+    
+    private func showSpeechHUDWindowIfNeeded() {
+        if debugSpeechHUD {
+            if hudWindow == nil {
+                hudWindow = SpeechHUDWindow(invertedColorManager: invertedColorManager)
+            }
+            hudWindow!.show()
+        } else {
+            hudWindow?.hide()
+            hudWindow = nil
+        }
+    }
 
     private func startSpeaking() {
         guard currentCharacterIndex < speechString.count else { return }
@@ -416,9 +438,7 @@ public class SpeechManager: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
         if !speechVoice.isEmpty {
             utterance.voice = AVSpeechSynthesisVoice(identifier: speechVoice)
         }
-        if debugSpeechHUD {
-            hudWindow.show()
-        }
+        showSpeechHUDWindowIfNeeded()
         speechSynthesizer.speak(utterance)
     }
 }
