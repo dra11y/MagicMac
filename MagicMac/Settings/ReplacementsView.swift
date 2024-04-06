@@ -71,6 +71,12 @@ struct ReplacementsView: View {
     private var replacementsTable: some View {
         ScrollViewReader { proxy in
             Table($filteredReplacements, selection: $selection) {
+                TableColumn("Index") { $row in
+                    Text(String(index(of: row) ?? -1))
+                        .font(.system(size: 20))
+                }
+                .width(50)
+
                 TableColumn("Enabled") { $row in
                     EnabledToggleView(row: $row, updateHandler: update)
                 }
@@ -190,7 +196,7 @@ struct ReplacementsView: View {
 struct EnabledToggleView: View {
     @Binding var row: Replacement
     var updateHandler: (_ row: Replacement) -> Void
-
+    
     var body: some View {
         Toggle(isOn: $row.isEnabled) {
             EmptyView()

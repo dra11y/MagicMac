@@ -185,6 +185,7 @@
 		E249DF3828A752B800479A6B /* MagicMac */ = {
 			isa = PBXGroup;
 			children = (
+				E2BA446F2BBF3BF700CD97D9 /* Calendar */,
 				E22C7D612B72BED8003ADCC7 /* MouseBatteryLevel */,
 				E278F7A92AEEE65D00AFC7B5 /* Speech */,
 				E28617D92AEEE43800EAD806 /* Settings */,
@@ -257,6 +258,13 @@
 				E28617D72AEEE40800EAD806 /* MenuBarExtraContent.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		E2BA446F2BBF3BF700CD97D9 /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Calendar;
 			sourceTree = "<group>";
 		};
 		E2E5ABC828A86B99005C2B49 /* MagicMacLauncher */ = {
