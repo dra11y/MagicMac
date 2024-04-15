@@ -8,11 +8,10 @@
 import AVFoundation
 import SwiftUI
 import WakeAudio
+import SettingsAccess
 
 @available(macOS 14.0, *)
 struct MenuExtraMenuContent: View {
-    @Environment(\.openSettings) private var openSettings
-
     @AppStorage(.speechRate) var speechRate: Double = UserDefaults.UniversalAccess.preferredRate
     @AppStorage(.slowSpeechRate) var slowSpeechRate: Double = UserDefaults.UniversalAccess.preferredSlowRate
     @AppStorage(.speechVolume) var speechVolume: Double = UserDefaults.UniversalAccess.preferredVolume
@@ -69,17 +68,19 @@ struct MenuExtraMenuContent: View {
             }
 
             HStack {
-                Button("Settings") {
+                SettingsLink {
+                    Text("Settings")
+                } preAction: {
+                    NSApp.activate(ignoringOtherApps: true)
+                } postAction: {
                     for window in NSApplication.shared.windows {
                         if window.level == NSWindow.Level.popUpMenu {
                             window.close()
                             break
                         }
                     }
-
-                    try? openSettings()
                 }
-
+                
                 Spacer()
 
                 Button {

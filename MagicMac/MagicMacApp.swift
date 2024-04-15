@@ -8,7 +8,6 @@
 import AVFoundation
 import Cocoa
 import ServiceManagement
-import SettingsAccess
 import SwiftUI
 import WakeAudio
 
@@ -76,7 +75,6 @@ final class MagicMacApp: App {
         if #available(macOS 14.0, *) {
             MenuBarExtra {
                 MenuExtraMenuContent()
-                    .openSettingsAccess()
             } label: {
                 MenuBarExtraIconView()
                     .environmentObject(invertedColorManager)
