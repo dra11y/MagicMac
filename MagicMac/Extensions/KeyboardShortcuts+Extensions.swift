@@ -18,6 +18,7 @@ extension KeyboardShortcuts.Name: CaseIterable {
             decreaseBrightness,
             speakSelection,
             speakSelectionSlowly,
+            toggleScreenRecording,
         ]
     }
 
@@ -29,6 +30,7 @@ extension KeyboardShortcuts.Name: CaseIterable {
     static let decreaseBrightness = Self("decreaseBrightness")
     static let speakSelection = Self("speakSelection")
     static let speakSelectionSlowly = Self("speakSelectionSlowly")
+    static let toggleScreenRecording = Self("toggleScreenRecording")
 
     var displayName: String {
         rawValue.sentenceCased

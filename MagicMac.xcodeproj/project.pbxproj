@@ -20,6 +20,12 @@
 		E249DF5B28A8413000479A6B /* NSSound+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E249DF5A28A8413000479A6B /* NSSound+Extensions.swift */; };
 		E255F4B12AEE3D8800F1FBD3 /* WakeAudio in Frameworks */ = {isa = PBXBuildFile; productRef = E255F4B02AEE3D8800F1FBD3 /* WakeAudio */; };
 		E25CF14329E70A3D00895FC3 /* ReplacementsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25CF14229E70A3D00895FC3 /* ReplacementsManager.swift */; };
+		E272DDA02BD34ED9007389F2 /* ScreenRecorder.swift.old in Sources */ = {isa = PBXBuildFile; fileRef = E272DD9F2BD34ED9007389F2 /* ScreenRecorder.swift.old */; };
+		E272DDA22BD34F91007389F2 /* Types.swift.old in Sources */ = {isa = PBXBuildFile; fileRef = E272DDA12BD34F91007389F2 /* Types.swift.old */; };
+		E272DDA42BD34FEB007389F2 /* ScreenRecorder+Recording.swift.old in Sources */ = {isa = PBXBuildFile; fileRef = E272DDA32BD34FEB007389F2 /* ScreenRecorder+Recording.swift.old */; };
+		E272DDA62BD3504A007389F2 /* ScreenRecorder+Processing.swift.old in Sources */ = {isa = PBXBuildFile; fileRef = E272DDA52BD3504A007389F2 /* ScreenRecorder+Processing.swift.old */; };
+		E272DDA92BD375C2007389F2 /* ScreenRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E272DDA82BD375C2007389F2 /* ScreenRecorder.swift */; };
+		E272DDAB2BD3771D007389F2 /* RecordMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = E272DDAA2BD3771D007389F2 /* RecordMode.swift */; };
 		E278F7A72AEEE57900AFC7B5 /* Notification+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28617C92AEEE19700EAD806 /* Notification+Extensions.swift */; };
 		E278F7A82AEEE5F700AFC7B5 /* Notification+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28617C92AEEE19700EAD806 /* Notification+Extensions.swift */; };
 		E278F7AB2AEEE66E00AFC7B5 /* PasteboardObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E278F7AA2AEEE66E00AFC7B5 /* PasteboardObserver.swift */; };
@@ -87,6 +93,12 @@
 		E249DF5828A8362900479A6B /* Permissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Permissions.swift; sourceTree = "<group>"; };
 		E249DF5A28A8413000479A6B /* NSSound+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSSound+Extensions.swift"; sourceTree = "<group>"; };
 		E25CF14229E70A3D00895FC3 /* ReplacementsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplacementsManager.swift; sourceTree = "<group>"; };
+		E272DD9F2BD34ED9007389F2 /* ScreenRecorder.swift.old */ = {isa = PBXFileReference; lastKnownFileType = text; path = ScreenRecorder.swift.old; sourceTree = "<group>"; };
+		E272DDA12BD34F91007389F2 /* Types.swift.old */ = {isa = PBXFileReference; lastKnownFileType = text; path = Types.swift.old; sourceTree = "<group>"; };
+		E272DDA32BD34FEB007389F2 /* ScreenRecorder+Recording.swift.old */ = {isa = PBXFileReference; lastKnownFileType = text; path = "ScreenRecorder+Recording.swift.old"; sourceTree = "<group>"; };
+		E272DDA52BD3504A007389F2 /* ScreenRecorder+Processing.swift.old */ = {isa = PBXFileReference; lastKnownFileType = text; path = "ScreenRecorder+Processing.swift.old"; sourceTree = "<group>"; };
+		E272DDA82BD375C2007389F2 /* ScreenRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecorder.swift; sourceTree = "<group>"; };
+		E272DDAA2BD3771D007389F2 /* RecordMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordMode.swift; sourceTree = "<group>"; };
 		E278F7AA2AEEE66E00AFC7B5 /* PasteboardObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardObserver.swift; sourceTree = "<group>"; };
 		E278F7AC2AEEE8C300AFC7B5 /* SpeechTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechTab.swift; sourceTree = "<group>"; };
 		E278F7AE2AEEE8D700AFC7B5 /* ShortcutsTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutsTab.swift; sourceTree = "<group>"; };
@@ -185,6 +197,8 @@
 		E249DF3828A752B800479A6B /* MagicMac */ = {
 			isa = PBXGroup;
 			children = (
+				E272DDA72BD375B9007389F2 /* ScreenRecorder */,
+				E2D8F47B2BD3038000BDC242 /* OldScreenRecorder */,
 				E2BA446F2BBF3BF700CD97D9 /* Calendar */,
 				E22C7D612B72BED8003ADCC7 /* MouseBatteryLevel */,
 				E278F7A92AEEE65D00AFC7B5 /* Speech */,
@@ -205,6 +219,15 @@
 				E282F0852AEA4DBD003035E2 /* KeyboardShortcutsManager.swift */,
 			);
 			path = MagicMac;
+			sourceTree = "<group>";
+		};
+		E272DDA72BD375B9007389F2 /* ScreenRecorder */ = {
+			isa = PBXGroup;
+			children = (
+				E272DDA82BD375C2007389F2 /* ScreenRecorder.swift */,
+				E272DDAA2BD3771D007389F2 /* RecordMode.swift */,
+			);
+			path = ScreenRecorder;
 			sourceTree = "<group>";
 		};
 		E278F7A92AEEE65D00AFC7B5 /* Speech */ = {
@@ -265,6 +288,17 @@
 			children = (
 			);
 			path = Calendar;
+			sourceTree = "<group>";
+		};
+		E2D8F47B2BD3038000BDC242 /* OldScreenRecorder */ = {
+			isa = PBXGroup;
+			children = (
+				E272DD9F2BD34ED9007389F2 /* ScreenRecorder.swift.old */,
+				E272DDA12BD34F91007389F2 /* Types.swift.old */,
+				E272DDA32BD34FEB007389F2 /* ScreenRecorder+Recording.swift.old */,
+				E272DDA52BD3504A007389F2 /* ScreenRecorder+Processing.swift.old */,
+			);
+			path = OldScreenRecorder;
 			sourceTree = "<group>";
 		};
 		E2E5ABC828A86B99005C2B49 /* MagicMacLauncher */ = {
@@ -409,13 +443,18 @@
 				E278F7B32AEEEAEB00AFC7B5 /* CustomGroupBox.swift in Sources */,
 				E278F7AB2AEEE66E00AFC7B5 /* PasteboardObserver.swift in Sources */,
 				E278F7AD2AEEE8C300AFC7B5 /* SpeechTab.swift in Sources */,
+				E272DDA62BD3504A007389F2 /* ScreenRecorder+Processing.swift.old in Sources */,
 				E28617CE2AEEE1DD00EAD806 /* Double+Extensions.swift in Sources */,
+				E272DDA42BD34FEB007389F2 /* ScreenRecorder+Recording.swift.old in Sources */,
+				E272DDA22BD34F91007389F2 /* Types.swift.old in Sources */,
 				E28617D82AEEE40800EAD806 /* MenuBarExtraContent.swift in Sources */,
 				E28617D62AEEE3F400EAD806 /* MenuBarExtraIconView.swift in Sources */,
 				E278F7AF2AEEE8D700AFC7B5 /* ShortcutsTab.swift in Sources */,
 				E2AD352B2AE8F7A2008A3EBF /* InvertedColorManager.swift in Sources */,
 				E22C7D632B72BEF6003ADCC7 /* getMouseBatteryLevel.swift in Sources */,
 				E28617C82AEEE17900EAD806 /* AVSpeechSynthesisVoice+Extensions.swift in Sources */,
+				E272DDA92BD375C2007389F2 /* ScreenRecorder.swift in Sources */,
+				E272DDAB2BD3771D007389F2 /* RecordMode.swift in Sources */,
 				E28298DD29E620B60088437C /* SpeechManager.swift in Sources */,
 				E2C70D0029E6753E0099FFBA /* ReplacementsSettings.swift in Sources */,
 				E28617D02AEEE21000EAD806 /* KeyboardShortcuts+Extensions.swift in Sources */,
@@ -433,6 +472,7 @@
 				E2E5ABE728A878EB005C2B49 /* MaximizeFrontWindow.swift in Sources */,
 				E249DF5728A77C6A00479A6B /* HoverSpeech.swift in Sources */,
 				E249DF5928A8362900479A6B /* Permissions.swift in Sources */,
+				E272DDA02BD34ED9007389F2 /* ScreenRecorder.swift.old in Sources */,
 				E249DF5328A7728800479A6B /* PolarityInverter.swift in Sources */,
 				E2FC512528A9918100A1FCA2 /* NSImage+Extensions.swift in Sources */,
 				E28617C62AEEE15000EAD806 /* UserDefaults+Extensions.swift in Sources */,
@@ -580,7 +620,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = MagicMac/MagicMac.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "3rd Party Mac Developer Application";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -588,11 +628,12 @@
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = LSQM3T2SC6;
-				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MagicMac/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSAppleEventsUsageDescription = "Send AppleScript Events for Accessibility";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -624,7 +665,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = MagicMac/MagicMac.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "3rd Party Mac Developer Application";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -632,11 +673,12 @@
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = LSQM3T2SC6;
-				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MagicMac/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSAppleEventsUsageDescription = "Send AppleScript Events for Accessibility";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -665,7 +707,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = MagicMacLauncher/MagicMacLauncher.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "3rd Party Mac Developer Application";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -701,7 +743,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = MagicMacLauncher/MagicMacLauncher.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "3rd Party Mac Developer Application";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;

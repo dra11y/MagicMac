@@ -23,7 +23,7 @@ class SpeechHUDWindow: NSWindow {
 
     override var canBecomeKey: Bool {
         get { true }
-        set { }
+        set {}
     }
 
     private var isInverted: Bool {
@@ -59,7 +59,7 @@ class SpeechHUDWindow: NSWindow {
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     deinit {
         print("HUD Window deinit")
         for subview in contentView?.subviews ?? [] {
@@ -68,7 +68,7 @@ class SpeechHUDWindow: NSWindow {
         textView = nil
         invertedColorManager = nil
     }
-    
+
     private func setupHUD() {
         let textView = NSTextView()
         self.textView = textView
@@ -95,7 +95,7 @@ class SpeechHUDWindow: NSWindow {
 
     func update(range: NSRange, utterance: AVSpeechUtterance) {
         guard let textView = textView else { return }
-        
+
         if !isVisible {
             show()
         }
@@ -256,7 +256,6 @@ public class SpeechManager: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
     }
 
     @objc private func screenDidWake(notification _: NSNotification) {
-
         speechSynthesizer.stopSpeaking(at: .immediate)
         speechSynthesizer = AVSpeechSynthesizer()
 
@@ -405,7 +404,7 @@ public class SpeechManager: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
         }
         FakeKey.shared.send(fakeKey: "C", useCommandFlag: true)
     }
-    
+
     private func showSpeechHUDWindowIfNeeded() {
         if debugSpeechHUD {
             if hudWindow == nil {

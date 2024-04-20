@@ -12,6 +12,7 @@ class KeyboardShortcutsManager: ObservableObject {
     let invertedColorManager: InvertedColorManager
     let speechManager: SpeechManager
     let dimmer: DisplayDimmer
+//    let screenRecorder = ScreenRecorder()
 
     init(invertedColorManager: InvertedColorManager, speechManager: SpeechManager, dimmer: DisplayDimmer) {
         self.invertedColorManager = invertedColorManager
@@ -58,5 +59,12 @@ class KeyboardShortcutsManager: ObservableObject {
             for: .speakSelectionSlowly,
             action: speechManager.speakSelectionSlowly
         )
+        KeyboardShortcuts.onKeyDown(
+            for: .toggleScreenRecording)
+        {
+            Task {
+                try! await ScreenRecorder.toggle()
+            }
+        }
     }
 }

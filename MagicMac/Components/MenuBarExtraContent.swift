@@ -6,9 +6,9 @@
 //
 
 import AVFoundation
+import SettingsAccess
 import SwiftUI
 import WakeAudio
-import SettingsAccess
 
 @available(macOS 14.0, *)
 struct MenuExtraMenuContent: View {
@@ -66,6 +66,14 @@ struct MenuExtraMenuContent: View {
                     .labelsHidden()
                     .toggleStyle(.switch)
             }
+            
+            Button {
+                Task {
+                    try! await ScreenRecorder.toggle()
+                }
+            } label: {
+                Text("Toggle Screen Recording")
+            }
 
             HStack {
                 SettingsLink {
@@ -80,7 +88,7 @@ struct MenuExtraMenuContent: View {
                         }
                     }
                 }
-                
+
                 Spacer()
 
                 Button {

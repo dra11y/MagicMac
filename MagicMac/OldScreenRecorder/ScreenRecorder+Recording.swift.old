@@ -1,0 +1,183 @@
+//
+//  ScreenRecorder+Recording.swift
+//  MagicMac
+//
+//  Created by Tom Grushka on 4/19/24.
+//
+
+import AVFAudio
+import ScreenCaptureKit
+import UserNotifications
+import VideoToolbox
+import AVFoundation
+//import CoreGraphics
+
+// https://nonstrict.eu/blog/2023/recording-to-disk-with-screencapturekit/
+// https://github.com/nonstrict-hq/ScreenCaptureKit-Recording-example/blob/main/Sources/sckrecording/main.swift
+
+extension ScreenRecorder {
+    public func prepRecord(streamType _: StreamType = .screen) {
+        updateAudioSettings()
+
+        // while recording, keep a timer which updates the menu's stats
+        updateTimer?.invalidate()
+        updateTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            print("TG: Recording...")
+        }
+        updateTimer?.fire()
+
+        Task {
+            await updateAvailableContent()
+            screen = availableContent!.displays.first(where: { $0.displayID == CGMainDisplayID() })!
+
+            print("TG: screen: \(String(describing: screen))")
+            filter = SCContentFilter(display: screen ?? availableContent!.displays.first!, excludingApplications: [], exceptingWindows: [])
+
+            await record(filter: filter!)
+        }
+    }
+
+    private func record(filter: SCContentFilter) async {
+        let audioOnly = false
+        let highRes = false
+        let width = Int(filter.contentRect.width) * (highRes ? Int(filter.pointPixelScale) : 1)
+        let height = Int(filter.contentRect.height) * (highRes ? Int(filter.pointPixelScale) : 1)
+        
+        guard let assistant = AVOutputSettingsAssistant(preset: .hevc3840x2160) else {
+            fatalError("Can't create AVOutputSettingsAssistant")
+        }
+        assistant.sourceVideoFormat = try? CMVideoFormatDescription(videoCodecType: .hevc, width: width, height: height)
+
+        guard var videoSettings = assistant.videoSettings else {
+            fatalError("No video settings!")
+        }
+        videoSettings[AVVideoWidthKey] = width
+        videoSettings[AVVideoHeightKey] = height
+        videoSettings[AVVideoColorPropertiesKey] = [
+            AVVideoTransferFunctionKey: AVVideoTransferFunction_ITU_R_709_2,
+            AVVideoColorPrimariesKey: AVVideoColorPrimaries_P3_D65,
+            AVVideoYCbCrMatrixKey: AVVideoYCbCrMatrix_ITU_R_709_2,
+        ]
+
+        let streamConfig = SCStreamConfiguration()
+        // Increase the depth of the frame queue to ensure high fps at the expense of increasing
+        // the memory footprint of WindowServer.
+        streamConfig.queueDepth = 8 // 4 minimum, or it becomes very stuttery
+        streamConfig.width = width
+        streamConfig.height = height
+
+        let frameRate = 60
+        streamConfig.minimumFrameInterval = CMTime(value: 1, timescale: CMTimeScale(frameRate))
+        let showMouse = true
+        streamConfig.showsCursor = showMouse
+        streamConfig.capturesAudio = true
+        streamConfig.sampleRate = audioSettings[AVSampleRateKey] as! Int
+        streamConfig.channelCount = audioSettings[AVNumberOfChannelsKey] as! Int
+
+        print("TG: streamConfig: \(streamConfig.width) x \(streamConfig.height)")
+
+        let stream = SCStream(filter: filter, configuration: streamConfig, delegate: self)
+        do {
+            try stream.addStreamOutput(self, type: .screen, sampleHandlerQueue: .global())
+            try stream.addStreamOutput(self, type: .audio, sampleHandlerQueue: .global())
+            if !audioOnly {
+                initVideo(streamConfig: streamConfig)
+            } else {
+                startTime = Date.now
+            }
+            self.stream = stream
+            try await stream.startCapture()
+        } catch {
+            fatalError("capture failed".local)
+        }
+        print("TG: record!")
+    }
+    
+    public func stopRecording() async {
+        print("TG: stopRecording()")
+        try? await stream?.stopCapture()
+        stream = nil
+//        if streamType != .systemaudio {
+            closeVideo()
+//        }
+        streamType = nil
+//        audioFile = nil // close audio file
+        window = nil
+        screen = nil
+        startTime = nil
+        updateTimer?.invalidate()
+
+//        let content = UNMutableNotificationContent()
+//        content.title = "Recording Completed".local
+//        if let filePath = filePath {
+//            content.body = String(format: "File saved to: %@".local, filePath)
+//        } else {
+//            content.body = String(format: "File saved to folder: %@".local, saveDirectory)
+//        }
+//        content.sound = UNNotificationSound.default
+//        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+//        let request = UNNotificationRequest(identifier: "azayaka.completed.\(Date.now)", content: content, trigger: trigger)
+//        UNUserNotificationCenter.current().add(request) { error in
+//            if let error = error { print("Notification failed to send: \(error.localizedDescription)") }
+//        }
+    }
+
+    func updateAudioSettings() {
+        let audioFormat = AudioFormat.aac.rawValue
+        audioSettings = [AVSampleRateKey: 48000, AVNumberOfChannelsKey: 2] // reset audioSettings
+        switch audioFormat {
+        case AudioFormat.aac.rawValue:
+            audioSettings[AVFormatIDKey] = kAudioFormatMPEG4AAC
+            audioSettings[AVEncoderBitRateKey] = AudioQuality.high.rawValue
+        case AudioFormat.alac.rawValue:
+            audioSettings[AVFormatIDKey] = kAudioFormatAppleLossless
+            audioSettings[AVEncoderBitDepthHintKey] = 16
+        case AudioFormat.flac.rawValue:
+            audioSettings[AVFormatIDKey] = kAudioFormatFLAC
+        default:
+            assertionFailure("unknown audio format while setting audio settings: ".local + audioFormat)
+        }
+    }
+
+//    func prepareAudioRecording() {
+//        let fileEnding = "m4a"
+//        filePath = "\(getFilePath()).\(fileEnding)"
+//        audioFile = try! AVAudioFile(forWriting: URL(fileURLWithPath: filePath), settings: audioSettings, commonFormat: .pcmFormatFloat32, interleaved: false)
+//    }
+
+    func getFilePath() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "y-MM-dd HH.mm.ss"
+        
+        return saveDirectory + "/Recording at ".local + dateFormatter.string(from: Date())
+    }
+
+    func getRecordingLength() -> String {
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.minute, .second]
+        formatter.zeroFormattingBehavior = .pad
+        formatter.unitsStyle = .positional
+        return formatter.string(from: Date.now.timeIntervalSince(startTime ?? Date.now)) ?? "Unknown".local
+    }
+
+    func getRecordingSize() -> String {
+        do {
+            if let filePath = filePath {
+                let fileAttr = try FileManager.default.attributesOfItem(atPath: filePath)
+                let byteFormat = ByteCountFormatter()
+                byteFormat.allowedUnits = [.useMB]
+                byteFormat.countStyle = .file
+                return byteFormat.string(fromByteCount: fileAttr[FileAttributeKey.size] as! Int64)
+            }
+        } catch {
+            print(String(format: "failed to fetch file for size indicator: %@".local, error.localizedDescription))
+        }
+        return "Unknown".local
+    }
+}
+
+extension NSScreen {
+    var displayID: CGDirectDisplayID? {
+        return deviceDescription[NSDeviceDescriptionKey(rawValue: "NSScreenNumber")] as? CGDirectDisplayID
+    }
+}

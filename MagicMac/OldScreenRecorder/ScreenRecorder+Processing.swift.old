@@ -1,0 +1,240 @@
+//
+//  ScreenRecorder+Processing.swift
+//  MagicMac
+//
+//  Created by Tom Grushka on 4/19/24.
+//
+
+import AVFAudio
+import AVFoundation
+import ScreenCaptureKit
+
+extension ScreenRecorder {
+    func initVideo(streamConfig: SCStreamConfiguration) {
+        startTime = nil
+
+        let fileEnding = "mp4"
+        var fileType: AVFileType
+        switch fileEnding {
+        case VideoFormat.mov.rawValue: fileType = AVFileType.mov
+        case VideoFormat.mp4.rawValue: fileType = AVFileType.mp4
+        default: fatalError("loaded unknown video format".local)
+        }
+
+        filePath = "\(getFilePath()).\(fileEnding)"
+        guard let assetWriter = try? AVAssetWriter(outputURL: URL(fileURLWithPath: filePath), fileType: fileType) else {
+            fatalError("TG: cannot create asset writer!")
+        }
+//        let encoderIsH265 = ud.string(forKey: "encoder") == Encoder.h265.rawValue
+        let encoderIsH265 = true
+        let frameRate = 30
+        let videoQuality = 1.0 // ud.double(forKey: "videoQuality")
+        let fpsMultiplier = Double(frameRate) / 8
+        let encoderMultiplier: Double = encoderIsH265 ? 0.5 : 0.9
+        let targetBitrate = (Double(streamConfig.width) * Double(streamConfig.height) * fpsMultiplier * encoderMultiplier * videoQuality)
+        print("TG: targetBitrate: \(targetBitrate)")
+        let videoSettings: [String: Any] = [
+            AVVideoCodecKey: encoderIsH265 ? AVVideoCodecType.hevc : AVVideoCodecType.h264,
+            AVVideoWidthKey: streamConfig.width,
+            AVVideoHeightKey: streamConfig.height,
+            AVVideoCompressionPropertiesKey: [
+                AVVideoAverageBitRateKey: Int(targetBitrate),
+                AVVideoExpectedSourceFrameRateKey: frameRate,
+            ] as [String: Any],
+        ]
+        let videoInput = AVAssetWriterInput(mediaType: AVMediaType.video, outputSettings: videoSettings)
+        let audioInput = AVAssetWriterInput(mediaType: AVMediaType.audio, outputSettings: audioSettings)
+//        let micInput = AVAssetWriterInput(mediaType: AVMediaType.audio, outputSettings: audioSettings)
+        videoInput.expectsMediaDataInRealTime = true
+        audioInput.expectsMediaDataInRealTime = true
+//        micInput.expectsMediaDataInRealTime = true
+        
+        if assetWriter.canAdd(videoInput) {
+            assetWriter.add(videoInput)
+        } else {
+            fatalError("TG: cannot add video input!")
+        }
+
+        if assetWriter.canAdd(audioInput) {
+            assetWriter.add(audioInput)
+        } else {
+            fatalError("TG: cannot add audio input!")
+        }
+
+//        if recordMic {
+//            if assetWriter.canAdd(micInput) {
+//                assetWriter.add(micInput)
+//            }
+//
+//            let input = audioEngine.inputNode
+//            input.installTap(onBus: 0, bufferSize: 1024, format: input.inputFormat(forBus: 0)) { [self] buffer, _ in
+//                if micInput.isReadyForMoreMediaData, startTime != nil {
+//                    micInput.append(buffer.asSampleBuffer!)
+//                }
+//            }
+//            try! audioEngine.start()
+//        }
+
+        if !assetWriter.startWriting() {
+            fatalError("TG: assetWriter cannot startWriting")
+        }
+        
+        self.assetWriter = assetWriter
+        self.videoInput = videoInput
+        self.audioInput = audioInput
+    }
+
+    func closeVideo() {
+        print("TG: closeVideo()")
+        let dispatchGroup = DispatchGroup()
+        dispatchGroup.enter()
+//        videoInput!.markAsFinished()
+//        audioInput!.markAsFinished()
+//        if recordMic {
+//            micInput.markAsFinished()
+//            audioEngine.inputNode.removeTap(onBus: 0)
+//            audioEngine.stop()
+//        }
+        assetWriter!.finishWriting {
+            print("TG: assetWriter finished writing!")
+            self.startTime = nil
+            dispatchGroup.leave()
+        }
+        dispatchGroup.wait()
+    }
+
+    func stream(_: SCStream, didOutputSampleBuffer sampleBuffer: CMSampleBuffer, of outputType: SCStreamOutputType) {
+        guard sampleBuffer.isValid
+        else {
+            print("TG: sample buffer is INVALID!")
+            return
+        }
+        
+        guard
+            let assetWriter = assetWriter,
+            let videoInput = videoInput,
+            let audioInput = audioInput
+        else { return }
+
+        switch outputType {
+        case .screen:
+            if screen == nil, window == nil { break }
+
+            guard
+                let attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(
+                    sampleBuffer, createIfNecessary: false
+                ) as? [[SCStreamFrameInfo: Any]],
+                let attachments = attachmentsArray.first
+            else {
+                print("TG: could not get attachments")
+                return
+            }
+            
+            guard let statusRawValue = attachments[SCStreamFrameInfo.status] as? Int,
+                  let status = SCFrameStatus(rawValue: statusRawValue),
+                  [.complete, .idle].contains(status)
+            else {
+                print("TG: could not get status")
+                return
+            }
+
+            if assetWriter.status == .writing, startTime == nil {
+                startTime = Date.now
+                assetWriter.startSession(atSourceTime: CMSampleBufferGetPresentationTimeStamp(sampleBuffer))
+                print("TG: assetWriter.startSession!")
+            }
+            if videoInput.isReadyForMoreMediaData {
+                videoInput.append(sampleBuffer)
+            } else {
+                print("TG: videoInput is NOT ready for more media data!")
+            }
+        case .audio:
+//            if streamType == .systemaudio { // write directly to file if not video recording
+//                guard let samples = sampleBuffer.asPCMBuffer else { return }
+//                do {
+//                    try audioFile?.write(from: samples)
+//                } catch { assertionFailure("audio file writing issue".local) }
+//            } else { // otherwise send the audio data to AVAssetWriter
+            if audioInput.isReadyForMoreMediaData {
+                audioInput.append(sampleBuffer)
+            } else {
+                print("TG: audio is NOT ready for more media data!")
+            }
+//            }
+        @unknown default:
+            assertionFailure("unknown stream type".local)
+        }
+    }
+
+    func stream(_: SCStream, didStopWithError error: Error) { // stream error
+        print("TG: closing stream with error:\n".local, error,
+              "\nthis might be due to the window closing or the user stopping from the sonoma ui".local)
+        Task {
+            self.stream = nil
+            await self.stopRecording()
+        }
+    }
+}
+
+// https://developer.apple.com/documentation/screencapturekit/capturing_screen_content_in_macos
+// For Sonoma updated to https://developer.apple.com/forums/thread/727709
+extension CMSampleBuffer {
+    var asPCMBuffer: AVAudioPCMBuffer? {
+        try? withAudioBufferList { audioBufferList, _ -> AVAudioPCMBuffer? in
+            guard let absd = self.formatDescription?.audioStreamBasicDescription else { return nil }
+            guard let format = AVAudioFormat(standardFormatWithSampleRate: absd.mSampleRate, channels: absd.mChannelsPerFrame) else { return nil }
+            return AVAudioPCMBuffer(pcmFormat: format, bufferListNoCopy: audioBufferList.unsafePointer)
+        }
+    }
+}
+
+// Based on https://gist.github.com/aibo-cora/c57d1a4125e145e586ecb61ebecff47c
+extension AVAudioPCMBuffer {
+    var asSampleBuffer: CMSampleBuffer? {
+        let asbd = self.format.streamDescription
+        var sampleBuffer: CMSampleBuffer?
+        var format: CMFormatDescription?
+
+        guard CMAudioFormatDescriptionCreate(
+            allocator: kCFAllocatorDefault,
+            asbd: asbd,
+            layoutSize: 0,
+            layout: nil,
+            magicCookieSize: 0,
+            magicCookie: nil,
+            extensions: nil,
+            formatDescriptionOut: &format
+        ) == noErr else { return nil }
+
+        var timing = CMSampleTimingInfo(
+            duration: CMTime(value: 1, timescale: Int32(asbd.pointee.mSampleRate)),
+            presentationTimeStamp: CMClockGetTime(CMClockGetHostTimeClock()),
+            decodeTimeStamp: .invalid
+        )
+
+        guard CMSampleBufferCreate(
+            allocator: kCFAllocatorDefault,
+            dataBuffer: nil,
+            dataReady: false,
+            makeDataReadyCallback: nil,
+            refcon: nil,
+            formatDescription: format,
+            sampleCount: CMItemCount(frameLength),
+            sampleTimingEntryCount: 1,
+            sampleTimingArray: &timing,
+            sampleSizeEntryCount: 0,
+            sampleSizeArray: nil,
+            sampleBufferOut: &sampleBuffer
+        ) == noErr else { return nil }
+
+        guard CMSampleBufferSetDataBufferFromAudioBufferList(
+            sampleBuffer!,
+            blockBufferAllocator: kCFAllocatorDefault,
+            blockBufferMemoryAllocator: kCFAllocatorDefault,
+            flags: 0,
+            bufferList: mutableAudioBufferList
+        ) == noErr else { return nil }
+
+        return sampleBuffer
+    }
+}

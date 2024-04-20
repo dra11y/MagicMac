@@ -38,7 +38,7 @@ final class MagicMacApp: App {
 
     private func warnMouseBatteryLevel() {
         if let percent = getMouseBatteryLevel(),
-           percent < 50
+           percent < 25
         {
             print("WARN MOUSE BATTERY \(percent) \(synth.debugDescription)")
             let speechString = "Mouse battery at \(percent) percent."

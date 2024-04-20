@@ -17,12 +17,12 @@ class InvertedColorManager: ObservableObject {
     init() {
         isInverted = Self.getInvertedStatus()
     }
-    
+
     private static func getInvertedStatus() -> Bool {
         guard let defaults = UserDefaults(suiteName: UserDefaults.Suite.universalAccess) else { return false }
         return defaults.bool(forKey: UserDefaults.UniversalAccess.whiteOnBlack)
     }
-    
+
     private func syncDefaults(_ defaults: UserDefaults) {
         // `synchronize()` returns `true` if FDA (Full Disk Access) is granted, `false` otherwise.
         let result = defaults.synchronize()

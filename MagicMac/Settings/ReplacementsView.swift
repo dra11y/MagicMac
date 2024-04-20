@@ -81,7 +81,7 @@ struct ReplacementsView: View {
                     EnabledToggleView(row: $row, updateHandler: update)
                 }
                 .width(50)
-                
+
                 TableColumn("Regex") { $row in
                     Toggle(isOn: $row.isRegex) {
                         EmptyView()
@@ -196,7 +196,7 @@ struct ReplacementsView: View {
 struct EnabledToggleView: View {
     @Binding var row: Replacement
     var updateHandler: (_ row: Replacement) -> Void
-    
+
     var body: some View {
         Toggle(isOn: $row.isEnabled) {
             EmptyView()
