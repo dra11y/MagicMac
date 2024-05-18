@@ -5,30 +5,58 @@
 //  Created by Tom Grushka on 4/19/24.
 //
 
+import Accelerate
 import AVFoundation
 import CoreGraphics
 import ScreenCaptureKit
 import VideoToolbox
 
+// Recording to disk using ScreenCaptureKit
+// NO AUDIO recording - "interesting edge cases" and example:
+// https://nonstrict.eu/blog/2023/recording-to-disk-with-screencapturekit/
+// https://github.com/nonstrict-hq/ScreenCaptureKit-Recording-example
+
+// Azayaka
+// AUDIO RECORDING example
+// https://github.com/Mnpn/Azayaka/blob/main/Azayaka/Processing.swift
+
+let cropRect = CGRect(
+    x: 150,
+    y: 40,
+    width: 1300,
+    height: 400
+)
+
 var screenRecorder: ScreenRecorder?
 
-struct ScreenRecorder {
-    public let url: URL
-    
+class ScreenRecorder {
     private let videoSampleBufferQueue = DispatchQueue(label: "ScreenRecorder.VideoSampleBufferQueue")
     private let audioSampleBufferQueue = DispatchQueue(label: "ScreenRecorder.AudioSampleBufferQueue")
-    private let assetWriter: AVAssetWriter
-    private let videoInput: AVAssetWriterInput
-    private let audioInput: AVAssetWriterInput
-    private let streamOutput: StreamOutput
-    private var stream: SCStream
+
+    public var url: URL?
     
-    static func toggle() async throws {
+    private var assetWriter: AVAssetWriter?
+    
+    private var videoInput: AVAssetWriterInput?
+    private var audioInput: AVAssetWriterInput?
+    private var micInput: AVAssetWriterInput?
+    private var streamOutput: StreamOutput?
+    private lazy var audioEngine = AVAudioEngine()
+    private var stream: SCStream?
+    private var recordMic: Bool = true
+    
+    private var initialized: Bool = false
+    
+    public init() { }
+    
+    static func toggle(partial: Bool) async throws {
         do {
             if let sr = screenRecorder {
                 try await sr.stop()
                 print("Recording ended, opening video")
-                NSWorkspace.shared.open(sr.url)
+                if let url = sr.url {
+                    NSWorkspace.shared.open(url)
+                }
                 screenRecorder = nil
                 return
             }
@@ -44,8 +72,9 @@ struct ScreenRecorder {
             let saveDirectory = UserDefaults(suiteName: "com.apple.screencapture")?.string(forKey: "location") ?? userDesktop
 
             let url = URL(filePath: saveDirectory).appending(path: "recording \(Date()).mp4")
-            let cropRect = CGRect(x: 100, y: 100, width: 760, height: 200)
-            screenRecorder = try await ScreenRecorder(url: url, displayID: CGMainDisplayID(), cropRect: cropRect, mode: .h264_sRGB)
+            let sr = ScreenRecorder()
+            try await sr.initialize(url: url, displayID: CGMainDisplayID(), cropRect: partial ? cropRect : nil, mode: .h264_sRGB)
+            screenRecorder = sr
 
             print("Starting screen recording of main display")
             try await screenRecorder!.start()
@@ -54,10 +83,17 @@ struct ScreenRecorder {
         }
     }
     
-    private init(url: URL, displayID: CGDirectDisplayID, cropRect: CGRect?, mode: RecordMode) async throws {
+    private func initialize(url: URL, displayID: CGDirectDisplayID, cropRect: CGRect?, mode: RecordMode) async throws {
+        if initialized {
+            throw RecordingError("ScreenRecorder instance already initialized!")
+        }
+        initialized = true
+        
         self.url = url
-        self.assetWriter = try AVAssetWriter(url: url, fileType: .mp4)
-
+        
+        let assetWriter = try AVAssetWriter(url: url, fileType: .mp4)
+        self.assetWriter = assetWriter
+        
         // MARK: AVAssetWriter setup
 
         // Get size and pixel scale factor for display
@@ -92,6 +128,10 @@ struct ScreenRecorder {
         // Configure video color properties and compression properties based on RecordMode
         // See AVVideoSettings.h and VTCompressionProperties.h
         videoSettings[AVVideoColorPropertiesKey] = mode.videoColorProperties
+        videoSettings[AVVideoCompressionPropertiesKey] = [
+            AVVideoAverageBitRateKey: 100000,
+            AVVideoMaxKeyFrameIntervalKey: 30
+        ]
         if let videoProfileLevel = mode.videoProfileLevel {
             var compressionProperties: [String: Any] = videoSettings[AVVideoCompressionPropertiesKey] as? [String: Any] ?? [:]
             compressionProperties[AVVideoProfileLevelKey] = videoProfileLevel
@@ -99,7 +139,8 @@ struct ScreenRecorder {
         }
 
         // Create AVAssetWriter input for video, based on the output settings from the Assistant
-        videoInput = AVAssetWriterInput(mediaType: .video, outputSettings: videoSettings)
+        let videoInput = AVAssetWriterInput(mediaType: .video, outputSettings: videoSettings)
+        self.videoInput = videoInput
         print("videoSettings: \(videoSettings)")
         videoInput.expectsMediaDataInRealTime = true
         
@@ -115,11 +156,13 @@ struct ScreenRecorder {
 //            AVEncoderBitRateKey: 128000,
 //        ]
 
-        audioInput = AVAssetWriterInput(mediaType: .audio, outputSettings: audioSettings)
+        let audioInput = AVAssetWriterInput(mediaType: .audio, outputSettings: audioSettings)
+        self.audioInput = audioInput
         print("audioSettings: \(audioSettings)")
         audioInput.expectsMediaDataInRealTime = true
 
-        streamOutput = StreamOutput(videoInput: videoInput, audioInput: audioInput)
+        let streamOutput = StreamOutput(videoInput: videoInput, audioInput: audioInput)
+        self.streamOutput = streamOutput
 
         // Adding videoInput to assetWriter
         guard assetWriter.canAdd(videoInput) else {
@@ -132,6 +175,57 @@ struct ScreenRecorder {
             throw RecordingError("Can't add audioInput to asset writer")
         }
         assetWriter.add(audioInput)
+
+        if recordMic {
+            let micInput = AVAssetWriterInput(mediaType: .audio, outputSettings: audioSettings)
+            self.micInput = micInput
+
+            guard assetWriter.canAdd(micInput) else {
+                throw RecordingError("Can't add micInput to asset writer")
+            }
+            assetWriter.add(micInput)
+            
+            let input = audioEngine.inputNode
+            input.installTap(onBus: 0, bufferSize: 1024, format: input.inputFormat(forBus: 0)) { (buffer, time) in
+                return;
+                if micInput.isReadyForMoreMediaData && streamOutput.sessionStarted {
+                    let sampleBuffer = buffer.asSampleBuffer!
+                    micInput.append(sampleBuffer)
+                    let arraySize = Int(buffer.frameLength)
+                    var channelSamples: [[DSPComplex]] = []
+                    let channelCount = Int(buffer.format.channelCount)
+
+                    for i in 0..<channelCount {
+
+                        channelSamples.append([])
+                        let firstSample = buffer.format.isInterleaved ? i : i*arraySize
+
+                        for j in stride(from: firstSample, to: arraySize, by: buffer.stride*2) {
+
+                            let channels = UnsafeBufferPointer(start: buffer.floatChannelData, count: Int(buffer.format.channelCount))
+                            let floats = UnsafeBufferPointer(start: channels[0], count: Int(buffer.frameLength))
+                            channelSamples[i].append(DSPComplex(real: floats[j], imag: floats[j+buffer.stride]))
+
+                        }
+                    }
+
+                    var spectrum = [Float]()
+
+                    for i in 0..<arraySize/2 {
+
+                        let imag = channelSamples[0][i].imag
+                        let real = channelSamples[0][i].real
+                        let magnitude = sqrt(pow(real,2)+pow(imag,2))
+
+                        spectrum.append(magnitude)
+                    }
+                    
+                    print("spectrum: \(spectrum.reduce(0, +) / Float(spectrum.count))")
+
+                }
+            }
+            try! audioEngine.start()
+        }
 
         guard assetWriter.startWriting() else {
             if let error = assetWriter.error {
@@ -147,6 +241,14 @@ struct ScreenRecorder {
         guard let display = sharableContent.displays.first(where: { $0.displayID == displayID }) else {
             throw RecordingError("Can't find display with ID \(displayID) in sharable content")
         }
+//        print(sharableContent.applications.map { $0.applicationName })
+        // DOES NOT GRAB VOICEOVER SOUND OR VIDEO!:
+//        guard
+//            let chrome = sharableContent.applications.first(where: { $0.applicationName == "Google Chrome" })
+//        else {
+//            throw RecordingError("Google Chrome is not running.")
+//        }
+//        let filter = SCContentFilter(display: display, including: [chrome], exceptingWindows: [])
         let filter = SCContentFilter(display: display, excludingApplications: [], exceptingWindows: [])
 
         let configuration = SCStreamConfiguration()
@@ -183,12 +285,21 @@ struct ScreenRecorder {
         }
 
         // Create SCStream and add local StreamOutput object to receive samples
-        stream = SCStream(filter: filter, configuration: configuration, delegate: streamOutput)
+        let stream = SCStream(filter: filter, configuration: configuration, delegate: streamOutput)
+        self.stream = stream
         try stream.addStreamOutput(streamOutput, type: .screen, sampleHandlerQueue: videoSampleBufferQueue)
         try stream.addStreamOutput(streamOutput, type: .audio, sampleHandlerQueue: audioSampleBufferQueue)
     }
 
     func start() async throws {
+        guard 
+            let stream = stream,
+            let assetWriter = assetWriter,
+            let streamOutput = streamOutput
+        else {
+            throw RecordingError("No stream!")
+        }
+        
         // Start capturing, wait for stream to start
         try await stream.startCapture()
 
@@ -198,6 +309,16 @@ struct ScreenRecorder {
     }
 
     func stop() async throws {
+        guard
+            let stream = stream,
+            let assetWriter = assetWriter,
+            let streamOutput = streamOutput,
+            let videoInput = videoInput,
+            let audioInput = audioInput
+        else {
+            throw RecordingError("No stream!")
+        }
+
         // Stop capturing, wait for stream to stop
         try await stream.stopCapture()
 
@@ -218,10 +339,17 @@ struct ScreenRecorder {
         // Finish writing
         videoInput.markAsFinished()
         audioInput.markAsFinished()
+        if recordMic {
+            if let micInput = micInput {
+                micInput.markAsFinished()
+            }
+            audioEngine.inputNode.removeTap(onBus: 0)
+            audioEngine.stop()
+        }
         await assetWriter.finishWriting()
     }
 
-    private class StreamOutput: NSObject, SCStreamOutput, SCStreamDelegate{
+    private class StreamOutput: NSObject, SCStreamOutput, SCStreamDelegate {
         let videoInput: AVAssetWriterInput
         let audioInput: AVAssetWriterInput
         var sessionStarted = false
@@ -331,4 +459,56 @@ private func downsizedVideoSize(source: CGSize, scaleFactor: Int, mode: RecordMo
 struct RecordingError: Error, CustomDebugStringConvertible {
     var debugDescription: String
     init(_ debugDescription: String) { self.debugDescription = debugDescription }
+}
+
+
+// Based on https://gist.github.com/aibo-cora/c57d1a4125e145e586ecb61ebecff47c
+extension AVAudioPCMBuffer {
+    var asSampleBuffer: CMSampleBuffer? {
+        let asbd = self.format.streamDescription
+        var sampleBuffer: CMSampleBuffer? = nil
+        var format: CMFormatDescription? = nil
+
+        guard CMAudioFormatDescriptionCreate(
+            allocator: kCFAllocatorDefault,
+            asbd: asbd,
+            layoutSize: 0,
+            layout: nil,
+            magicCookieSize: 0,
+            magicCookie: nil,
+            extensions: nil,
+            formatDescriptionOut: &format
+        ) == noErr else { return nil }
+
+        var timing = CMSampleTimingInfo(
+            duration: CMTime(value: 1, timescale: Int32(asbd.pointee.mSampleRate)),
+            presentationTimeStamp: CMClockGetTime(CMClockGetHostTimeClock()),
+            decodeTimeStamp: .invalid
+        )
+
+        guard CMSampleBufferCreate(
+            allocator: kCFAllocatorDefault,
+            dataBuffer: nil,
+            dataReady: false,
+            makeDataReadyCallback: nil,
+            refcon: nil,
+            formatDescription: format,
+            sampleCount: CMItemCount(self.frameLength),
+            sampleTimingEntryCount: 1,
+            sampleTimingArray: &timing,
+            sampleSizeEntryCount: 0,
+            sampleSizeArray: nil,
+            sampleBufferOut: &sampleBuffer
+        ) == noErr else { return nil }
+
+        guard CMSampleBufferSetDataBufferFromAudioBufferList(
+            sampleBuffer!,
+            blockBufferAllocator: kCFAllocatorDefault,
+            blockBufferMemoryAllocator: kCFAllocatorDefault,
+            flags: 0,
+            bufferList: self.mutableAudioBufferList
+        ) == noErr else { return nil }
+
+        return sampleBuffer
+    }
 }

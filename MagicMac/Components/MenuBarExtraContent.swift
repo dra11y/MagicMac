@@ -67,14 +67,6 @@ struct MenuExtraMenuContent: View {
                     .toggleStyle(.switch)
             }
             
-            Button {
-                Task {
-                    try! await ScreenRecorder.toggle()
-                }
-            } label: {
-                Text("Toggle Screen Recording")
-            }
-
             HStack {
                 SettingsLink {
                     Text("Settings")

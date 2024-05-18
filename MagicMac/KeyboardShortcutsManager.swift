@@ -60,10 +60,24 @@ class KeyboardShortcutsManager: ObservableObject {
             action: speechManager.speakSelectionSlowly
         )
         KeyboardShortcuts.onKeyDown(
-            for: .toggleScreenRecording)
+            for: .togglePartialScreenRecording)
         {
             Task {
-                try! await ScreenRecorder.toggle()
+                try! await ScreenRecorder.toggle(partial: true)
+            }
+        }
+        KeyboardShortcuts.onKeyDown(
+            for: .zoomShareScreen)
+        {
+            Task {
+                zoomShareScreen()
+            }
+        }
+        KeyboardShortcuts.onKeyDown(
+            for: .toggleFullScreenRecording)
+        {
+            Task {
+                try! await ScreenRecorder.toggle(partial: false)
             }
         }
     }

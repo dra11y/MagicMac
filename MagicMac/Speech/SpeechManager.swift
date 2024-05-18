@@ -15,6 +15,7 @@ import WakeAudio
 class SpeechHUDWindow: NSWindow {
     private var invertedColorManager: InvertedColorManager?
     private var textView: NSTextView?
+    private var scrollView: NSScrollView?
     private var utterance: AVSpeechUtterance?
 
     private func computeBackgroundColor() -> NSColor {
@@ -40,7 +41,7 @@ class SpeechHUDWindow: NSWindow {
 
     init(invertedColorManager: InvertedColorManager) {
         self.invertedColorManager = invertedColorManager
-
+        
         let screenRect = NSScreen.main?.visibleFrame ?? NSRect.zero
         let windowSize = CGSize(width: screenRect.width * 0.8, height: screenRect.height * 0.5)
         let windowRect = NSRect(
@@ -49,7 +50,7 @@ class SpeechHUDWindow: NSWindow {
             width: windowSize.width,
             height: windowSize.height
         )
-
+        
         super.init(contentRect: windowRect, styleMask: [.titled], backing: .buffered, defer: true)
 
         setupHUD()
@@ -66,20 +67,23 @@ class SpeechHUDWindow: NSWindow {
             subview.removeFromSuperview()
         }
         textView = nil
+        scrollView = nil
         invertedColorManager = nil
     }
 
     private func setupHUD() {
-        let textView = NSTextView()
+        let scrollView = NSTextView.scrollableTextView()
+        let textView = scrollView.documentView as! NSTextView
+        self.scrollView = scrollView
         self.textView = textView
-        contentView!.addSubview(textView)
-        textView.translatesAutoresizingMaskIntoConstraints = false
+        contentView!.addSubview(scrollView)
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            textView.topAnchor.constraint(equalTo: contentView!.topAnchor),
-            textView.leadingAnchor.constraint(equalTo: contentView!.leadingAnchor),
-            textView.trailingAnchor.constraint(equalTo: contentView!.trailingAnchor),
-            textView.bottomAnchor.constraint(equalTo: contentView!.bottomAnchor),
+            scrollView.topAnchor.constraint(equalTo: contentView!.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: contentView!.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: contentView!.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: contentView!.bottomAnchor),
         ])
 
         isOpaque = false
@@ -88,9 +92,9 @@ class SpeechHUDWindow: NSWindow {
         isMovableByWindowBackground = true
 
         textView.isEditable = false
+        scrollView.backgroundColor = .clear
         textView.backgroundColor = .clear
-        textView.font = NSFont.systemFont(ofSize: 30)
-        print("done setupHUD")
+        textView.font = NSFont.monospacedSystemFont(ofSize: 36, weight: .regular)
     }
 
     func update(range: NSRange, utterance: AVSpeechUtterance) {
@@ -122,6 +126,7 @@ class SpeechHUDWindow: NSWindow {
     }
 
     func show() {
+        backgroundColor = computeBackgroundColor()
         makeKeyAndOrderFront(nil)
     }
 
@@ -162,6 +167,7 @@ public class SpeechManager: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
         }
         didChangeRate = false
         hudWindow?.hide()
+        hudWindow = nil
         state = .stopped
     }
 
@@ -438,6 +444,7 @@ public class SpeechManager: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
             utterance.voice = AVSpeechSynthesisVoice(identifier: speechVoice)
         }
         showSpeechHUDWindowIfNeeded()
+        hudWindow?.update(range: .init(), utterance: utterance)
         speechSynthesizer.speak(utterance)
     }
 }
