@@ -65,7 +65,6 @@ extension NSImage {
     }
 }
 
-@available(macOS 14.0, *)
 struct MenuBarExtraIconView: View {
     @EnvironmentObject var invertedColorManager: InvertedColorManager
     @EnvironmentObject var speechManager: SpeechManager

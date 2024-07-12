@@ -7,6 +7,9 @@
 
 import Carbon
 import Cocoa
+import OSLog
+
+fileprivate let logger = Logger(subsystem: "MagicMac", category: "ZoomTools")
 
 func zoomShareScreen() {
     let event = NSAppleEventDescriptor(
@@ -26,7 +29,7 @@ func zoomShareScreen() {
     var error: NSDictionary?
     _ = zoomShareScript.executeAppleEvent(event, error: &error)
     
-    print("zoomShareScreen error: \(String(describing: error))")
+    logger.info("zoomShareScreen error: \(String(describing: error))")
 }
 
 let zoomShareScript: NSAppleScript = {

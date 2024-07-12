@@ -7,9 +7,12 @@
 
 import Combine
 import CoreGraphics
+import OSLog
 import SwiftUI
 
 class InvertedColorManager: ObservableObject {
+    private let logger = Logger(subsystem: "MagicMac", category: "InvertedColorManager")
+
     @Published public var isInverted: Bool
     @AppStorage(.invertColorsDelay) var invertColorsDelay: Double = 0
     @AppStorage(.switchThemeDelay) var switchThemeDelay: Double = 0
@@ -46,18 +49,20 @@ class InvertedColorManager: ObservableObject {
         /// Universal Access default. However, there is a nasty "Invert Display Color off/on"
         /// popup that pre-setting this default to the desired value helps to alleviate.
         defaults.set(newInverted, forKey: UserDefaults.UniversalAccess.whiteOnBlack)
-        print("defaults.set(\(newInverted), forKey: \(UserDefaults.UniversalAccess.whiteOnBlack))")
+        logger.debug("defaults.set(\(newInverted), forKey: \(UserDefaults.UniversalAccess.whiteOnBlack))")
 
         syncDefaults(defaults)
 
-        DispatchQueue.global().asyncAfter(deadline: .now() + switchThemeDelay) {
+        DispatchQueue.global().asyncAfter(deadline: .now() + switchThemeDelay) { [weak self] in
+            guard let self = self else { return }
             SLSSetAppearanceThemeLegacy(!newInverted)
-            print("SLSSetAppearanceThemeLegacy(\(!newInverted))")
+            self.logger.debug("SLSSetAppearanceThemeLegacy(\(!newInverted))")
         }
 
-        DispatchQueue.global().asyncAfter(deadline: .now() + invertColorsDelay) {
+        DispatchQueue.global().asyncAfter(deadline: .now() + invertColorsDelay) { [weak self] in
+            guard let self = self else { return }
             UAWhiteOnBlackSetEnabled(newInverted)
-            print("UAWhiteOnBlackSetEnabled(\(newInverted))")
+            self.logger.debug("UAWhiteOnBlackSetEnabled(\(newInverted))")
         }
 
         doSwitchTerminalTheme(newInverted)
@@ -66,7 +71,7 @@ class InvertedColorManager: ObservableObject {
 
         if let completion = completion {
             completion(newInverted)
-            print("completion(\(newInverted))")
+            logger.debug("completion(\(newInverted))")
         }
     }
 }

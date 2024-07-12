@@ -6,6 +6,9 @@
 //
 
 import Foundation
+import OSLog
+
+fileprivate let logger = Logger(subsystem: "MagicMac", category: "ReplacementsManager")
 
 class ReplacementsManager: ObservableObject {
     static let shared = ReplacementsManager()
@@ -122,7 +125,7 @@ class ReplacementsManager: ObservableObject {
         } catch {
             fatalError("Error encoding JSON: \(error)")
         }
-        // print("SAVED! \(Date.now)")
+        // logger.info("SAVED! \(Date.now)")
         objectWillChange.send()
     }
 }

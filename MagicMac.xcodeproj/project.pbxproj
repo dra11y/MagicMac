@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		E229BA2329E65E8400435833 /* FakeKeyEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229BA2229E65E8400435833 /* FakeKeyEvents.swift */; };
-		E22C7D632B72BEF6003ADCC7 /* getMouseBatteryLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22C7D622B72BEF6003ADCC7 /* getMouseBatteryLevel.swift */; };
+		E22C7D632B72BEF6003ADCC7 /* getBatteryLevels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22C7D622B72BEF6003ADCC7 /* getBatteryLevels.swift */; };
 		E2324E102AEC284500D012E1 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2324E0F2AEC284500D012E1 /* Metal.framework */; };
 		E23760A82BF82792001786AD /* ZoomTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23760A72BF82792001786AD /* ZoomTools.swift */; };
 		E249DF3A28A752B800479A6B /* MagicMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E249DF3928A752B800479A6B /* MagicMacApp.swift */; };
@@ -78,7 +78,7 @@
 
 /* Begin PBXFileReference section */
 		E229BA2229E65E8400435833 /* FakeKeyEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeKeyEvents.swift; sourceTree = "<group>"; };
-		E22C7D622B72BEF6003ADCC7 /* getMouseBatteryLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getMouseBatteryLevel.swift; sourceTree = "<group>"; };
+		E22C7D622B72BEF6003ADCC7 /* getBatteryLevels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getBatteryLevels.swift; sourceTree = "<group>"; };
 		E2324E0F2AEC284500D012E1 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		E23760A72BF82792001786AD /* ZoomTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomTools.swift; sourceTree = "<group>"; };
 		E249DF3628A752B800479A6B /* MagicMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MagicMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -165,7 +165,7 @@
 		E22C7D612B72BED8003ADCC7 /* MouseBatteryLevel */ = {
 			isa = PBXGroup;
 			children = (
-				E22C7D622B72BEF6003ADCC7 /* getMouseBatteryLevel.swift */,
+				E22C7D622B72BEF6003ADCC7 /* getBatteryLevels.swift */,
 			);
 			path = MouseBatteryLevel;
 			sourceTree = "<group>";
@@ -443,7 +443,7 @@
 				E278F7AF2AEEE8D700AFC7B5 /* ShortcutsTab.swift in Sources */,
 				E23760A82BF82792001786AD /* ZoomTools.swift in Sources */,
 				E2AD352B2AE8F7A2008A3EBF /* InvertedColorManager.swift in Sources */,
-				E22C7D632B72BEF6003ADCC7 /* getMouseBatteryLevel.swift in Sources */,
+				E22C7D632B72BEF6003ADCC7 /* getBatteryLevels.swift in Sources */,
 				E28617C82AEEE17900EAD806 /* AVSpeechSynthesisVoice+Extensions.swift in Sources */,
 				E272DDA92BD375C2007389F2 /* ScreenRecorder.swift in Sources */,
 				E272DDAB2BD3771D007389F2 /* RecordMode.swift in Sources */,

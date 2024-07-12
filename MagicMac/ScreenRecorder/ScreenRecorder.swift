@@ -8,8 +8,11 @@
 import Accelerate
 import AVFoundation
 import CoreGraphics
+import OSLog
 import ScreenCaptureKit
 import VideoToolbox
+
+fileprivate let logger = Logger(subsystem: "MagicMac", category: "ScreenRecorder")
 
 // Recording to disk using ScreenCaptureKit
 // NO AUDIO recording - "interesting edge cases" and example:
@@ -53,7 +56,7 @@ class ScreenRecorder {
         do {
             if let sr = screenRecorder {
                 try await sr.stop()
-                print("Recording ended, opening video")
+                logger.info("Recording ended, opening video")
                 if let url = sr.url {
                     NSWorkspace.shared.open(url)
                 }
@@ -76,10 +79,10 @@ class ScreenRecorder {
             try await sr.initialize(url: url, displayID: CGMainDisplayID(), cropRect: partial ? cropRect : nil, mode: .h264_sRGB)
             screenRecorder = sr
 
-            print("Starting screen recording of main display")
+            logger.info("Starting screen recording of main display")
             try await screenRecorder!.start()
         } catch {
-            print("Error during recording:", error)
+            logger.info("Error during recording: \(error)")
         }
     }
     
@@ -141,7 +144,7 @@ class ScreenRecorder {
         // Create AVAssetWriter input for video, based on the output settings from the Assistant
         let videoInput = AVAssetWriterInput(mediaType: .video, outputSettings: videoSettings)
         self.videoInput = videoInput
-        print("videoSettings: \(videoSettings)")
+        logger.info("videoSettings: \(videoSettings)")
         videoInput.expectsMediaDataInRealTime = true
         
         audioSettings[AVSampleRateKey] = 48000
@@ -158,7 +161,7 @@ class ScreenRecorder {
 
         let audioInput = AVAssetWriterInput(mediaType: .audio, outputSettings: audioSettings)
         self.audioInput = audioInput
-        print("audioSettings: \(audioSettings)")
+        logger.info("audioSettings: \(audioSettings)")
         audioInput.expectsMediaDataInRealTime = true
 
         let streamOutput = StreamOutput(videoInput: videoInput, audioInput: audioInput)
@@ -220,7 +223,7 @@ class ScreenRecorder {
                         spectrum.append(magnitude)
                     }
                     
-                    print("spectrum: \(spectrum.reduce(0, +) / Float(spectrum.count))")
+                    logger.info("spectrum: \(spectrum.reduce(0, +) / Float(spectrum.count))")
 
                 }
             }
@@ -241,7 +244,7 @@ class ScreenRecorder {
         guard let display = sharableContent.displays.first(where: { $0.displayID == displayID }) else {
             throw RecordingError("Can't find display with ID \(displayID) in sharable content")
         }
-//        print(sharableContent.applications.map { $0.applicationName })
+//        logger.info(sharableContent.applications.map { $0.applicationName })
         // DOES NOT GRAB VOICEOVER SOUND OR VIDEO!:
 //        guard
 //            let chrome = sharableContent.applications.first(where: { $0.applicationName == "Google Chrome" })
@@ -384,7 +387,7 @@ class ScreenRecorder {
                 else { return }
                 
                 guard videoInput.isReadyForMoreMediaData else {
-                    print("AVAssetWriterInput isn't ready, dropping frame")
+                    logger.info("AVAssetWriterInput isn't ready, dropping frame")
                     return
                 }
                 
@@ -409,7 +412,7 @@ class ScreenRecorder {
                 if let retimedSampleBuffer = try? CMSampleBuffer(copying: sampleBuffer, withNewTiming: [timing]) {
                     videoInput.append(retimedSampleBuffer)
                 } else {
-                    print("Couldn't copy CMSampleBuffer, dropping frame")
+                    logger.info("Couldn't copy CMSampleBuffer, dropping frame")
                 }
 
             case .audio:
@@ -428,11 +431,11 @@ class ScreenRecorder {
                     if let retimedSampleBuffer = try? CMSampleBuffer(copying: sampleBuffer, withNewTiming: [timing]) {
                         audioInput.append(retimedSampleBuffer)
                     } else {
-                        print("Couldn't copy CMSampleBuffer, dropping frame")
+                        logger.info("Couldn't copy CMSampleBuffer, dropping frame")
                     }
                     
                 } else {
-                    print("TG: Audio Buffer NOT READY")
+                    logger.info("TG: Audio Buffer NOT READY")
                 }
                 break
 

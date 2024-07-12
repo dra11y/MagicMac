@@ -7,12 +7,15 @@
 
 import AVFoundation
 import Cocoa
+import OSLog
 import ServiceManagement
 import SwiftUI
 import WakeAudio
 
 @main
 final class MagicMacApp: App {
+    private let logger = Logger(subsystem: "MagicMac", category: "MagicMacApp")
+
     let invertedColorManager = InvertedColorManager()
 
     lazy var speechManager = SpeechManager(invertedColorManager: invertedColorManager)
@@ -37,19 +40,23 @@ final class MagicMacApp: App {
     private lazy var synth = AVSpeechSynthesizer()
 
     private func warnMouseBatteryLevel() {
-        if let percent = getMouseBatteryLevel(),
-           percent < 25
-        {
-            print("WARN MOUSE BATTERY \(percent) \(synth.debugDescription)")
-            let speechString = "Mouse battery at \(percent) percent."
-            let utterance = AVSpeechUtterance(string: speechString)
-            utterance.rate = Float(speechRate)
-            utterance.volume = Float(speechVolume)
-            if !speechVoice.isEmpty {
-                utterance.voice = AVSpeechSynthesisVoice(identifier: speechVoice)
-            }
-            DispatchQueue.main.async { [weak self] in
-                self?.synth.speak(utterance)
+        let (mouse: mousePercent, keyboard: keyboardPercent) = getBatteryLevels()
+        var deadline: DispatchTime = .now()
+        for value in [(mousePercent, "Mouse"), (keyboardPercent, "Keyboard")] {
+            guard let percent = value.0 else { continue }
+            if percent < 25 {
+                self.logger.debug("WARN \(value.1) BATTERY \(percent) \(self.synth.debugDescription)")
+                let speechString = "\(value.1) battery at \(percent) percent."
+                let utterance = AVSpeechUtterance(string: speechString)
+                utterance.rate = Float(speechRate)
+                utterance.volume = Float(speechVolume)
+                if !speechVoice.isEmpty {
+                    utterance.voice = AVSpeechSynthesisVoice(identifier: speechVoice)
+                }
+                DispatchQueue.main.asyncAfter(deadline: deadline) { [weak self] in
+                    self?.synth.speak(utterance)
+                }
+                deadline = deadline.advanced(by: .seconds(5))
             }
         }
     }
@@ -72,16 +79,14 @@ final class MagicMacApp: App {
                 .frame(alignment: .center)
         }
 
-        if #available(macOS 14.0, *) {
-            MenuBarExtra {
-                MenuExtraMenuContent()
-            } label: {
-                MenuBarExtraIconView()
-                    .environmentObject(invertedColorManager)
-                    .environmentObject(speechManager)
-            }
-            .menuBarExtraStyle(.window)
+        MenuBarExtra {
+            MenuExtraMenuContent()
+        } label: {
+            MenuBarExtraIconView()
+                .environmentObject(invertedColorManager)
+                .environmentObject(speechManager)
         }
+        .menuBarExtraStyle(.window)
     }
 
     private func addObservers() {

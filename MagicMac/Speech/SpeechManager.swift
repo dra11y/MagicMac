@@ -8,11 +8,14 @@
 import AVFoundation
 import Cocoa
 import Foundation
+import OSLog
 import Security
 import SwiftUI
 import WakeAudio
 
 class SpeechHUDWindow: NSWindow {
+    private let logger = Logger(subsystem: "MagicMac", category: "SpeechHUDWindow")
+
     private var invertedColorManager: InvertedColorManager?
     private var textView: NSTextView?
     private var scrollView: NSScrollView?
@@ -56,13 +59,12 @@ class SpeechHUDWindow: NSWindow {
         setupHUD()
     }
 
-    @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     deinit {
-        print("HUD Window deinit")
+        logger.debug("HUD Window deinit")
         for subview in contentView?.subviews ?? [] {
             subview.removeFromSuperview()
         }
@@ -136,6 +138,9 @@ class SpeechHUDWindow: NSWindow {
 }
 
 public class SpeechManager: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
+
+    private let logger = Logger(subsystem: "MagicMac", category: "SpeechManager")
+
     let invertedColorManager: InvertedColorManager
 
     var hudWindow: SpeechHUDWindow?
@@ -253,7 +258,7 @@ public class SpeechManager: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
     public static func wakeAudio() {
         let isAsleep = isAudioAsleep()
         if isAsleep {
-            wakeAudioInterfaces(false)
+            wakeAudioInterfaces()
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 Self.wakeAudio()
             }
@@ -294,7 +299,7 @@ public class SpeechManager: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
         do {
             try audioEngine.start()
         } catch {
-            print("Failed to start audio engine: \(error)")
+            logger.error("Failed to start audio engine: \(error)")
             return
         }
         let bufferDuration = 0.1
@@ -304,7 +309,7 @@ public class SpeechManager: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
         buffer.frameLength = bufferSize
 
         guard let floatChannelData = buffer.floatChannelData else {
-            print("Failed to access channel data")
+            logger.error("Failed to access channel data")
             return
         }
 
@@ -352,6 +357,8 @@ public class SpeechManager: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
 
         // Apply replacements
         for replacement in replacements {
+            let space = replacement.addSpace ? " " : ""
+
             if replacement.isRegex {
                 /// Replace using regex
                 let options: NSRegularExpression.Options = replacement.caseSensitive ? [] : [.caseInsensitive]
@@ -359,11 +366,11 @@ public class SpeechManager: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
                     let regex = try? NSRegularExpression(pattern: replacement.pattern, options: options)
                 else { continue }
                 let range = NSRange(replacedText.startIndex..., in: replacedText)
-                replacedText = regex.stringByReplacingMatches(in: replacedText, range: range, withTemplate: " \(replacement.replacement) ")
+                replacedText = regex.stringByReplacingMatches(in: replacedText, range: range, withTemplate: "\(space)\(replacement.replacement)\(space)")
             } else {
                 // Replace using plain text
                 let options: String.CompareOptions = replacement.caseSensitive ? [.diacriticInsensitive] : [.diacriticInsensitive, .caseInsensitive]
-                replacedText = replacedText.replacingOccurrences(of: replacement.pattern, with: " \(replacement.replacement) ", options: options)
+                replacedText = replacedText.replacingOccurrences(of: replacement.pattern, with: "\(space)\(replacement.replacement)\(space)", options: options)
             }
         }
 

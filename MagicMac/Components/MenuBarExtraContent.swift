@@ -10,7 +10,98 @@ import SettingsAccess
 import SwiftUI
 import WakeAudio
 
-@available(macOS 14.0, *)
+enum BatteryKind {
+    case mouse
+    case keyboard
+}
+
+struct BatteryView: View {
+    let value: Int
+    let isPresent: Bool
+    let batteryPercent: BatteryPercent
+    let kind: BatteryKind
+    
+    init(kind: BatteryKind, value: Int? = nil) {
+        self.kind = kind
+        self.isPresent = value != nil
+        self.value = max(0, min((value ?? 0), 100))
+        switch self.value {
+        case 90...100:self.batteryPercent = .battery100
+        case 65..<90: self.batteryPercent = .battery75
+        case 40..<65: self.batteryPercent = .battery50
+        case 15..<40: self.batteryPercent = .battery25
+        default: self.batteryPercent = .battery0
+        }
+    }
+    
+    enum BatteryPercent {
+        case battery0
+        case battery25
+        case battery50
+        case battery75
+        case battery100
+        
+        var systemName: String {
+            switch self {
+            case .battery0: "battery.0percent"
+            case .battery25: "battery.25percent"
+            case .battery50: "battery.50percent"
+            case .battery75: "battery.75percent"
+            case .battery100: "battery.100percent"
+            }
+        }
+        
+        var batteryColor: Color {
+            switch self {
+            case .battery0: .red
+            case .battery25: .red
+            case .battery50: .orange
+            case .battery75: .yellow
+            case .battery100: .green
+            }
+        }
+        
+        var textColor: Color {
+            switch self {
+            case .battery0: .white
+            case .battery25: .white
+            case .battery50: .white
+            case .battery75: .black
+            case .battery100: .black
+            }
+        }
+    }
+    
+    var iconName: String {
+        switch kind {
+        case .mouse: "magicmouse.fill"
+        case .keyboard: "keyboard.fill"
+        }
+    }
+    
+    var body: some View {
+        HStack {
+            if isPresent {
+                ZStack {
+                    Image(systemName: batteryPercent.systemName)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .foregroundStyle(batteryPercent.batteryColor)
+                        .frame(height: 30)
+                    Text("\(value)%")
+                        .foregroundStyle(batteryPercent.textColor)
+                        .font(.system(size: 15, weight: .bold))
+                        .offset(x: -4, y: -1)
+                }
+                Image(systemName: iconName)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 30)
+            }
+        }
+    }
+}
+
 struct MenuExtraMenuContent: View {
     @AppStorage(.speechRate) var speechRate: Double = UserDefaults.UniversalAccess.preferredRate
     @AppStorage(.slowSpeechRate) var slowSpeechRate: Double = UserDefaults.UniversalAccess.preferredSlowRate
@@ -20,6 +111,7 @@ struct MenuExtraMenuContent: View {
     @AppStorage(.debugSpeechHUD) private var debugSpeechHUD: Bool = false
 
     @State private var mouseBatteryLevel: Int?
+    @State private var keyboardBatteryLevel: Int?
     let mouseBatteryDisplayTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
 
     var body: some View {
@@ -47,15 +139,13 @@ struct MenuExtraMenuContent: View {
             }
 
             HStack {
-                Text("Mouse Battery Level")
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                BatteryView(kind: .mouse, value: mouseBatteryLevel)
                 Spacer()
-                Text("\(mouseBatteryLevel ?? 0)%")
-                    .frame(alignment: .trailing)
+                BatteryView(kind: .keyboard, value: keyboardBatteryLevel)
             }
-            .onAppear(perform: fetchMouseBatteryLevel)
+            .onAppear(perform: fetchBatteryLevels)
             .onReceive(mouseBatteryDisplayTimer) { _ in
-                fetchMouseBatteryLevel()
+                fetchBatteryLevels()
             }
 
             HStack {
@@ -84,7 +174,7 @@ struct MenuExtraMenuContent: View {
                 Spacer()
 
                 Button {
-                    wakeAudioInterfaces(true)
+                    wakeAudioInterfaces()
                 } label: {
                     Text("Reset Audio")
                 }
@@ -101,7 +191,7 @@ struct MenuExtraMenuContent: View {
         .scenePadding()
     }
 
-    private func fetchMouseBatteryLevel() {
-        mouseBatteryLevel = getMouseBatteryLevel()
+    private func fetchBatteryLevels() {
+        (mouse: mouseBatteryLevel, keyboard: keyboardBatteryLevel) = getBatteryLevels()
     }
 }

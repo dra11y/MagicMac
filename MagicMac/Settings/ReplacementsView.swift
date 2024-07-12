@@ -24,12 +24,11 @@ struct ReplacementsView: View {
     @StateObject private var replacementsManager = ReplacementsManager.shared
     @State private var selection = Set<UUID>()
 
-    enum FieldType { case pattern, replacement, regex, caseSensitive }
     struct FocusIdentifier: Hashable {
         let id: UUID
-        let field: FieldType
+        let field: Replacement.CodingKeys
 
-        init(_ id: UUID, _ field: FieldType) {
+        init(_ id: UUID, _ field: Replacement.CodingKeys) {
             self.id = id
             self.field = field
         }
@@ -87,7 +86,7 @@ struct ReplacementsView: View {
                         EmptyView()
                     }
                     .focusable()
-                    .focused($focused, equals: FocusIdentifier(row.id, .regex))
+                    .focused($focused, equals: FocusIdentifier(row.id, .isRegex))
                     .onChange(of: row.isRegex) {
                         update(row)
                     }
@@ -133,6 +132,19 @@ struct ReplacementsView: View {
                         update(row)
                     }
                 }
+                
+                TableColumn("Space") { $row in
+                    Toggle(isOn: $row.addSpace) {
+                        EmptyView()
+                    }
+                    .focusable()
+                    .focused($focused, equals: FocusIdentifier(row.id, .addSpace))
+                    .onChange(of: row.addSpace) {
+                        update(row)
+                    }
+                }
+                .width(50)
+
             }
             .onChange(of: selection) { _, newValue in
                 if let first = newValue.first {
