@@ -21,7 +21,7 @@ struct ReplacementsView: View {
         }
     }
 
-    @StateObject private var replacementsManager = ReplacementsManager.shared
+    @ObservedObject private var replacementsManager = ReplacementsManager.shared
     @State private var selection = Set<UUID>()
 
     struct FocusIdentifier: Hashable {

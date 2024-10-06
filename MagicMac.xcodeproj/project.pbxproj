@@ -48,6 +48,7 @@
 		E2AD352B2AE8F7A2008A3EBF /* InvertedColorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2AD352A2AE8F7A2008A3EBF /* InvertedColorManager.swift */; };
 		E2C70D0029E6753E0099FFBA /* ReplacementsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C70CFF29E6753E0099FFBA /* ReplacementsSettings.swift */; };
 		E2CC69942AEE400F0000AD1D /* WakeAudio in Frameworks */ = {isa = PBXBuildFile; productRef = E2CC69932AEE400F0000AD1D /* WakeAudio */; };
+		E2CF34392CB26B7B001C649A /* MagicMacAppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CF34382CB26B7B001C649A /* MagicMacAppState.swift */; };
 		E2D32E6928A8C16F00F52439 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2D32E6828A8C16F00F52439 /* ApplicationServices.framework */; };
 		E2D32E6C28A8CF7E00F52439 /* AXSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E2D32E6B28A8CF7E00F52439 /* AXSwift */; };
 		E2D32E6E28A9794000F52439 /* DisplayDimmer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D32E6D28A9794000F52439 /* DisplayDimmer.swift */; };
@@ -116,6 +117,7 @@
 		E2A8F0BA2AEC457E0076969C /* MomentaryButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentaryButtons.swift; sourceTree = "<group>"; };
 		E2AD352A2AE8F7A2008A3EBF /* InvertedColorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedColorManager.swift; sourceTree = "<group>"; };
 		E2C70CFF29E6753E0099FFBA /* ReplacementsSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplacementsSettings.swift; sourceTree = "<group>"; };
+		E2CF34382CB26B7B001C649A /* MagicMacAppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MagicMacAppState.swift; sourceTree = "<group>"; };
 		E2D32E6828A8C16F00F52439 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 		E2D32E6D28A9794000F52439 /* DisplayDimmer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayDimmer.swift; sourceTree = "<group>"; };
 		E2E5ABC728A86B99005C2B49 /* MagicMacLauncher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MagicMacLauncher.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -201,6 +203,7 @@
 		E249DF3828A752B800479A6B /* MagicMac */ = {
 			isa = PBXGroup;
 			children = (
+				E2CF34382CB26B7B001C649A /* MagicMacAppState.swift */,
 				E23760A62BF82786001786AD /* Zoom */,
 				E272DDA72BD375B9007389F2 /* ScreenRecorder */,
 				E2BA446F2BBF3BF700CD97D9 /* Calendar */,
@@ -461,6 +464,7 @@
 				E249DF3A28A752B800479A6B /* MagicMacApp.swift in Sources */,
 				E28617D22AEEE38800EAD806 /* NSPasteboard+Extensions.swift in Sources */,
 				E249DF5528A7733500479A6B /* String+Extensions.swift in Sources */,
+				E2CF34392CB26B7B001C649A /* MagicMacAppState.swift in Sources */,
 				E2E5ABE728A878EB005C2B49 /* MaximizeFrontWindow.swift in Sources */,
 				E249DF5728A77C6A00479A6B /* HoverSpeech.swift in Sources */,
 				E249DF5928A8362900479A6B /* Permissions.swift in Sources */,
