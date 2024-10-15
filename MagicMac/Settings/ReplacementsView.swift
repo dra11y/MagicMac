@@ -40,7 +40,8 @@ struct ReplacementsView: View {
     @State private var filteredReplacements: [Replacement] = []
 
     private func index(of row: Replacement) -> Int? {
-        replacementsManager.replacements.firstIndex(where: { $0.id == row.id })
+        0
+//        replacementsManager.replacements.firstIndex(where: { $0.id == row.id })
     }
 
     private func update(_ row: Replacement) {
@@ -48,13 +49,15 @@ struct ReplacementsView: View {
     }
 
     private func filterReplacements() {
-        if searchQuery.isEmpty {
-            filteredReplacements = replacementsManager.replacements
-            return
-        }
-        filteredReplacements = replacementsManager.replacements.filter { replacement in
-            replacement.pattern.lowercased().contains(searchQuery.lowercased()) ||
+        DispatchQueue.main.async {
+            if searchQuery.isEmpty {
+                filteredReplacements = replacementsManager.replacements
+                return
+            }
+            filteredReplacements = replacementsManager.replacements.filter { replacement in
+                replacement.pattern.lowercased().contains(searchQuery.lowercased()) ||
                 replacement.replacement.lowercased().contains(searchQuery.lowercased())
+            }
         }
     }
 

@@ -20,6 +20,7 @@
 		E249DF5928A8362900479A6B /* Permissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E249DF5828A8362900479A6B /* Permissions.swift */; };
 		E249DF5B28A8413000479A6B /* NSSound+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E249DF5A28A8413000479A6B /* NSSound+Extensions.swift */; };
 		E255F4B12AEE3D8800F1FBD3 /* WakeAudio in Frameworks */ = {isa = PBXBuildFile; productRef = E255F4B02AEE3D8800F1FBD3 /* WakeAudio */; };
+		E259A3142CBF194E00A89088 /* SpeechHUDWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E259A3132CBF194A00A89088 /* SpeechHUDWindow.swift */; };
 		E25CF14329E70A3D00895FC3 /* ReplacementsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25CF14229E70A3D00895FC3 /* ReplacementsManager.swift */; };
 		E272DDA92BD375C2007389F2 /* ScreenRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E272DDA82BD375C2007389F2 /* ScreenRecorder.swift */; };
 		E272DDAB2BD3771D007389F2 /* RecordMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = E272DDAA2BD3771D007389F2 /* RecordMode.swift */; };
@@ -92,6 +93,7 @@
 		E249DF5628A77C6A00479A6B /* HoverSpeech.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverSpeech.swift; sourceTree = "<group>"; };
 		E249DF5828A8362900479A6B /* Permissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Permissions.swift; sourceTree = "<group>"; };
 		E249DF5A28A8413000479A6B /* NSSound+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSSound+Extensions.swift"; sourceTree = "<group>"; };
+		E259A3132CBF194A00A89088 /* SpeechHUDWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechHUDWindow.swift; sourceTree = "<group>"; };
 		E25CF14229E70A3D00895FC3 /* ReplacementsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplacementsManager.swift; sourceTree = "<group>"; };
 		E272DDA82BD375C2007389F2 /* ScreenRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecorder.swift; sourceTree = "<group>"; };
 		E272DDAA2BD3771D007389F2 /* RecordMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordMode.swift; sourceTree = "<group>"; };
@@ -283,6 +285,7 @@
 		E2A8F0B92AEC45740076969C /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				E259A3132CBF194A00A89088 /* SpeechHUDWindow.swift */,
 				E2A8F0BA2AEC457E0076969C /* MomentaryButtons.swift */,
 				E28617C02AEEDD9A00EAD806 /* VoicePicker.swift */,
 				E28617D52AEEE3F400EAD806 /* MenuBarExtraIconView.swift */,
@@ -437,6 +440,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E278F7B52AEEF4A300AFC7B5 /* DisplayTab.swift in Sources */,
+				E259A3142CBF194E00A89088 /* SpeechHUDWindow.swift in Sources */,
 				E278F7B32AEEEAEB00AFC7B5 /* CustomGroupBox.swift in Sources */,
 				E278F7AB2AEEE66E00AFC7B5 /* PasteboardObserver.swift in Sources */,
 				E278F7AD2AEEE8C300AFC7B5 /* SpeechTab.swift in Sources */,
